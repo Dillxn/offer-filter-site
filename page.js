@@ -1,1 +1,59 @@
-(()=>{'use strict';const $=id=>document.getElementById(id),film=$('film'),play=$('film-play');let opener=null;function open(id,source){opener=source;film.pause();$(id).showModal();document.body.classList.add('dialog-open');}document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',()=>b.closest('dialog').close()));document.querySelectorAll('dialog').forEach(d=>{d.addEventListener('close',()=>{document.body.classList.toggle('dialog-open',document.querySelector('dialog[open]')!==null);opener?.focus();});d.addEventListener('click',e=>{if(e.target===d){const r=d.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)d.close();}});});[['tip-open','tip-dialog'],['download-open','download-dialog'],['about-open','about-dialog']].forEach(([b,d])=>$(b).addEventListener('click',()=>open(d,$(b))));play.addEventListener('click',()=>{film.play().catch(()=>{play.hidden=false;});});film.addEventListener('play',()=>{play.hidden=true;});film.addEventListener('ended',()=>{play.hidden=false;play.querySelector('b').textContent='Replay film';play.setAttribute('aria-label','Replay the Offer Filter film');});$('sky-toggle').addEventListener('click',()=>{const night=document.body.classList.toggle('night');$('sky-toggle').setAttribute('aria-label',night?'Switch to day':'Switch to night');window.setSceneNight?.(night);});let paused=matchMedia('(prefers-reduced-motion: reduce)').matches;function label(){const b=$('motion-toggle');b.textContent=paused?'Resume motion':'Pause motion';b.setAttribute('aria-pressed',String(paused));document.body.classList.toggle('motion-paused',paused);}label();$('motion-toggle').addEventListener('click',()=>{paused=!paused;window.setScenePaused?.(paused);label();});})();
+(() => {
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const film = $('film'), play = $('film-play');
+  let opener = null;
+  let paused = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Quiet scenery temporarily; preserve the visitor's motion preference.
+  function syncMotion() {
+    const dialogOpen = document.querySelector('dialog[open]') !== null;
+    const quiet = paused || dialogOpen || (!film.paused && !film.ended && !film.error);
+    document.body.classList.toggle('dialog-open', dialogOpen);
+    document.body.classList.toggle('motion-paused', quiet);
+    window.setScenePaused?.(quiet);
+  }
+  function open(id, source) {
+    opener = source;
+    film.pause();
+    $(id).showModal();
+    syncMotion();
+  }
+  document.querySelectorAll('[data-close]').forEach(b =>
+    b.addEventListener('click', () => b.closest('dialog').close()));
+  document.querySelectorAll('dialog').forEach(d => {
+    d.addEventListener('close', () => { syncMotion(); opener?.focus(); });
+    d.addEventListener('click', e => {
+      if (e.target !== d) return;
+      const r = d.getBoundingClientRect();
+      if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) d.close();
+    });
+  });
+  [['tip-open', 'tip-dialog'], ['download-open', 'download-dialog'], ['about-open', 'about-dialog']]
+    .forEach(([b, d]) => $(b).addEventListener('click', () => open(d, $(b))));
+  play.addEventListener('click', () => {
+    film.play().catch(() => { play.hidden = false; syncMotion(); });
+  });
+  film.addEventListener('play', () => { play.hidden = true; syncMotion(); });
+  film.addEventListener('pause', syncMotion);
+  film.addEventListener('error', syncMotion);
+  film.addEventListener('ended', () => {
+    play.hidden = false;
+    play.querySelector('b').textContent = 'Replay film';
+    play.setAttribute('aria-label', 'Replay the Offer Filter film');
+    syncMotion();
+  });
+  $('sky-toggle').addEventListener('click', () => {
+    const night = document.body.classList.toggle('night');
+    $('sky-toggle').setAttribute('aria-label', night ? 'Switch to day' : 'Switch to night');
+    window.setSceneNight?.(night);
+  });
+  function label() {
+    const b = $('motion-toggle');
+    b.textContent = paused ? 'Resume motion' : 'Pause motion';
+    b.setAttribute('aria-pressed', String(paused));
+    syncMotion();
+  }
+  label();
+  $('motion-toggle').addEventListener('click', () => { paused = !paused; label(); });
+})();
