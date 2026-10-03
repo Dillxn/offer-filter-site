@@ -1,0 +1,152 @@
+{
+  "emblem": "jesus-loves-you-emblem.png",
+  "emblemSha256": "9af7a75273865629d33a690622040b11ec9d1078f9bd9d2dcec7c540b5ab1a23",
+  "exactText": [
+    "JESUS",
+    "LOVES",
+    "YOU",
+    "WE LOVE EACH OTHER",
+    "BECAUSE HE LOVES US FIRST.",
+    "1 JOHN 4:19"
+  ],
+  "closingCardBeginsSeconds": 16,
+  "closingCardFullOpacitySeconds": 16.35,
+  "contentDurationSeconds": 20,
+  "frames": 600,
+  "framesPerSecond": 30,
+  "audio": "Every compressed packet and presentation time of the existing clean tonal score is unchanged. Final 1.5 seconds are intentionally quiet.",
+  "exports": [
+    {
+      "file": "offer-filter-landscape.mp4",
+      "sourceSha256": "99001b06f9811b5c8d5433f3159d518b197a795c9f6c728c60c7b89edad5796d",
+      "sha256": "96efd2f8d9d9c0bc2e6801409c0c674951ed5c6eb8926c3b75718d41f2c448dc",
+      "size": 3291312,
+      "audioPacketsUnchanged": true,
+      "audioPresentationTimingUnchanged": true,
+      "completeDecode": "pass",
+      "programs": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "width": 1920,
+          "height": 1080,
+          "r_frame_rate": "30/1",
+          "nb_read_frames": "600"
+        },
+        {
+          "codec_name": "aac",
+          "r_frame_rate": "0/0",
+          "nb_read_frames": "868"
+        }
+      ],
+      "format": {
+        "duration": "20.000000"
+      }
+    },
+    {
+      "file": "offer-filter-portrait.mp4",
+      "sourceSha256": "c71f0720afabd36a756c55127716366c514f56966a448dec2580fa064bc13120",
+      "sha256": "2e6c01f716957944e0af3ca09bb2e7085dd660a67655a985743ad7222b46443e",
+      "size": 3112490,
+      "audioPacketsUnchanged": true,
+      "audioPresentationTimingUnchanged": true,
+      "completeDecode": "pass",
+      "programs": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "width": 1080,
+          "height": 1920,
+          "r_frame_rate": "30/1",
+          "nb_read_frames": "600"
+        },
+        {
+          "codec_name": "aac",
+          "r_frame_rate": "0/0",
+          "nb_read_frames": "868"
+        }
+      ],
+      "format": {
+        "duration": "20.000000"
+      }
+    },
+    {
+      "file": "offer-filter-square.mp4",
+      "sourceSha256": "331c38b36471ac975ac1e8edf9e7cb895a233cb182e18e88469836f62b8b30ac",
+      "sha256": "ef16724b2b1ccb45c530ccde19d054ccabfc838a3f7ae9d1c6c165f13a5a88ca",
+      "size": 2649447,
+      "audioPacketsUnchanged": true,
+      "audioPresentationTimingUnchanged": true,
+      "completeDecode": "pass",
+      "programs": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "width": 1080,
+          "height": 1080,
+          "r_frame_rate": "30/1",
+          "nb_read_frames": "600"
+        },
+        {
+          "codec_name": "aac",
+          "r_frame_rate": "0/0",
+          "nb_read_frames": "868"
+        }
+      ],
+      "format": {
+        "duration": "20.000000"
+      }
+    },
+    {
+      "file": "offer-filter-portrait.webm",
+      "sourceSha256": "1a8b105cbe00afad688e8c82c2b473d814cfdd9a84272b7f017f852ccdf7a6f4",
+      "sha256": "2b4e34363f75ed1a6ef9aece4868d04412a8e547d9cb5981e345daf0c74d2ef0",
+      "size": 2211781,
+      "audioPacketsUnchanged": true,
+      "audioPresentationTimingUnchanged": true,
+      "completeDecode": "pass",
+      "programs": [],
+      "streams": [
+        {
+          "codec_name": "vp9",
+          "width": 1080,
+          "height": 1920,
+          "r_frame_rate": "30/1",
+          "nb_read_frames": "600"
+        },
+        {
+          "codec_name": "opus",
+          "r_frame_rate": "0/0",
+          "nb_read_frames": "926"
+        }
+      ],
+      "format": {
+        "duration": "19.999000"
+      }
+    }
+  ],
+  "posters": [
+    {
+      "file": "assets/film-poster-wide.jpg",
+      "sha256": "0444a470795e062d86c15de1c289668d9d95c643eecec8d9d8811b403c44295a",
+      "bytes": 129664,
+      "extractedAtSeconds": 17.5
+    },
+    {
+      "file": "assets/film-poster.jpg",
+      "sha256": "11f11aa291e8646b01ad7cb964cd179213584e2bd80601e6c4728882560f1f30",
+      "bytes": 121870,
+      "extractedAtSeconds": 17.5
+    }
+  ],
+  "unchangedEditCheck": {
+    "export": "offer-filter-landscape.mp4",
+    "rangeSeconds": [
+      0,
+      16
+    ],
+    "comparedFrames": 480,
+    "ssim": 0.999311,
+    "interpretation": "Existing first sixteen seconds retain their edit. Re-encoding is lossy; no byte identity claimed."
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "asset": "assets/jesus-loves-you-emblem.png",
+  "sha256": "9af7a75273865629d33a690622040b11ec9d1078f9bd9d2dcec7c540b5ab1a23",
+  "bytes": 818026,
+  "dimensions": {
+    "width": 1412,
+    "height": 1114
+  },
+  "mode": "RGBA",
+  "generator": "OpenAI built-in image_gen",
+  "generatedSourceFilename": "exec-4b7eaba1-a572-4d90-b901-4cdabb9355af.png",
+  "reference": "User-supplied hoodie screenshot; design reference only. The reference photo is not published.",
+  "initialDirection": "Faithfully recreate only warm sandstone typography, transparent, bold vintage wavy serif JESUS / LOVES / YOU, exact smaller passage and 1 JOHN 4:19.",
+  "finalRefinementPrompt": "Clean up this exact emblem for production. Preserve the lettering shapes, word layout, exact text and warm sandstone color. Remove ALL stray white/light speckles and colored fringing outside and inside the letters, leaving only crisp typography on genuinely transparent background. Letter strokes should have uniform solid matte warm sandstone fill, with smooth antialiased edges; no outline, no light drop shadow, no texture, no glow, no gradient. All holes and spaces and outer margins must be fully transparent. Preserve every letter of the smaller passage and reference. Exact text: JESUS / LOVES / YOU; WE LOVE EACH OTHER / BECAUSE HE LOVES US FIRST.; 1 JOHN 4:19. Keep the entire passage visible and no extra marks. Do not change the design, just produce a clean typography-only transparent asset.",
+  "assetHandling": "The generated PNG is copied without pixel changes across app, website and video-compositing input. Website light theme uses a presentation-only CSS brightness filter.",
+  "visualReview": "Final landscape and portrait film compositions inspected; complete text readable and no visible alpha speckles."
+}
