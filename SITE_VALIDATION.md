@@ -30,3 +30,12 @@ After the original-signer 0.4.59 release reached the existing automatic update c
 Release-channel evidence at preparation: version 0.4.59/code 65; APK 423,069 bytes; SHA-256 `cc1000c8ad33731f6a8fc3b9b016d7dfc6e8e6c40fdb988d23709efc247a20f4`. This is publication evidence, not a physical-phone test.
 
 Copy source `9e9afff5afa02a50324559014e737d8d2b688075` deployed successfully in Pages run `37150686335`. Live HTML and VTT bytes matched the committed files. The rendered download dialog visibly states default-off auto-accept, separate Settings confirmation and possible delivery commitment; the acceptance-rate warning and existing signed download link remain present. No film or audio re-export was needed for this copy-only follow-up.
+
+
+## Hero layout and closing signature — October 3, 2026
+
+The existing illustrated mascot now appears beside the header wordmark. The single inline 16:9 player takes the former hero mascot space; there is no second film section or duplicate player. The hero uses a two-column layout on desktop and a stacked layout below 850 px, removing the previous illustration/text overlap on phones. A visible poster, user-started playback, controls, captions, signed download route and optional tips remain. The page’s final line reads “Jesus Loves You”. The ambient skyline stays behind the content, without duplicate offer tickets or constellation in the hero.
+
+Local HTML checks passed: one video, unique element IDs, all referenced assets present, one page signature. JavaScript syntax passed. Live deployment and responsive playback verification follow below.
+
+All four film exports now end with the exact signature “Jesus Loves You”, fading in from 16.3 to 16.7 seconds. Both posters were refreshed from the signed end card. Native captions also include the closing line. `tools/sign-film.py` records the guarded local operation, and `validation/film-signature-20261003.json` records output hashes, complete decode checks and audio/timing evidence. Each output contains 555 frames at 30 fps. MP4 duration remains 18.500 seconds. WebM container duration is 18.521 seconds versus the former 18.514 seconds because of Opus preroll metadata; actual packet presentation times are unchanged. Every compressed audio packet matches the existing clean tonal score, with no breathing or noise added.

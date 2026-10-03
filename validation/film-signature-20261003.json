@@ -1,0 +1,121 @@
+{
+  "signature": "Jesus Loves You",
+  "appearsAtSeconds": 16.3,
+  "fullOpacityAtSeconds": 16.7,
+  "lastFrameSeconds": 18.466667,
+  "font": "Baloo 2",
+  "fontSizePixels": 34,
+  "audio": "Original clean tonal score; every compressed audio packet unchanged.",
+  "exports": [
+    {
+      "file": "offer-filter-landscape.mp4",
+      "sourceSha256": "287cc499c0f85b6b8a5c60814cdb8a0bd021ad0ca8b1768baf0476939abdc446",
+      "sha256": "99001b06f9811b5c8d5433f3159d518b197a795c9f6c728c60c7b89edad5796d",
+      "size": 3158448,
+      "audioPacketsUnchanged": true,
+      "completeDecode": "pass",
+      "programs": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "width": 1920,
+          "height": 1080,
+          "r_frame_rate": "30/1",
+          "nb_read_frames": "555"
+        },
+        {
+          "codec_name": "aac",
+          "r_frame_rate": "0/0",
+          "nb_read_frames": "868"
+        }
+      ],
+      "format": {
+        "duration": "18.500000"
+      },
+      "streamPresentationTimingUnchanged": true
+    },
+    {
+      "file": "offer-filter-portrait.mp4",
+      "sourceSha256": "e3d3ee5501c1947fce62b64e7a407588e4e88c8356242c1d1fd5607cbf00fa00",
+      "sha256": "c71f0720afabd36a756c55127716366c514f56966a448dec2580fa064bc13120",
+      "size": 3087961,
+      "audioPacketsUnchanged": true,
+      "completeDecode": "pass",
+      "programs": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "width": 1080,
+          "height": 1920,
+          "r_frame_rate": "30/1",
+          "nb_read_frames": "555"
+        },
+        {
+          "codec_name": "aac",
+          "r_frame_rate": "0/0",
+          "nb_read_frames": "868"
+        }
+      ],
+      "format": {
+        "duration": "18.500000"
+      },
+      "streamPresentationTimingUnchanged": true
+    },
+    {
+      "file": "offer-filter-square.mp4",
+      "sourceSha256": "996156c19bd8aec1ad79040679ab49e0fb9ed90cbd7ffd850ad4120bac08352d",
+      "sha256": "331c38b36471ac975ac1e8edf9e7cb895a233cb182e18e88469836f62b8b30ac",
+      "size": 2494408,
+      "audioPacketsUnchanged": true,
+      "completeDecode": "pass",
+      "programs": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "width": 1080,
+          "height": 1080,
+          "r_frame_rate": "30/1",
+          "nb_read_frames": "555"
+        },
+        {
+          "codec_name": "aac",
+          "r_frame_rate": "0/0",
+          "nb_read_frames": "868"
+        }
+      ],
+      "format": {
+        "duration": "18.500000"
+      },
+      "streamPresentationTimingUnchanged": true
+    },
+    {
+      "file": "offer-filter-portrait.webm",
+      "sourceSha256": "fdb5e35868e7b781190bc3514611a472a9a2cb04ceee7ec7ef53d3ef56e0fd5c",
+      "sha256": "1a8b105cbe00afad688e8c82c2b473d814cfdd9a84272b7f017f852ccdf7a6f4",
+      "size": 2171437,
+      "audioPacketsUnchanged": true,
+      "completeDecode": "pass",
+      "programs": [],
+      "streams": [
+        {
+          "codec_name": "vp9",
+          "width": 1080,
+          "height": 1920,
+          "r_frame_rate": "30/1",
+          "nb_read_frames": "555"
+        },
+        {
+          "codec_name": "opus",
+          "r_frame_rate": "0/0",
+          "nb_read_frames": "926"
+        }
+      ],
+      "format": {
+        "duration": "18.521000"
+      },
+      "streamPresentationTimingUnchanged": true
+    }
+  ],
+  "timingNote": "Each export retains exactly 555 video frames and original audio/video packet presentation timestamps. MP4 duration is 18.500 seconds. WebM reports 18.521 seconds because its container includes existing Opus preroll; content and packet timings are unchanged.",
+  "visibleProof": "Decoded end cards at 17.4 s visually checked in all three layouts. Cropped OCR reads Jesus Loves You (case-insensitive) in all three."
+}
