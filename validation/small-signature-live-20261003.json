@@ -1,0 +1,81 @@
+{
+  "sourceCommit": "ceecaddee9f5de2e9fc5788ac685146eb6f9ce0d",
+  "verifiedAt": "2026-10-03T23:45:07.202173+00:00",
+  "files": [
+    {
+      "path": "index.html",
+      "bytes": 7064,
+      "sha256": "88eb96622a953a127704bbfbd010b659bc3770b060469e92e7fbfb107f684ba0",
+      "liveEqualsLocal": true
+    },
+    {
+      "path": "style.css",
+      "bytes": 11527,
+      "sha256": "4fb5fff958d9a88803ff5063229c4f66a8688864f65fa0ac1934f60be94b45e1",
+      "liveEqualsLocal": true
+    },
+    {
+      "path": "assets/jesus-loves-you-emblem.png",
+      "bytes": 818026,
+      "sha256": "9af7a75273865629d33a690622040b11ec9d1078f9bd9d2dcec7c540b5ab1a23",
+      "liveEqualsLocal": true
+    },
+    {
+      "path": "assets/film-poster-wide.jpg",
+      "bytes": 127853,
+      "sha256": "5f9389f779487a739f906246da7b40c0335db90929732d393cfb98af25255bfc",
+      "liveEqualsLocal": true
+    },
+    {
+      "path": "assets/film-poster.jpg",
+      "bytes": 133795,
+      "sha256": "f392d938574a44a7be7e50a7e658c971ec123d83866c0a72c69cf5a9338c3bab",
+      "liveEqualsLocal": true
+    },
+    {
+      "path": "assets/film-captions.vtt",
+      "bytes": 613,
+      "sha256": "296e74d31fe6bf2083b989c050c37bbfca0de736dfc40107a58ac270bee4bc2e",
+      "liveEqualsLocal": true
+    },
+    {
+      "path": "assets/offer-filter-landscape.mp4",
+      "bytes": 3207720,
+      "sha256": "b4bd9eff1cb399e421507d49c295f180e4e5b398e69209f050fea9fd1aaecafe",
+      "liveEqualsLocal": true
+    },
+    {
+      "path": "assets/offer-filter-portrait.mp4",
+      "bytes": 3126352,
+      "sha256": "57d5cfad29cffb59b2ea30ed81f2ef0773c9e8d89ab3e14135d02563efed9392",
+      "liveEqualsLocal": true
+    },
+    {
+      "path": "assets/offer-filter-portrait.webm",
+      "bytes": 2201526,
+      "sha256": "c940965f4e8036d2696b11228a025670fedc616b2806d1ec75b9527d93632189",
+      "liveEqualsLocal": true
+    },
+    {
+      "path": "assets/offer-filter-square.mp4",
+      "bytes": 2523447,
+      "sha256": "3c7ca357365b707bd6af519f6a72362e601b522a83d5e05b5240ad049e7450b0",
+      "liveEqualsLocal": true
+    }
+  ],
+  "pagesRun": 37162673602,
+  "browser": {
+    "viewport": [
+      520,
+      850
+    ],
+    "horizontalOverflow": false,
+    "signatureWidthPx": 200,
+    "signatureFilter": "brightness(0) invert(1)",
+    "duration": 18.5,
+    "currentTime": 18.5,
+    "ended": true,
+    "error": null,
+    "physicalPhoneClaim": false
+  }
+}
