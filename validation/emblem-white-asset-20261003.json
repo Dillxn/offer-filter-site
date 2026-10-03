@@ -1,0 +1,17 @@
+{
+  "asset": "assets/jesus-loves-you-emblem.png",
+  "sha256": "9af7a75273865629d33a690622040b11ec9d1078f9bd9d2dcec7c540b5ab1a23",
+  "bytes": 818026,
+  "dimensions": {
+    "width": 1412,
+    "height": 1114
+  },
+  "mode": "RGBA",
+  "masterProvenance": "validation/emblem-asset-20261003.json",
+  "latestUserDirection": "A little signature at the end. White for website and video; Android keeps sandstone with smaller sizing.",
+  "pixelAssetChanges": false,
+  "websitePresentation": "CSS brightness(0) invert(1) makes the original RGB white while retaining alpha. Maximum image width200px, small day-theme contrast backing.",
+  "videoPresentation": "FFmpeg lutrgb=r=255:g=255:b=255 after resizing keeps source alpha. Small lower-left signature and subtle composited shadow; no full-frame card.",
+  "visualReview": "Landscape master-only composite inspected; full emblem and passage present, app title/mascot/CTA/affiliation remain primary.",
+  "regeneratedWhiteImageUsed": false
+}

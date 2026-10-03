@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""Apply the shared Jesus Loves You emblem to the film's final four seconds.
+"""Add the small white Jesus Loves You signature to the original closing scene.
 
-Operates only on the known, previously signed 18.5-second exports, never on
-its own output. The first sixteen seconds keep their edit and all original
-compressed audio packets are copied. The final 1.5 seconds are intentionally
-quiet after the existing score resolves. Requires ffmpeg and ffprobe.
+Operates only on the known, unsignatured 18.5-second clean-score exports, never
+on its own output. The original mascot, app title, call to action and scenery
+remain. Every original compressed audio packet is copied. Requires ffmpeg and
+ffprobe. Earlier full-frame emblem exports are superseded by this recipe.
 """
 import argparse
 import concurrent.futures
@@ -16,10 +16,10 @@ import subprocess
 NAMES = ('offer-filter-landscape.mp4', 'offer-filter-portrait.mp4',
          'offer-filter-square.mp4', 'offer-filter-portrait.webm')
 SOURCE_SHA256 = {
-    'offer-filter-landscape.mp4': '99001b06f9811b5c8d5433f3159d518b197a795c9f6c728c60c7b89edad5796d',
-    'offer-filter-portrait.mp4': 'c71f0720afabd36a756c55127716366c514f56966a448dec2580fa064bc13120',
-    'offer-filter-square.mp4': '331c38b36471ac975ac1e8edf9e7cb895a233cb182e18e88469836f62b8b30ac',
-    'offer-filter-portrait.webm': '1a8b105cbe00afad688e8c82c2b473d814cfdd9a84272b7f017f852ccdf7a6f4',
+    'offer-filter-landscape.mp4': '287cc499c0f85b6b8a5c60814cdb8a0bd021ad0ca8b1768baf0476939abdc446',
+    'offer-filter-portrait.mp4': 'e3d3ee5501c1947fce62b64e7a407588e4e88c8356242c1d1fd5607cbf00fa00',
+    'offer-filter-square.mp4': '996156c19bd8aec1ad79040679ab49e0fb9ed90cbd7ffd850ad4120bac08352d',
+    'offer-filter-portrait.webm': 'fdb5e35868e7b781190bc3514611a472a9a2cb04ceee7ec7ef53d3ef56e0fd5c',
 }
 
 
@@ -48,23 +48,15 @@ def export(name, source, output, emblem):
         raise ValueError(f'{name}: refusing stale or already-overlaid input')
     original = probe(before)
     width, height = original['streams'][0]['width'], original['streams'][0]['height']
-    mark_width = round(min(width * .88, height * .74 * 1412 / 1114))
-    top = '(H-h)/2'
-    # A full-frame closing card avoids shrinking the passage into a logo strip.
-    # The same transparent PNG is used by the website and Android Settings.
+    mark_width = 240 if width == height else 300
+    # A quiet corner signature, never a replacement for the app/mascot card.
+    # A faint shadow belongs to video compositing; the original sandstone PNG is unmodified; RGB is tinted white while alpha is retained.
     graph = (
-        f'color=c=0x111721:s={width}x{height}:r=30:d=20.1,format=rgba,'
-        f"drawtext=fontfile={source / 'AtkinsonHyperlegible-Regular.ttf'}:"
-        "text='Offer Filter':fontsize=32:fontcolor=0xb7c4c4:"
-        "x=(w-text_w)/2:y=54,"
-        f"drawtext=fontfile={source / 'AtkinsonHyperlegible-Regular.ttf'}:"
-        "text='Independent app. Not affiliated with DoorDash.':"
-        "fontsize=23:fontcolor=0xb7c4c4:x=(w-text_w)/2:y=h-66[paper];"
-        f'[1:v]scale={mark_width}:-1:flags=lanczos,format=rgba[mark];'
-        f'[paper][mark]overlay=x=(W-w)/2:y={top}:shortest=1,'
-        'fade=t=in:st=16:d=0.35:alpha=1[card];'
-        '[0:v]tpad=stop_mode=clone:stop_duration=1.5[base];'
-        '[base][card]overlay=shortest=1:format=auto[out]'
+        f'[1:v]scale={mark_width}:-1:flags=lanczos,format=rgba,lutrgb=r=255:g=255:b=255,'
+        'fade=t=in:st=16.3:d=0.35:alpha=1,split=2[mark][shade];'
+        '[shade]colorchannelmixer=rr=0:gg=0:bb=0:aa=.8,gblur=sigma=2[shadow];'
+        '[0:v][shadow]overlay=x=42:y=H-h-68:shortest=1:format=auto[base];'
+        '[base][mark]overlay=x=40:y=H-h-70:shortest=1:format=auto[out]'
     )
     webm = before.suffix == '.webm'
     codec = (['-c:v', 'libvpx-vp9', '-crf', '28', '-b:v', '0', '-row-mt', '1',
@@ -76,13 +68,13 @@ def export(name, source, output, emblem):
          '-loop', '1', '-framerate', '30', '-i', str(emblem),
          '-filter_complex_threads', '1', '-filter_complex', graph,
          '-map', '[out]', '-map', '0:a:0', *codec, '-threads', '2',
-         '-pix_fmt', 'yuv420p', '-c:a', 'copy', '-frames:v', '600', str(after)])
+         '-pix_fmt', 'yuv420p', '-c:a', 'copy', '-frames:v', '555', str(after)])
     run(['ffmpeg', '-nostdin', '-v', 'error', '-i', str(after), '-f', 'null', '-'])
     before_audio, after_audio = packets(before, 'a:0'), packets(after, 'a:0')
     match = [(p['size'], p['data_hash']) for p in before_audio] == [(p['size'], p['data_hash']) for p in after_audio]
     assert match, f'{name}: original audio packets changed'
     metadata = probe(after)
-    assert metadata['streams'][0]['nb_read_frames'] == '600', metadata
+    assert metadata['streams'][0]['nb_read_frames'] == '555', metadata
     assert metadata['streams'][0]['r_frame_rate'] == '30/1', metadata
     audio_timing = [(p['pts_time'],p.get('duration_time')) for p in before_audio] == [(p['pts_time'],p.get('duration_time')) for p in after_audio]
     assert audio_timing, f'{name}: audio presentation timing changed'
@@ -110,12 +102,14 @@ def main():
         'emblem': emblem.name, 'emblemSha256': digest(emblem),
         'exactText': ['JESUS', 'LOVES', 'YOU', 'WE LOVE EACH OTHER',
                       'BECAUSE HE LOVES US FIRST.', '1 JOHN 4:19'],
-        'closingCardBeginsSeconds': 16, 'closingCardFullOpacitySeconds': 16.35,
-        'contentDurationSeconds': 20, 'frames': 600, 'framesPerSecond': 30,
-        'audio': 'Every compressed packet and presentation time of the existing clean tonal score is unchanged. Final 1.5 seconds are intentionally quiet.',
+        'signatureBeginsSeconds': 16.3, 'signatureFullOpacitySeconds': 16.65,
+        'contentDurationSeconds': 18.5, 'frames': 555, 'framesPerSecond': 30,
+        'signatureWidthPixels': {'landscape': 300, 'portrait': 300, 'square': 240},
+        'signaturePlacement': 'Lower-left; x40px,70px bottom inset; subtle shadow. Original mascot/app closing scene retained.',
+        'audio': 'Every compressed packet and presentation time of the existing clean tonal score is unchanged.',
         'exports': results,
     }
-    (output / 'film-emblem-validation.json').write_text(json.dumps(report, indent=2) + '\n')
+    (output / 'film-small-white-signature-validation.json').write_text(json.dumps(report, indent=2) + '\n')
     print(json.dumps(report, indent=2))
 
 

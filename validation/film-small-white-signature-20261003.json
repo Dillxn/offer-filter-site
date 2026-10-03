@@ -1,0 +1,149 @@
+{
+  "emblem": "jesus-loves-you-emblem.png",
+  "emblemSha256": "9af7a75273865629d33a690622040b11ec9d1078f9bd9d2dcec7c540b5ab1a23",
+  "exactText": [
+    "JESUS",
+    "LOVES",
+    "YOU",
+    "WE LOVE EACH OTHER",
+    "BECAUSE HE LOVES US FIRST.",
+    "1 JOHN 4:19"
+  ],
+  "signatureBeginsSeconds": 16.3,
+  "signatureFullOpacitySeconds": 16.65,
+  "contentDurationSeconds": 18.5,
+  "frames": 555,
+  "framesPerSecond": 30,
+  "signatureWidthPixels": {
+    "landscape": 300,
+    "portrait": 300,
+    "square": 240
+  },
+  "signaturePlacement": "Lower-left; x40px,70px bottom inset; subtle shadow. Original mascot/app closing scene retained.",
+  "audio": "Every compressed packet and presentation time of the existing clean tonal score is unchanged.",
+  "exports": [
+    {
+      "file": "offer-filter-landscape.mp4",
+      "sourceSha256": "287cc499c0f85b6b8a5c60814cdb8a0bd021ad0ca8b1768baf0476939abdc446",
+      "sha256": "b4bd9eff1cb399e421507d49c295f180e4e5b398e69209f050fea9fd1aaecafe",
+      "size": 3207720,
+      "audioPacketsUnchanged": true,
+      "audioPresentationTimingUnchanged": true,
+      "completeDecode": "pass",
+      "programs": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "width": 1920,
+          "height": 1080,
+          "r_frame_rate": "30/1",
+          "nb_read_frames": "555"
+        },
+        {
+          "codec_name": "aac",
+          "r_frame_rate": "0/0",
+          "nb_read_frames": "868"
+        }
+      ],
+      "format": {
+        "duration": "18.500000"
+      }
+    },
+    {
+      "file": "offer-filter-portrait.mp4",
+      "sourceSha256": "e3d3ee5501c1947fce62b64e7a407588e4e88c8356242c1d1fd5607cbf00fa00",
+      "sha256": "57d5cfad29cffb59b2ea30ed81f2ef0773c9e8d89ab3e14135d02563efed9392",
+      "size": 3126352,
+      "audioPacketsUnchanged": true,
+      "audioPresentationTimingUnchanged": true,
+      "completeDecode": "pass",
+      "programs": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "width": 1080,
+          "height": 1920,
+          "r_frame_rate": "30/1",
+          "nb_read_frames": "555"
+        },
+        {
+          "codec_name": "aac",
+          "r_frame_rate": "0/0",
+          "nb_read_frames": "868"
+        }
+      ],
+      "format": {
+        "duration": "18.500000"
+      }
+    },
+    {
+      "file": "offer-filter-square.mp4",
+      "sourceSha256": "996156c19bd8aec1ad79040679ab49e0fb9ed90cbd7ffd850ad4120bac08352d",
+      "sha256": "3c7ca357365b707bd6af519f6a72362e601b522a83d5e05b5240ad049e7450b0",
+      "size": 2523447,
+      "audioPacketsUnchanged": true,
+      "audioPresentationTimingUnchanged": true,
+      "completeDecode": "pass",
+      "programs": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "width": 1080,
+          "height": 1080,
+          "r_frame_rate": "30/1",
+          "nb_read_frames": "555"
+        },
+        {
+          "codec_name": "aac",
+          "r_frame_rate": "0/0",
+          "nb_read_frames": "868"
+        }
+      ],
+      "format": {
+        "duration": "18.500000"
+      }
+    },
+    {
+      "file": "offer-filter-portrait.webm",
+      "sourceSha256": "fdb5e35868e7b781190bc3514611a472a9a2cb04ceee7ec7ef53d3ef56e0fd5c",
+      "sha256": "c940965f4e8036d2696b11228a025670fedc616b2806d1ec75b9527d93632189",
+      "size": 2201526,
+      "audioPacketsUnchanged": true,
+      "audioPresentationTimingUnchanged": true,
+      "completeDecode": "pass",
+      "programs": [],
+      "streams": [
+        {
+          "codec_name": "vp9",
+          "width": 1080,
+          "height": 1920,
+          "r_frame_rate": "30/1",
+          "nb_read_frames": "555"
+        },
+        {
+          "codec_name": "opus",
+          "r_frame_rate": "0/0",
+          "nb_read_frames": "926"
+        }
+      ],
+      "format": {
+        "duration": "18.521000"
+      }
+    }
+  ],
+  "masterRendering": "Original sandstone PNG; presentation-only RGB white tint preserving alpha. No regenerated white PNG used.",
+  "posters": [
+    {
+      "file": "assets/film-poster-wide.jpg",
+      "sha256": "5f9389f779487a739f906246da7b40c0335db90929732d393cfb98af25255bfc",
+      "bytes": 127853,
+      "extractedAtSeconds": 17.5
+    },
+    {
+      "file": "assets/film-poster.jpg",
+      "sha256": "f392d938574a44a7be7e50a7e658c971ec123d83866c0a72c69cf5a9338c3bab",
+      "bytes": 133795,
+      "extractedAtSeconds": 17.5
+    }
+  ]
+}
