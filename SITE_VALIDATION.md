@@ -21,4 +21,10 @@ Published source: `9c1c37a431aaf3689842684b67fa55e3e3a9fc30` (parent `45b6e23424
 
 ## Scope
 
-This remains the original illustrative marketing draft, not final film polish or device-validation evidence. The currently published Android app description remains faithful to the live app; coordinate copy updates when a later optional auto-accept release is actually published.
+This remains the original illustrative marketing draft, not final film polish or device-validation evidence. The film shows default behavior. Optional auto-accept is described in the download details and remains off unless the user separately enables it in Settings.
+
+## 0.4.59 copy follow-up — October 3, 2026
+
+After the original-signer 0.4.59 release reached the existing automatic update channel, the absolute “never accepts” claim was removed from download details. The text now explains that auto-accept is off by default, needs a separate Settings opt-in, and can commit the user to a matching delivery. Metadata and the film's caption qualify the default behavior without adding UI controls. Caption URLs are versioned to refresh cached text. The illustrated layout, four film exports, clean original soundtrack, tip destinations and signed download route are unchanged.
+
+Release-channel evidence at preparation: version 0.4.59/code 65; APK 423,069 bytes; SHA-256 `cc1000c8ad33731f6a8fc3b9b016d7dfc6e8e6c40fdb988d23709efc247a20f4`. This is publication evidence, not a physical-phone test.
