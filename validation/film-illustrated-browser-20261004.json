@@ -1,0 +1,50 @@
+[
+  {
+    "viewportWidth": 1280,
+    "initial": {
+      "paused": true,
+      "controls": true,
+      "preload": "none",
+      "width": 554.03125,
+      "height": 311.640625,
+      "source": "http://127.0.0.1:42171/assets/offer-filter-landscape.mp4?v=illustrated-film-20261004",
+      "poster": "http://127.0.0.1:42171/assets/film-poster-wide.jpg?v=illustrated-film-20261004",
+      "overflow": false
+    },
+    "end": {
+      "duration": 21,
+      "currentTime": 19.6,
+      "width": 1920,
+      "height": 1080,
+      "currentSrc": "http://127.0.0.1:42171/assets/offer-filter-landscape.mp4?v=illustrated-film-20261004",
+      "error": null,
+      "tracks": 1
+    },
+    "replay": true,
+    "errors": []
+  },
+  {
+    "viewportWidth": 400,
+    "initial": {
+      "paused": true,
+      "controls": true,
+      "preload": "none",
+      "width": 344,
+      "height": 344,
+      "source": "http://127.0.0.1:42171/assets/offer-filter-square.mp4?v=illustrated-film-20261004",
+      "poster": "http://127.0.0.1:42171/assets/film-poster-square.jpg?v=illustrated-film-20261004",
+      "overflow": false
+    },
+    "end": {
+      "duration": 21,
+      "currentTime": 19.6,
+      "width": 1080,
+      "height": 1080,
+      "currentSrc": "http://127.0.0.1:42171/assets/offer-filter-square.mp4?v=illustrated-film-20261004",
+      "error": null,
+      "tracks": 1
+    },
+    "replay": true,
+    "errors": []
+  }
+]

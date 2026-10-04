@@ -1,0 +1,217 @@
+{
+  "durationSeconds": 21,
+  "framesPerFormat": 630,
+  "narrationAlignedShotTimes": [
+    0,
+    1.78,
+    3.72,
+    7.08,
+    9,
+    11.5,
+    13.8
+  ],
+  "musicCreditVisible": false,
+  "audio": {
+    "sourceSha256": "b9faf89fb1a52ae1151a900c33ff1a1b828544964d00bf0e215501f47eca6dbc",
+    "duration": 21,
+    "originalPcmUnchangedThroughSeconds": 17.45,
+    "voiceSpeed": 1,
+    "voiceGainDb": 0,
+    "completeFinalLine": "Free and open source.",
+    "instrumentalSourceSeconds": [
+      16.08,
+      17.6
+    ],
+    "instrumentalCopies": 2,
+    "fadeOut": [
+      19.49,
+      20.29
+    ],
+    "silentHold": 0.71,
+    "peakAmplitude": 0.8420912623405457
+  },
+  "text": [
+    {
+      "format": "landscape",
+      "width": 1920,
+      "height": 1080,
+      "frames": 630,
+      "fps": 30,
+      "duration": 21,
+      "minimumTextMargins": {
+        "left": 120,
+        "top": 253,
+        "right": 308.1878094881872,
+        "bottom": 84
+      },
+      "checkedTextDraws": {
+        "time": 114,
+        "minimums": 501,
+        "decline": 312,
+        "choose": 301,
+        "perspective": 394,
+        "direction": 218,
+        "close": 1070
+      },
+      "violations": []
+    },
+    {
+      "format": "portrait",
+      "width": 1080,
+      "height": 1920,
+      "frames": 630,
+      "fps": 30,
+      "duration": 21,
+      "minimumTextMargins": {
+        "left": 77,
+        "top": 155,
+        "right": 98.4375,
+        "bottom": 98
+      },
+      "checkedTextDraws": {
+        "time": 114,
+        "minimums": 501,
+        "decline": 312,
+        "choose": 301,
+        "perspective": 394,
+        "direction": 218,
+        "close": 1070
+      },
+      "violations": []
+    },
+    {
+      "format": "square",
+      "width": 1080,
+      "height": 1080,
+      "frames": 630,
+      "fps": 30,
+      "duration": 21,
+      "minimumTextMargins": {
+        "left": 76,
+        "top": 58,
+        "right": 281.5204772949219,
+        "bottom": 68
+      },
+      "checkedTextDraws": {
+        "time": 114,
+        "minimums": 501,
+        "decline": 312,
+        "choose": 301,
+        "perspective": 394,
+        "direction": 218,
+        "close": 1070
+      },
+      "violations": []
+    }
+  ],
+  "exports": [
+    {
+      "file": "offer-filter-landscape.mp4",
+      "sha256": "21b52976f457241da1dccf8a20dc76413e9a038e3833427da73870226418f3e4",
+      "bytes": 3810253,
+      "fullDecode": "pass",
+      "blackFrames": "none",
+      "programs": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "width": 1920,
+          "height": 1080,
+          "r_frame_rate": "30/1",
+          "nb_read_frames": "630"
+        },
+        {
+          "codec_name": "aac",
+          "sample_rate": "48000",
+          "channels": 2,
+          "r_frame_rate": "0/0",
+          "nb_read_frames": "985"
+        }
+      ],
+      "format": {
+        "duration": "21.000000"
+      }
+    },
+    {
+      "file": "offer-filter-portrait.mp4",
+      "sha256": "449de3d6bf367e4e76d11a5dd2ea9bc783a39e1df861751ebada235a4454a9ba",
+      "bytes": 3676765,
+      "fullDecode": "pass",
+      "blackFrames": "none",
+      "programs": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "width": 1080,
+          "height": 1920,
+          "r_frame_rate": "30/1",
+          "nb_read_frames": "630"
+        },
+        {
+          "codec_name": "aac",
+          "sample_rate": "48000",
+          "channels": 2,
+          "r_frame_rate": "0/0",
+          "nb_read_frames": "985"
+        }
+      ],
+      "format": {
+        "duration": "21.000000"
+      }
+    },
+    {
+      "file": "offer-filter-portrait.webm",
+      "sha256": "2f19cc081d2db757df2de751eb837e1e2ac0234d30bbc614b48d4036f50d59c3",
+      "bytes": 2851317,
+      "fullDecode": "pass",
+      "blackFrames": "none",
+      "programs": [],
+      "streams": [
+        {
+          "codec_name": "vp9",
+          "width": 1080,
+          "height": 1920,
+          "r_frame_rate": "30/1",
+          "nb_read_frames": "630"
+        },
+        {
+          "codec_name": "opus",
+          "sample_rate": "48000",
+          "channels": 2,
+          "r_frame_rate": "0/0",
+          "nb_read_frames": "1051"
+        }
+      ],
+      "format": {
+        "duration": "21.021000"
+      }
+    },
+    {
+      "file": "offer-filter-square.mp4",
+      "sha256": "de12e6e04decfa2e5cf0250a4453a5b90cad1a6149e42e1d1c02f903f19c7863",
+      "bytes": 2871798,
+      "fullDecode": "pass",
+      "blackFrames": "none",
+      "programs": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "width": 1080,
+          "height": 1080,
+          "r_frame_rate": "30/1",
+          "nb_read_frames": "630"
+        },
+        {
+          "codec_name": "aac",
+          "sample_rate": "48000",
+          "channels": 2,
+          "r_frame_rate": "0/0",
+          "nb_read_frames": "985"
+        }
+      ],
+      "format": {
+        "duration": "21.000000"
+      }
+    }
+  ]
+}

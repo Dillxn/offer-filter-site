@@ -2,6 +2,17 @@
   'use strict';
   const $ = id => document.getElementById(id);
   const film = $('film'), play = $('film-play');
+  // Select a composed square film on phones, then keep that choice stable
+  // throughout playback. No crop, autoplay, or reset when the viewport changes.
+  if (matchMedia('(max-width: 600px)').matches) {
+    const source = film.querySelector('source');
+    source.src = 'assets/offer-filter-square.mp4?v=illustrated-film-20261004';
+    film.poster = 'assets/film-poster-square.jpg?v=illustrated-film-20261004';
+    film.width = film.height = 1080;
+    film.closest('.film-stage').classList.add('film-square');
+    film.load();
+    document.querySelector('.film-heading a[download]').href = source.src;
+  }
   let opener = null;
   let paused = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -67,3 +78,4 @@
   label();
   $('motion-toggle').addEventListener('click', () => { paused = !paused; label(); });
 })();
+

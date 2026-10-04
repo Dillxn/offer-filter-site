@@ -39,3 +39,7 @@ footer{position:relative;inset:auto;display:block;flex:none}.footer-links{displa
 #help-dialog h3{font-size:20px;margin:24px 0 8px}
 #help-dialog .secondary{font-size:14px;min-height:44px}
 .setup-steps{padding-left:24px}.setup-steps li{margin-bottom:14px}
+
+
+/* The phone edit is composed in a square, with no cropped video or type. */
+.film-stage.film-square,.film-stage.film-square video{aspect-ratio:1}
