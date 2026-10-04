@@ -94,3 +94,11 @@ The emblem master, all four video exports, clean soundtrack, captions and wide p
 ## Unbacked signature — live verification, October 4 UTC
 
 Source `bf58f6ab1259272cd67e7395bf90d60b78a9797b` deployed successfully via Pages run `37165910338`. Live HTML, CSS and scene JavaScript exactly match local source bytes. The live 520px browser shows the complete signature at160px with transparent background, darker original gold by day and white by night, without horizontal overflow. The road stays above the signature. `validation/small-unbacked-live-20261003.json` and the matching JPEG record this. Film/media files are unchanged; this check makes no new playback or handset claim.
+
+## Forest-green homepage signature — October 3, 2026
+
+Prepared from main `44330c69a607f1bb6c30cd8307da06b7ed26539b` after the user requested a smaller signature in the illustration's darker green. The homepage's final emblem is now 144px wide. Its day color is forest green `#36594b`; night retains white for contrast. The original PNG supplies only the alpha mask, preserving all lettering and the complete passage without a new raster asset or backing panel. The existing image remains in the accessibility tree with its complete alternative text and becomes the visible gold/white fallback when CSS masks are unsupported. The prior road/car placement is unchanged.
+
+Local Chromium 153 checks passed at 320, 400 and 1280px in both themes: no horizontal overflow or script errors, 144px signature, exact green/white computed colors, transparent container, full accessible image name, one 16:9 video and no scenery crossing behind the signature. Two additional 400px checks removed the mask-support rule and confirmed the original image remains visible at the same size in both themes. The 400px day preview was visually reviewed. JavaScript syntax and whitespace checks passed. See `validation/small-forest-signature-20261003.json` and `validation/small-forest-day-400.jpg`.
+
+All media assets and the scene/page scripts remain byte-for-byte unchanged from the base. This is local presentation evidence only, with publication and live checks left to the coordinating thread.
