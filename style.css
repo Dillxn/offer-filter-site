@@ -22,12 +22,14 @@ footer{position:relative;inset:auto;display:block;flex:none}.footer-links{displa
 .film-play{left:12px;top:12px;transform:none;gap:7px;padding:9px 12px;font-size:12px;min-height:44px}
 .film-play span{font-size:14px}
 
-/* Keep the source available next to the download, with a quieter visual weight. */
-.source-button{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:44px;max-width:100%;margin-top:16px;padding:11px 15px;border:1px solid var(--line);border-radius:5px;background:rgba(250,246,235,.2);color:inherit;font-size:14px;line-height:1.4;text-decoration:none;transition:background .2s,border-color .2s}
-.source-button svg{width:18px;height:18px;flex:none}
-.source-button:hover{background:rgba(250,246,235,.52);border-color:currentColor}
-body.night .source-button{border-color:#d7dec54a;background:#21344a55}
-body.night .source-button:hover{background:#21344a99;border-color:#d7dec5}
+/* One primary action, with the source kept as a quiet text link. */
+.app-actions{display:flex;flex-direction:column;align-items:flex-start}
+.source-button{display:inline-flex;align-items:center;min-height:44px;max-width:100%;margin-top:4px;color:inherit;font-size:14px;line-height:1.4;text-underline-offset:4px}
+.source-button:hover{text-decoration-thickness:2px}
+.film-heading{justify-content:flex-end;margin:8px 0 0}
+.film-heading>a{display:inline-flex;align-items:center;min-height:44px;font-size:14px}
+.footer-links{justify-content:center;flex-wrap:wrap;gap:8px 24px}
+.footer-links .tip-link,.footer-links .quiet-link{display:inline-flex;align-items:center;min-height:44px;font-size:14px}
 
 /* Launch information stays on demand, away from the illustrated hero. */
 .support-links{display:flex;justify-content:center;flex-wrap:wrap;gap:8px 22px;margin-top:14px}
