@@ -1,0 +1,301 @@
+{
+  "checkedAt": "2026-10-04T00:42:42.017Z",
+  "sourceBase": "0578626721dbd8e71055d506fa1befd756b407da",
+  "scope": "Local Chromium 153 responsive presentation checks; no publication or physical-phone claim",
+  "results": [
+    {
+      "maxHorizontalVariationUnderSignature": 0,
+      "viewport": 320,
+      "theme": "day",
+      "documentWidth": 320,
+      "signature": {
+        "x": 80,
+        "y": 848.21875,
+        "width": 160,
+        "height": 126.21875,
+        "background": "rgba(0, 0, 0, 0)",
+        "backgroundImage": "none",
+        "padding": "0px",
+        "border": "0px",
+        "filter": "brightness(0.58)",
+        "complete": true,
+        "naturalWidth": 1412,
+        "alt": "Jesus Loves You. We love each other because He loves us first. 1 John 4:19.",
+        "gapAbove": 24,
+        "centerOffset": 0
+      },
+      "videoCount": 1,
+      "filmRatio": 1.7779347935802967
+    },
+    {
+      "maxHorizontalVariationUnderSignature": 0,
+      "viewport": 320,
+      "theme": "night",
+      "documentWidth": 320,
+      "signature": {
+        "x": 80,
+        "y": 848.21875,
+        "width": 160,
+        "height": 126.21875,
+        "background": "rgba(0, 0, 0, 0)",
+        "backgroundImage": "none",
+        "padding": "0px",
+        "border": "0px",
+        "filter": "brightness(0) invert(1)",
+        "complete": true,
+        "naturalWidth": 1412,
+        "alt": "Jesus Loves You. We love each other because He loves us first. 1 John 4:19.",
+        "gapAbove": 24,
+        "centerOffset": 0
+      },
+      "videoCount": 1,
+      "filmRatio": 1.7779347935802967
+    },
+    {
+      "maxHorizontalVariationUnderSignature": 0,
+      "viewport": 400,
+      "theme": "day",
+      "documentWidth": 400,
+      "signature": {
+        "x": 120,
+        "y": 800.5,
+        "width": 160,
+        "height": 126.21875,
+        "background": "rgba(0, 0, 0, 0)",
+        "backgroundImage": "none",
+        "padding": "0px",
+        "border": "0px",
+        "filter": "brightness(0.58)",
+        "complete": true,
+        "naturalWidth": 1412,
+        "alt": "Jesus Loves You. We love each other because He loves us first. 1 John 4:19.",
+        "gapAbove": 24,
+        "centerOffset": 0
+      },
+      "videoCount": 1,
+      "filmRatio": 1.7777777777777777
+    },
+    {
+      "maxHorizontalVariationUnderSignature": 0,
+      "viewport": 400,
+      "theme": "night",
+      "documentWidth": 400,
+      "signature": {
+        "x": 120,
+        "y": 800.5,
+        "width": 160,
+        "height": 126.21875,
+        "background": "rgba(0, 0, 0, 0)",
+        "backgroundImage": "none",
+        "padding": "0px",
+        "border": "0px",
+        "filter": "brightness(0) invert(1)",
+        "complete": true,
+        "naturalWidth": 1412,
+        "alt": "Jesus Loves You. We love each other because He loves us first. 1 John 4:19.",
+        "gapAbove": 24,
+        "centerOffset": 0
+      },
+      "videoCount": 1,
+      "filmRatio": 1.7777777777777777
+    },
+    {
+      "maxHorizontalVariationUnderSignature": 0,
+      "viewport": 520,
+      "theme": "day",
+      "documentWidth": 520,
+      "signature": {
+        "x": 180,
+        "y": 916.953125,
+        "width": 160,
+        "height": 126.21875,
+        "background": "rgba(0, 0, 0, 0)",
+        "backgroundImage": "none",
+        "padding": "0px",
+        "border": "0px",
+        "filter": "brightness(0.58)",
+        "complete": true,
+        "naturalWidth": 1412,
+        "alt": "Jesus Loves You. We love each other because He loves us first. 1 John 4:19.",
+        "gapAbove": 24,
+        "centerOffset": 0
+      },
+      "videoCount": 1,
+      "filmRatio": 1.7778317348549229
+    },
+    {
+      "maxHorizontalVariationUnderSignature": 0,
+      "viewport": 520,
+      "theme": "night",
+      "documentWidth": 520,
+      "signature": {
+        "x": 180,
+        "y": 916.953125,
+        "width": 160,
+        "height": 126.21875,
+        "background": "rgba(0, 0, 0, 0)",
+        "backgroundImage": "none",
+        "padding": "0px",
+        "border": "0px",
+        "filter": "brightness(0) invert(1)",
+        "complete": true,
+        "naturalWidth": 1412,
+        "alt": "Jesus Loves You. We love each other because He loves us first. 1 John 4:19.",
+        "gapAbove": 24,
+        "centerOffset": 0
+      },
+      "videoCount": 1,
+      "filmRatio": 1.7778317348549229
+    },
+    {
+      "maxHorizontalVariationUnderSignature": 0,
+      "viewport": 1280,
+      "theme": "day",
+      "documentWidth": 1280,
+      "signature": {
+        "x": 560,
+        "y": 743.78125,
+        "width": 160,
+        "height": 126.21875,
+        "background": "rgba(0, 0, 0, 0)",
+        "backgroundImage": "none",
+        "padding": "0px",
+        "border": "0px",
+        "filter": "brightness(0.58)",
+        "complete": true,
+        "naturalWidth": 1412,
+        "alt": "Jesus Loves You. We love each other because He loves us first. 1 John 4:19.",
+        "gapAbove": 24,
+        "centerOffset": 0
+      },
+      "videoCount": 1,
+      "filmRatio": 1.777788919528704
+    },
+    {
+      "maxHorizontalVariationUnderSignature": 0,
+      "viewport": 1280,
+      "theme": "night",
+      "documentWidth": 1280,
+      "signature": {
+        "x": 560,
+        "y": 743.78125,
+        "width": 160,
+        "height": 126.21875,
+        "background": "rgba(0, 0, 0, 0)",
+        "backgroundImage": "none",
+        "padding": "0px",
+        "border": "0px",
+        "filter": "brightness(0) invert(1)",
+        "complete": true,
+        "naturalWidth": 1412,
+        "alt": "Jesus Loves You. We love each other because He loves us first. 1 John 4:19.",
+        "gapAbove": 24,
+        "centerOffset": 0
+      },
+      "videoCount": 1,
+      "filmRatio": 1.777788919528704
+    },
+    {
+      "maxHorizontalVariationUnderSignature": 0,
+      "viewport": 1920,
+      "theme": "day",
+      "documentWidth": 1920,
+      "signature": {
+        "x": 880,
+        "y": 879.6875,
+        "width": 160,
+        "height": 126.21875,
+        "background": "rgba(0, 0, 0, 0)",
+        "backgroundImage": "none",
+        "padding": "0px",
+        "border": "0px",
+        "filter": "brightness(0.58)",
+        "complete": true,
+        "naturalWidth": 1412,
+        "alt": "Jesus Loves You. We love each other because He loves us first. 1 John 4:19.",
+        "gapAbove": 24,
+        "centerOffset": 0
+      },
+      "videoCount": 1,
+      "filmRatio": 1.7777980446519772
+    },
+    {
+      "maxHorizontalVariationUnderSignature": 0,
+      "viewport": 1920,
+      "theme": "night",
+      "documentWidth": 1920,
+      "signature": {
+        "x": 880,
+        "y": 879.6875,
+        "width": 160,
+        "height": 126.21875,
+        "background": "rgba(0, 0, 0, 0)",
+        "backgroundImage": "none",
+        "padding": "0px",
+        "border": "0px",
+        "filter": "brightness(0) invert(1)",
+        "complete": true,
+        "naturalWidth": 1412,
+        "alt": "Jesus Loves You. We love each other because He loves us first. 1 John 4:19.",
+        "gapAbove": 24,
+        "centerOffset": 0
+      },
+      "videoCount": 1,
+      "filmRatio": 1.7777980446519772
+    }
+  ],
+  "unchangedAssets": {
+    "assets/jesus-loves-you-emblem.png": {
+      "bytes": 818026,
+      "sha256": "9af7a75273865629d33a690622040b11ec9d1078f9bd9d2dcec7c540b5ab1a23",
+      "unchangedFromBase": true
+    },
+    "assets/offer-filter-landscape.mp4": {
+      "bytes": 3207720,
+      "sha256": "b4bd9eff1cb399e421507d49c295f180e4e5b398e69209f050fea9fd1aaecafe",
+      "unchangedFromBase": true
+    },
+    "assets/offer-filter-portrait.mp4": {
+      "bytes": 3126352,
+      "sha256": "57d5cfad29cffb59b2ea30ed81f2ef0773c9e8d89ab3e14135d02563efed9392",
+      "unchangedFromBase": true
+    },
+    "assets/offer-filter-portrait.webm": {
+      "bytes": 2201526,
+      "sha256": "c940965f4e8036d2696b11228a025670fedc616b2806d1ec75b9527d93632189",
+      "unchangedFromBase": true
+    },
+    "assets/offer-filter-square.mp4": {
+      "bytes": 2523447,
+      "sha256": "3c7ca357365b707bd6af519f6a72362e601b522a83d5e05b5240ad049e7450b0",
+      "unchangedFromBase": true
+    },
+    "assets/film-captions.vtt": {
+      "bytes": 613,
+      "sha256": "296e74d31fe6bf2083b989c050c37bbfca0de736dfc40107a58ac270bee4bc2e",
+      "unchangedFromBase": true
+    },
+    "assets/film-poster-wide.jpg": {
+      "bytes": 127853,
+      "sha256": "5f9389f779487a739f906246da7b40c0335db90929732d393cfb98af25255bfc",
+      "unchangedFromBase": true
+    },
+    "page.js": {
+      "bytes": 2466,
+      "sha256": "a68449faa1421040afb621ad6af4f16ff5c5589bbd51cc12683c499f985d0881",
+      "unchangedFromBase": true
+    }
+  },
+  "reviewedPreviews": [
+    "validation/small-unbacked-day-400.jpg",
+    "validation/small-unbacked-night-400.jpg"
+  ],
+  "checks": [
+    "10 viewport/theme combinations without horizontal overflow or page errors",
+    "160px transparent unbacked signature centered after footer links with complete alternative text",
+    "Darker original gold by day and white by night",
+    "Canvas pixel rows beneath the signature are horizontally uniform in every case: road, buildings and car stay above it",
+    "One 16:9 video retained; no media, audio, caption or update-route change",
+    "JavaScript syntax and git diff --check passed"
+  ]
+}
