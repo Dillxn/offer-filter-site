@@ -28,3 +28,12 @@ footer{position:relative;inset:auto;display:block;flex:none}.footer-links{displa
 .source-button:hover{background:rgba(250,246,235,.52);border-color:currentColor}
 body.night .source-button{border-color:#d7dec54a;background:#21344a55}
 body.night .source-button:hover{background:#21344a99;border-color:#d7dec5}
+
+/* Launch information stays on demand, away from the illustrated hero. */
+.support-links{display:flex;justify-content:center;flex-wrap:wrap;gap:8px 22px;margin-top:14px}
+.support-links a{display:inline-flex;align-items:center;min-height:44px;font-size:14px;text-underline-offset:4px}
+#help-dialog{width:min(620px,calc(100% - 32px))}
+#help-dialog p,.setup-steps{font-size:16px;line-height:1.6}
+#help-dialog h3{font-size:20px;margin:24px 0 8px}
+#help-dialog .secondary{font-size:14px;min-height:44px}
+.setup-steps{padding-left:24px}.setup-steps li{margin-bottom:14px}

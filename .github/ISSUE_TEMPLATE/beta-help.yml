@@ -1,0 +1,58 @@
+name: Beta help or a non-sensitive problem
+description: Public help for Offer Filter; never attach private reports or order screenshots.
+title: "[beta] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Everything in this issue is public.** Do not paste diagnostic exports, real order screenshots, names, addresses, payment information, passwords, tokens or private security reports. Use invented examples only. A private privacy/security contact channel is not yet published.
+        If filtering behaves unexpectedly, pause it and use Dasher directly. Do not troubleshoot while driving.
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Public report
+      options:
+        - label: I removed personal, customer, delivery, payment and credential information, and attached no raw diagnostics.
+          required: true
+  - type: input
+    id: app-version
+    attributes:
+      label: Offer Filter version
+      description: Find this at the bottom of Settings.
+      placeholder: "Example: 0.4.68"
+    validations:
+      required: true
+  - type: input
+    id: phone
+    attributes:
+      label: Phone model and Android version
+      description: Do not include a serial number, device ID or account name.
+      placeholder: "Example: Samsung Galaxy, Android 16"
+  - type: textarea
+    id: problem
+    attributes:
+      label: What happened, and what did you expect?
+      description: Use invented offer figures and generic button names. Do not attach logs or screenshots.
+    validations:
+      required: true
+  - type: dropdown
+    id: setup
+    attributes:
+      label: Where did it happen?
+      options:
+        - Installation or update
+        - Permissions or setup
+        - Foreground Dasher
+        - Split screen
+        - Switching to or from a map
+        - Website or film
+        - Other non-sensitive problem
+  - type: checkboxes
+    id: settings
+    attributes:
+      label: Relevant settings (if known)
+      options:
+        - label: Auto-accept was on
+        - label: Adaptive minimums were on
+        - label: Area scoring was on
+        - label: Peek was on

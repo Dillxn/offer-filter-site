@@ -14,6 +14,7 @@
     window.setScenePaused?.(quiet);
   }
   function open(id, source) {
+    document.querySelectorAll('dialog[open]').forEach(d => { if (d.id !== id) d.close(); });
     opener = source;
     film.pause();
     $(id).showModal();
@@ -31,6 +32,15 @@
   });
   [['tip-open', 'tip-dialog'], ['download-open', 'download-dialog'], ['about-open', 'about-dialog']]
     .forEach(([b, d]) => $(b).addEventListener('click', () => open(d, $(b))));
+  $('help-open').addEventListener('click', e => {
+    e.preventDefault();
+    open('help-dialog', $('help-open'));
+  });
+  function openLinkedHelp() {
+    if (location.hash === '#help' && !$('help-dialog').open) open('help-dialog', $('help-open'));
+  }
+  window.addEventListener('hashchange', openLinkedHelp);
+  openLinkedHelp();
   play.addEventListener('click', () => {
     film.play().catch(() => { play.hidden = false; syncMotion(); });
   });
