@@ -1,0 +1,230 @@
+{
+  "path": "/tmp/offer-narration-free-exports/your-time-matters-free.wav",
+  "duration": 18.5,
+  "peakLinear": 0.8420912027359009,
+  "peakDbFS": -1.4928174018859863,
+  "samplesAtOrAboveFullScale": 0,
+  "tailLast1sPeak": 0.0,
+  "asr": [
+    {
+      "start": 0.0,
+      "end": 6.12,
+      "text": " Your time matters. Set your minimums. Offer filter declines the offers below them.",
+      "words": [
+        {
+          "start": 0.0,
+          "end": 0.26,
+          "word": " Your",
+          "probability": 0.9192962646484375
+        },
+        {
+          "start": 0.26,
+          "end": 0.54,
+          "word": " time",
+          "probability": 0.9947838187217712
+        },
+        {
+          "start": 0.54,
+          "end": 1.1,
+          "word": " matters.",
+          "probability": 0.9963740706443787
+        },
+        {
+          "start": 1.9,
+          "end": 2.06,
+          "word": " Set",
+          "probability": 0.9871490597724915
+        },
+        {
+          "start": 2.06,
+          "end": 2.22,
+          "word": " your",
+          "probability": 0.9974785447120667
+        },
+        {
+          "start": 2.22,
+          "end": 3.56,
+          "word": " minimums.",
+          "probability": 0.989201694726944
+        },
+        {
+          "start": 3.84,
+          "end": 3.9,
+          "word": " Offer",
+          "probability": 0.9783057570457458
+        },
+        {
+          "start": 3.9,
+          "end": 4.36,
+          "word": " filter",
+          "probability": 0.9796220064163208
+        },
+        {
+          "start": 4.36,
+          "end": 4.84,
+          "word": " declines",
+          "probability": 0.9928500652313232
+        },
+        {
+          "start": 4.84,
+          "end": 5.14,
+          "word": " the",
+          "probability": 0.7506318092346191
+        },
+        {
+          "start": 5.14,
+          "end": 5.4,
+          "word": " offers",
+          "probability": 0.9924553632736206
+        },
+        {
+          "start": 5.4,
+          "end": 5.72,
+          "word": " below",
+          "probability": 0.9980165958404541
+        },
+        {
+          "start": 5.72,
+          "end": 6.12,
+          "word": " them.",
+          "probability": 0.9973579049110413
+        }
+      ]
+    },
+    {
+      "start": 7.22,
+      "end": 14.34,
+      "text": " You choose the good ones. See every offer in perspective. Find your next move. Free.",
+      "words": [
+        {
+          "start": 7.22,
+          "end": 7.38,
+          "word": " You",
+          "probability": 0.9938730001449585
+        },
+        {
+          "start": 7.38,
+          "end": 7.6,
+          "word": " choose",
+          "probability": 0.9796781539916992
+        },
+        {
+          "start": 7.6,
+          "end": 7.78,
+          "word": " the",
+          "probability": 0.9956849813461304
+        },
+        {
+          "start": 7.78,
+          "end": 7.92,
+          "word": " good",
+          "probability": 0.9923896193504333
+        },
+        {
+          "start": 7.92,
+          "end": 8.3,
+          "word": " ones.",
+          "probability": 0.9963274598121643
+        },
+        {
+          "start": 9.26,
+          "end": 9.42,
+          "word": " See",
+          "probability": 0.9946898221969604
+        },
+        {
+          "start": 9.42,
+          "end": 9.74,
+          "word": " every",
+          "probability": 0.9976767897605896
+        },
+        {
+          "start": 9.74,
+          "end": 9.96,
+          "word": " offer",
+          "probability": 0.9228910207748413
+        },
+        {
+          "start": 9.96,
+          "end": 10.76,
+          "word": " in",
+          "probability": 0.9848291277885437
+        },
+        {
+          "start": 10.76,
+          "end": 10.76,
+          "word": " perspective.",
+          "probability": 0.9292026162147522
+        },
+        {
+          "start": 11.74,
+          "end": 11.92,
+          "word": " Find",
+          "probability": 0.9957953691482544
+        },
+        {
+          "start": 11.92,
+          "end": 12.14,
+          "word": " your",
+          "probability": 0.9918521046638489
+        },
+        {
+          "start": 12.14,
+          "end": 12.38,
+          "word": " next",
+          "probability": 0.9982047080993652
+        },
+        {
+          "start": 12.38,
+          "end": 12.86,
+          "word": " move.",
+          "probability": 0.9976671934127808
+        },
+        {
+          "start": 14.02,
+          "end": 14.34,
+          "word": " Free.",
+          "probability": 0.9311730265617371
+        }
+      ]
+    }
+  ],
+  "seams": [
+    {
+      "time": 14.6,
+      "rmsDbFS": -27.092084884643555,
+      "maxSampleJump": 0.009928345680236816,
+      "junctionSampleJump": 0.0008434057235717773
+    },
+    {
+      "time": 14.72,
+      "rmsDbFS": -29.62493133544922,
+      "maxSampleJump": 0.008005619049072266,
+      "junctionSampleJump": 0.0007025003433227539
+    },
+    {
+      "time": 15.92,
+      "rmsDbFS": -32.412879943847656,
+      "maxSampleJump": 0.002557039260864258,
+      "junctionSampleJump": 0.0008082389831542969
+    },
+    {
+      "time": 16.12,
+      "rmsDbFS": -32.18217849731445,
+      "maxSampleJump": 0.002705693244934082,
+      "junctionSampleJump": 0.0009976625442504883
+    },
+    {
+      "time": 16.84,
+      "rmsDbFS": -28.522098541259766,
+      "maxSampleJump": 0.003214597702026367,
+      "junctionSampleJump": 0.0006538629531860352
+    },
+    {
+      "time": 17.44,
+      "rmsDbFS": -54.27724838256836,
+      "maxSampleJump": 0.0004112720489501953,
+      "junctionSampleJump": 0.0
+    }
+  ]
+}

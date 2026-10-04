@@ -1,0 +1,189 @@
+[
+  {
+    "crop": [
+      13.5,
+      14.45
+    ],
+    "segments": [
+      {
+        "start": 0.0,
+        "end": 0.82,
+        "text": " Free",
+        "words": [
+          {
+            "start": 0.0,
+            "end": 0.82,
+            "word": " Free",
+            "probability": 0.39821067452430725
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "crop": [
+      13.5,
+      14.6
+    ],
+    "segments": [
+      {
+        "start": 0.0,
+        "end": 0.86,
+        "text": " Free.",
+        "words": [
+          {
+            "start": 0.0,
+            "end": 0.86,
+            "word": " Free.",
+            "probability": 0.4633730947971344
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "crop": [
+      13.5,
+      14.7
+    ],
+    "segments": [
+      {
+        "start": 0.0,
+        "end": 0.86,
+        "text": " Free.",
+        "words": [
+          {
+            "start": 0.0,
+            "end": 0.86,
+            "word": " Free.",
+            "probability": 0.47729194164276123
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "crop": [
+      13.5,
+      14.8
+    ],
+    "segments": [
+      {
+        "start": 0.0,
+        "end": 0.86,
+        "text": " Free.",
+        "words": [
+          {
+            "start": 0.0,
+            "end": 0.86,
+            "word": " Free.",
+            "probability": 0.49560239911079407
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "crop": [
+      13.5,
+      14.85
+    ],
+    "segments": [
+      {
+        "start": 0.0,
+        "end": 0.86,
+        "text": " Free.",
+        "words": [
+          {
+            "start": 0.0,
+            "end": 0.86,
+            "word": " Free.",
+            "probability": 0.5123183727264404
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "crop": [
+      13.5,
+      14.95
+    ],
+    "segments": [
+      {
+        "start": 0.0,
+        "end": 0.86,
+        "text": " Free.",
+        "words": [
+          {
+            "start": 0.0,
+            "end": 0.86,
+            "word": " Free.",
+            "probability": 0.5186280012130737
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "crop": [
+      13.5,
+      15.1
+    ],
+    "segments": [
+      {
+        "start": 0.0,
+        "end": 1.58,
+        "text": " Free and free.",
+        "words": [
+          {
+            "start": 0.0,
+            "end": 0.94,
+            "word": " Free",
+            "probability": 0.29811254143714905
+          },
+          {
+            "start": 0.94,
+            "end": 1.58,
+            "word": " and",
+            "probability": 0.5680558681488037
+          },
+          {
+            "start": 1.58,
+            "end": 1.58,
+            "word": " free.",
+            "probability": 0.2567581534385681
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "crop": [
+      15.9,
+      17.6
+    ],
+    "segments": []
+  },
+  {
+    "crop": [
+      16.0,
+      17.6
+    ],
+    "segments": [
+      {
+        "start": 0.0,
+        "end": 1.58,
+        "text": " you",
+        "words": [
+          {
+            "start": 0.0,
+            "end": 1.58,
+            "word": " you",
+            "probability": 0.16426347196102142
+          }
+        ]
+      }
+    ]
+  }
+]

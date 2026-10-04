@@ -1,0 +1,26 @@
+[
+  {
+    "file": "offer-filter-landscape.mp4",
+    "truePeakDbfs": -1.5,
+    "integratedLoudnessLufs": -15.3,
+    "clipping": false
+  },
+  {
+    "file": "offer-filter-portrait.mp4",
+    "truePeakDbfs": -1.5,
+    "integratedLoudnessLufs": -15.3,
+    "clipping": false
+  },
+  {
+    "file": "offer-filter-square.mp4",
+    "truePeakDbfs": -1.5,
+    "integratedLoudnessLufs": -15.3,
+    "clipping": false
+  },
+  {
+    "file": "offer-filter-portrait.webm",
+    "truePeakDbfs": -1.3,
+    "integratedLoudnessLufs": -15.3,
+    "clipping": false
+  }
+]

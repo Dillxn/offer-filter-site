@@ -1,0 +1,141 @@
+{
+  "scope": "Local completed narration candidate; not publication evidence",
+  "baseCommit": "ccae35d09a13790ee9b232af9fb1176b6734402a",
+  "sourceAudioSha256": "b9faf89fb1a52ae1151a900c33ff1a1b828544964d00bf0e215501f47eca6dbc",
+  "editedAudioSha256": "f54890679043e9065277b35aaf55fd9b16f3674c5c6fa666d3110a27d671704b",
+  "finalSpokenLine": "Free.",
+  "originalAudioRetainedThroughSeconds": 14.6,
+  "leadCutSeconds": 14.72,
+  "instrumentalSourceRangeSeconds": [
+    16.08,
+    17.6
+  ],
+  "instrumentalRepetitions": 2,
+  "instrumentalLoopCrossfadeSeconds": 0.2,
+  "leadTailCrossfadeSeconds": 0.12,
+  "crossfadeCurve": "equal power quarter sine",
+  "fadeOutRangeSeconds": [
+    16.84,
+    17.44
+  ],
+  "quietTailSeconds": 1.06,
+  "durationSeconds": 18.5,
+  "voiceSpeed": 1,
+  "voiceGainDb": 0,
+  "originalScoreMixed": false,
+  "licenseChanged": false,
+  "exports": [
+    {
+      "file": "offer-filter-landscape.mp4",
+      "sourceSha256": "f7ff19db33d8fc42f33fa835a80020d165e95ac1a97e147159d80d714a7b6d28",
+      "sha256": "98676283cfc8794210dedf640d014c570f02f3d5da422141afa7dc74a2a82f83",
+      "bytes": 3434971,
+      "videoPacketsAndTimingUnchanged": true,
+      "fullDecode": "pass",
+      "programs": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "width": 1920,
+          "height": 1080,
+          "r_frame_rate": "30/1",
+          "nb_read_frames": "555"
+        },
+        {
+          "codec_name": "aac",
+          "sample_rate": "48000",
+          "channels": 2,
+          "r_frame_rate": "0/0",
+          "nb_read_frames": "868"
+        }
+      ],
+      "format": {
+        "duration": "18.500000"
+      }
+    },
+    {
+      "file": "offer-filter-portrait.mp4",
+      "sourceSha256": "1e199019bcebc25ae792523d5392181b5d6044e959b47b44620ed6e4cfba129d",
+      "sha256": "33c51bc1ec8c27537911046519c14cec4b73d8b97f6b62dabe780d9634555a5d",
+      "bytes": 3379871,
+      "videoPacketsAndTimingUnchanged": true,
+      "fullDecode": "pass",
+      "programs": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "width": 1080,
+          "height": 1920,
+          "r_frame_rate": "30/1",
+          "nb_read_frames": "555"
+        },
+        {
+          "codec_name": "aac",
+          "sample_rate": "48000",
+          "channels": 2,
+          "r_frame_rate": "0/0",
+          "nb_read_frames": "868"
+        }
+      ],
+      "format": {
+        "duration": "18.500000"
+      }
+    },
+    {
+      "file": "offer-filter-square.mp4",
+      "sourceSha256": "c8913f21dcc19a6230411542cb0c631ae91b6a48e6b20834c4b9384404282355",
+      "sha256": "abdf126185797ada2bf018c122f1a1aa3ed1aeac2a4487c6c052a551e7447b39",
+      "bytes": 2741992,
+      "videoPacketsAndTimingUnchanged": true,
+      "fullDecode": "pass",
+      "programs": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "width": 1080,
+          "height": 1080,
+          "r_frame_rate": "30/1",
+          "nb_read_frames": "555"
+        },
+        {
+          "codec_name": "aac",
+          "sample_rate": "48000",
+          "channels": 2,
+          "r_frame_rate": "0/0",
+          "nb_read_frames": "868"
+        }
+      ],
+      "format": {
+        "duration": "18.500000"
+      }
+    },
+    {
+      "file": "offer-filter-portrait.webm",
+      "sourceSha256": "ee94dbf65a42a70d1f2552e64d7002b52a9f46f7460a1d905f582d808746cd18",
+      "sha256": "1b505a06494776dc732553afbd5d31ab0522d08b5bc9d12d0a5ee331f11fa0ba",
+      "bytes": 2393735,
+      "videoPacketsAndTimingUnchanged": true,
+      "fullDecode": "pass",
+      "programs": [],
+      "streams": [
+        {
+          "codec_name": "vp9",
+          "width": 1080,
+          "height": 1920,
+          "r_frame_rate": "30/1",
+          "nb_read_frames": "555"
+        },
+        {
+          "codec_name": "opus",
+          "sample_rate": "48000",
+          "channels": 2,
+          "r_frame_rate": "0/0",
+          "nb_read_frames": "926"
+        }
+      ],
+      "format": {
+        "duration": "18.514000"
+      }
+    }
+  ]
+}

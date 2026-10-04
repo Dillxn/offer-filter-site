@@ -1,0 +1,94 @@
+{
+  "checkedAt": "2026-10-04T05:20:28.205Z",
+  "scope": "Local Chromium153 desktop and400px viewport; no live website or physical phone claim",
+  "playback": {
+    "duration": 18.5,
+    "currentTime": 18.5,
+    "ended": true,
+    "error": null,
+    "readyState": 4,
+    "ratio": 1.777788919528704,
+    "poster": "http://127.0.0.1:42395/assets/film-poster-wide.jpg?v=narration-free-20261004",
+    "muted": false,
+    "volume": 1,
+    "overflow": false
+  },
+  "phone": {
+    "width": 400,
+    "overflow": false,
+    "poster": "http://127.0.0.1:42395/assets/film-poster-wide.jpg?v=narration-free-20261004"
+  },
+  "variants": [
+    {
+      "name": "offer-filter-portrait.mp4",
+      "duration": 18.5,
+      "ended": true,
+      "width": 1080,
+      "height": 1920,
+      "error": null
+    },
+    {
+      "name": "offer-filter-square.mp4",
+      "duration": 18.5,
+      "ended": true,
+      "width": 1080,
+      "height": 1080,
+      "error": null
+    },
+    {
+      "name": "offer-filter-portrait.webm",
+      "duration": 18.514,
+      "ended": true,
+      "width": 1080,
+      "height": 1920,
+      "error": null
+    }
+  ],
+  "cues": [
+    {
+      "start": 0,
+      "end": 1.28,
+      "text": "Your time matters."
+    },
+    {
+      "start": 1.78,
+      "end": 3.74,
+      "text": "Set your minimums."
+    },
+    {
+      "start": 3.74,
+      "end": 6.32,
+      "text": "Offer Filter declines the offers below them."
+    },
+    {
+      "start": 7.12,
+      "end": 8.5,
+      "text": "You choose the good ones."
+    },
+    {
+      "start": 9.14,
+      "end": 10.98,
+      "text": "See every offer in perspective."
+    },
+    {
+      "start": 11.62,
+      "end": 13.06,
+      "text": "Find your next move."
+    },
+    {
+      "start": 13.94,
+      "end": 14.65,
+      "text": "Free."
+    }
+  ],
+  "errors": [],
+  "testedAssetSha256": {
+    "index.html": "0f13339e911518d041544f39c74fcc7a550affd522428a9fff00f6bf3a88b55d",
+    "assets/film-captions.vtt": "331bc3a53e135dee83e9de990420174ff3d180e5f1d85797a36576b22dd10a18",
+    "assets/offer-filter-landscape.mp4": "98676283cfc8794210dedf640d014c570f02f3d5da422141afa7dc74a2a82f83",
+    "assets/offer-filter-portrait.mp4": "33c51bc1ec8c27537911046519c14cec4b73d8b97f6b62dabe780d9634555a5d",
+    "assets/offer-filter-square.mp4": "abdf126185797ada2bf018c122f1a1aa3ed1aeac2a4487c6c052a551e7447b39",
+    "assets/offer-filter-portrait.webm": "1b505a06494776dc732553afbd5d31ab0522d08b5bc9d12d0a5ee331f11fa0ba"
+  },
+  "auditionScope": "Unmuted browser playback verified; subjective listening unavailable. Independent waveform, spectral, ASR and true-peak checks documented separately."
+}
