@@ -1,3 +1,11 @@
+## Movie-credit ending — live verification, October 4, 2026
+
+Published product `e9d95ee34a9d0fc04f54dc24090c5391d73dca53` (tree `85fe4bd5d1dd38fb150386872a0aa57aa3dddc48`) is live at https://dillxn.github.io/offer-filter-site/. Pages run `37187542659` completed successfully using checkout, artifact upload and deployment only. All rendering and validation ran locally. Before publication, the coordinator verified public app-source commit `ebba04f28f617b8512b6128e92f555c6a65cd8cd` for version 0.4.68/code 74 and its standard MIT license. The original supplied “Free and open source.” line is now both accurate and restored in full.
+
+All 28 checked public files match the reviewed local bytes, including the four videos, two posters, captions, website MIT license/notices and preserved mascot favicon variants/scripts. Actual live Chromium playback ran unmuted through all 24 seconds to `ended=true`, `readyState=4`, without media or JavaScript errors. Nine captions are ordered and within the film duration; the last spoken cue is “Free and open source.” The source button targets the public app-source branch, and the About link targets its MIT License. At 1280px and 400px there is no horizontal overflow. Both final-frame screenshots were visually reviewed. This is browser evidence, not a physical-phone or subjective listening claim.
+
+Durable receipt: `validation/movie-credits-live-20261004.json`; screenshots: `validation/movie-credits-live/`. This live record supersedes the local-candidate status immediately below and the earlier clipped narration and proprietary-license states retained as history.
+
 ## Movie-credit ending and complete narration — October 4, 2026
 
 Prepared locally from public main `7375a837f75ea50afb7c3c293227b04cde627036`. The user requested a movie-credit ending and confirmed the original “free and open-source” direction. This version restores the supplied final spoken sentence “Free and open source.” It supersedes the earlier clipped “Free.” line and the prior end-card composition. Historical receipts below record earlier states, including the then-proprietary notice; they are not current licensing or soundtrack instructions.
