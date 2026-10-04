@@ -1,3 +1,9 @@
+## Supplied narration — live verification, October 4, 2026
+
+Product `4b6e946e883e4250605330a87c63b46f6426fda7` (tree `c337b52b9671d8e49ccf84dd2a4c55e8ec6b2522`) deployed successfully in Pages run `37179883341`. All 27 checked files match the reviewed local bytes: the 17 changed files plus the preserved styles, posters, favicon variants and scripts. The existing `.nojekyll` deployment performed checkout, artifact upload and deployment only; every render, media export and test ran locally.
+
+The actual live landscape film played unmuted through 18.5s to `ended=true`, `readyState=4`, with no media or JavaScript error. All seven speech captions parsed, stayed ordered and within the film duration, and ended with “Free.” At 1280px and 400px there was no horizontal overflow; the source button and mascot favicon references remained correct. The two live final-frame screenshots were visually reviewed. This is browser evidence, not a physical-phone or subjective listening claim. Evidence: `validation/narration-free-live-20261004.json` and `validation/narration-free-live/`.
+
 ## Completed supplied narration: accurate final line — October 4, 2026
 
 Prepared from live website main `ccae35d09a13790ee9b232af9fb1176b6734402a`. This candidate supersedes the clean-score soundtrack described below. The supplied “Your Time Matters” recording now accompanies all four films. Its final spoken line is edited to “Free.” The existing proprietary app license and source branch are unchanged; no open-source licensing claim is made.

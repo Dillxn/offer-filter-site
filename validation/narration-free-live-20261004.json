@@ -1,0 +1,333 @@
+{
+  "checkedAt": "2026-10-04T05:28:44.578804+00:00",
+  "sourceCommit": "4b6e946e883e4250605330a87c63b46f6426fda7",
+  "sourceTree": "c337b52b9671d8e49ccf84dd2a4c55e8ec6b2522",
+  "pagesRun": 37179883341,
+  "pagesConclusion": "success",
+  "url": "https://dillxn.github.io/offer-filter-site/",
+  "assets": [
+    {
+      "file": "README.md",
+      "bytes": 4472,
+      "sha256": "394ad8c67b8a4007f7076a15756ffd8e48a08e6cf68ea5e9d721eb7a871a1ede",
+      "httpStatus": 200,
+      "matches": true
+    },
+    {
+      "file": "SITE_VALIDATION.md",
+      "bytes": 29998,
+      "sha256": "d7e598303fbc8a86e22370c1a8eb5eddc0c1df0dd98509dc4afb8a8ce95d528d",
+      "httpStatus": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/film-captions.vtt",
+      "bytes": 522,
+      "sha256": "331bc3a53e135dee83e9de990420174ff3d180e5f1d85797a36576b22dd10a18",
+      "httpStatus": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/offer-filter-landscape.mp4",
+      "bytes": 3434971,
+      "sha256": "98676283cfc8794210dedf640d014c570f02f3d5da422141afa7dc74a2a82f83",
+      "httpStatus": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/offer-filter-portrait.mp4",
+      "bytes": 3379871,
+      "sha256": "33c51bc1ec8c27537911046519c14cec4b73d8b97f6b62dabe780d9634555a5d",
+      "httpStatus": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/offer-filter-portrait.webm",
+      "bytes": 2393735,
+      "sha256": "1b505a06494776dc732553afbd5d31ab0522d08b5bc9d12d0a5ee331f11fa0ba",
+      "httpStatus": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/offer-filter-square.mp4",
+      "bytes": 2741992,
+      "sha256": "abdf126185797ada2bf018c122f1a1aa3ed1aeac2a4487c6c052a551e7447b39",
+      "httpStatus": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/your-time-matters.mp3",
+      "bytes": 391461,
+      "sha256": "b9faf89fb1a52ae1151a900c33ff1a1b828544964d00bf0e215501f47eca6dbc",
+      "httpStatus": 200,
+      "matches": true
+    },
+    {
+      "file": "index.html",
+      "bytes": 7482,
+      "sha256": "0f13339e911518d041544f39c74fcc7a550affd522428a9fff00f6bf3a88b55d",
+      "httpStatus": 200,
+      "matches": true
+    },
+    {
+      "file": "tools/finish-narration.py",
+      "bytes": 5719,
+      "sha256": "6af160c5c639a778596d2029d148efb9b0ad1a3f41ed6aa7a2f2855fe46e28c1",
+      "httpStatus": 200,
+      "matches": true
+    },
+    {
+      "file": "validation/film-narration-free-20261004.json",
+      "bytes": 4011,
+      "sha256": "c2c7a23faca513033241e91cbc6b3476f6e25036afb9a6dcf2bb5a593538721b",
+      "httpStatus": 200,
+      "matches": true
+    },
+    {
+      "file": "validation/film-narration-free-browser-20261004.json",
+      "bytes": 2624,
+      "sha256": "9a67fef136c447af9e12d83cda588b8093238bb016f60e3ce2add3367f9f92c6",
+      "httpStatus": 200,
+      "matches": true
+    },
+    {
+      "file": "validation/narration-free-independent-qa-20261004.json",
+      "bytes": 5547,
+      "sha256": "ceef2a1107d2df59899dc4e635c34e9a4be60d8efd9866fb52c8f1c0815e25ab",
+      "httpStatus": 200,
+      "matches": true
+    },
+    {
+      "file": "validation/narration-free-levels-20261004.json",
+      "bytes": 543,
+      "sha256": "6da0c461e7b6a47417d11e6ee728b0c7a0fca008bcb55395fbb03b3e27c43e5c",
+      "httpStatus": 200,
+      "matches": true
+    },
+    {
+      "file": "validation/narration-free-word-boundary-20261004.json",
+      "bytes": 3124,
+      "sha256": "79cabfee3af28223142794db80ef3c58a6f4df151b9d10aaf9ccc25598b25721",
+      "httpStatus": 200,
+      "matches": true
+    },
+    {
+      "file": "validation/narration-free/playback-ended-1280.jpg",
+      "bytes": 120895,
+      "sha256": "b633cf982ba32446443af7d0fec6c80ba68167d56d12742696207c0c7fc577d0",
+      "httpStatus": 200,
+      "matches": true
+    },
+    {
+      "file": "validation/narration-free/poster-400.jpg",
+      "bytes": 68539,
+      "sha256": "be581e354fa41b5fd9a4ed33835730652ddf759a1a971679400c71aa4dd73322",
+      "httpStatus": 200,
+      "matches": true
+    },
+    {
+      "file": "style.css",
+      "bytes": 12661,
+      "sha256": "168d567139683305c11a40e417b4632bc35412ac2a1fc64476cff7a712f90558",
+      "httpStatus": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/film-poster.jpg",
+      "bytes": 118773,
+      "sha256": "a9dd419917cdeac6ce90ca1ecdc29d6a620f91b701d38beceed4afc04c74c210",
+      "httpStatus": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/film-poster-wide.jpg",
+      "bytes": 114216,
+      "sha256": "64c753c3b8bad96136093361ea4a7db48d8bcb99afa4126768e0d649cbd7e571",
+      "httpStatus": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/favicon.svg",
+      "bytes": 84118,
+      "sha256": "47b4cda4bcbc1e907c7b568a15b8fc24db8bf590001226dc5ca6975f4d2467e0",
+      "httpStatus": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/favicon-16.png",
+      "bytes": 657,
+      "sha256": "14fe754761b5f33364151f9ea210c08726939a16980f9012291e0080fb1249b8",
+      "httpStatus": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/favicon-32.png",
+      "bytes": 1567,
+      "sha256": "cfb0e3ebb1b1f1bfcb0609b9b59df5ad00ad9deeb788b73876f5f1164e3b5247",
+      "httpStatus": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/apple-touch-icon.png",
+      "bytes": 12762,
+      "sha256": "9a978d0f819af474139fdf72686864ef295e5c716b2ef7c0dfd192a7ee50ebd8",
+      "httpStatus": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/brand.js",
+      "bytes": 23001,
+      "sha256": "fa212b91ade9cfc7cbbae80e44412d9efd239f5873217c83ca931561e6c67281",
+      "httpStatus": 200,
+      "matches": true
+    },
+    {
+      "file": "page.js",
+      "bytes": 2466,
+      "sha256": "a68449faa1421040afb621ad6af4f16ff5c5589bbd51cc12683c499f985d0881",
+      "httpStatus": 200,
+      "matches": true
+    },
+    {
+      "file": "scene.js",
+      "bytes": 5308,
+      "sha256": "823ace44db86c34e5fab0cad51f43f7e4cfb6193b1e49bd65a95508709eb45fb",
+      "httpStatus": 200,
+      "matches": true
+    }
+  ],
+  "browser": {
+    "checkedAt": "2026-10-04T05:28:51.552Z",
+    "scope": "Actual live website playback in Chromium153 at1280px, then responsive400px viewport; not a physical phone run or subjective ear assessment",
+    "url": "https://dillxn.github.io/offer-filter-site/?verify=4b6e946",
+    "productCommit": "4b6e946e883e4250605330a87c63b46f6426fda7",
+    "playback": {
+      "duration": 18.5,
+      "currentTime": 18.5,
+      "ended": true,
+      "readyState": 4,
+      "error": null,
+      "muted": false,
+      "volume": 1,
+      "viewport": 1280,
+      "overflow": false,
+      "src": "https://dillxn.github.io/offer-filter-site/assets/offer-filter-landscape.mp4?v=narration-free-20261004"
+    },
+    "phone": {
+      "width": 400,
+      "overflow": false,
+      "sourceLink": "https://github.com/Dillxn/offer-filter-site/tree/app-source",
+      "favicons": [
+        "https://dillxn.github.io/offer-filter-site/assets/favicon-32.png?v=mascot-20261004",
+        "https://dillxn.github.io/offer-filter-site/assets/favicon-16.png?v=mascot-20261004",
+        "https://dillxn.github.io/offer-filter-site/assets/favicon.svg?v=mascot-20261004"
+      ]
+    },
+    "cues": [
+      {
+        "start": 0,
+        "end": 1.28,
+        "text": "Your time matters."
+      },
+      {
+        "start": 1.78,
+        "end": 3.74,
+        "text": "Set your minimums."
+      },
+      {
+        "start": 3.74,
+        "end": 6.32,
+        "text": "Offer Filter declines the offers below them."
+      },
+      {
+        "start": 7.12,
+        "end": 8.5,
+        "text": "You choose the good ones."
+      },
+      {
+        "start": 9.14,
+        "end": 10.98,
+        "text": "See every offer in perspective."
+      },
+      {
+        "start": 11.62,
+        "end": 13.06,
+        "text": "Find your next move."
+      },
+      {
+        "start": 13.94,
+        "end": 14.65,
+        "text": "Free."
+      }
+    ],
+    "errors": []
+  },
+  "deploymentJobs": [
+    {
+      "id": 111370120476,
+      "name": "build",
+      "conclusion": "success",
+      "steps": [
+        {
+          "name": "Set up job",
+          "conclusion": "success"
+        },
+        {
+          "name": "Checkout",
+          "conclusion": "success"
+        },
+        {
+          "name": "Upload artifact",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Checkout",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 111370144718,
+      "name": "deploy",
+      "conclusion": "success",
+      "steps": [
+        {
+          "name": "Set up job",
+          "conclusion": "success"
+        },
+        {
+          "name": "Deploy to GitHub Pages",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 111370144720,
+      "name": "report-build-status",
+      "conclusion": "success",
+      "steps": [
+        {
+          "name": "Set up job",
+          "conclusion": "success"
+        },
+        {
+          "name": "Report Build Status",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "conclusion": "success"
+        }
+      ]
+    }
+  ],
+  "deploymentScope": "Existing .nojekyll Pages workflow performed checkout, upload and deploy only. All rendering, audio editing, media exports and tests ran locally."
+}
