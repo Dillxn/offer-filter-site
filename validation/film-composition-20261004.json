@@ -1,0 +1,274 @@
+{
+  "scope": "Locally rendered closing-scene composition; no publication or physical-device claim.",
+  "originalEditRetainedBeforeSeconds": 16,
+  "closingSceneFullOpacitySeconds": 16.3,
+  "contentDurationSeconds": 18.5,
+  "frames": 555,
+  "framesPerSecond": 30,
+  "signatureColor": "#343A40",
+  "signatureShadow": false,
+  "emblemMasterUnchanged": true,
+  "audio": "Every compressed packet and presentation time remains unchanged.",
+  "layouts": {
+    "start": 16,
+    "fadeSeconds": 0.3,
+    "duration": 2.5,
+    "frames": 75,
+    "layouts": {
+      "landscape": {
+        "w": 1920,
+        "h": 1080,
+        "ring": [
+          1400,
+          470,
+          250
+        ],
+        "mascot": [
+          1400,
+          437,
+          2.78
+        ],
+        "title": [
+          160,
+          382,
+          118,
+          "left"
+        ],
+        "tag": [
+          162,
+          459,
+          46,
+          "left"
+        ],
+        "support": [
+          164,
+          578,
+          28,
+          "left"
+        ],
+        "tips": [
+          164,
+          625,
+          29,
+          "left"
+        ],
+        "mark": [
+          671,
+          542,
+          220
+        ],
+        "notice": [
+          960,
+          1014,
+          23
+        ]
+      },
+      "portrait": {
+        "w": 1080,
+        "h": 1920,
+        "ring": [
+          540,
+          535,
+          267
+        ],
+        "mascot": [
+          540,
+          500,
+          2.97
+        ],
+        "title": [
+          540,
+          945,
+          115,
+          "center"
+        ],
+        "tag": [
+          540,
+          1027,
+          45,
+          "center"
+        ],
+        "support": [
+          540,
+          1142,
+          28,
+          "center"
+        ],
+        "tips": [
+          540,
+          1190,
+          30,
+          "center"
+        ],
+        "mark": [
+          430,
+          1270,
+          220
+        ],
+        "notice": [
+          540,
+          1808,
+          23
+        ]
+      },
+      "square": {
+        "w": 1080,
+        "h": 1080,
+        "ring": [
+          540,
+          310,
+          178
+        ],
+        "mascot": [
+          540,
+          286,
+          1.98
+        ],
+        "title": [
+          540,
+          604,
+          91,
+          "center"
+        ],
+        "tag": [
+          540,
+          668,
+          36,
+          "center"
+        ],
+        "support": [
+          174,
+          790,
+          23,
+          "left"
+        ],
+        "tips": [
+          174,
+          832,
+          25,
+          "left"
+        ],
+        "mark": [
+          707,
+          735,
+          190
+        ],
+        "notice": [
+          540,
+          1014,
+          21
+        ]
+      }
+    }
+  },
+  "exports": [
+    {
+      "file": "offer-filter-landscape.mp4",
+      "sourceSha256": "287cc499c0f85b6b8a5c60814cdb8a0bd021ad0ca8b1768baf0476939abdc446",
+      "sha256": "f7ff19db33d8fc42f33fa835a80020d165e95ac1a97e147159d80d714a7b6d28",
+      "size": 3302329,
+      "audioPacketsUnchanged": true,
+      "audioPresentationTimingUnchanged": true,
+      "completeDecode": "pass",
+      "programs": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "width": 1920,
+          "height": 1080,
+          "r_frame_rate": "30/1",
+          "nb_read_frames": "555"
+        },
+        {
+          "codec_name": "aac",
+          "r_frame_rate": "0/0",
+          "nb_read_frames": "868"
+        }
+      ],
+      "format": {
+        "duration": "18.500000"
+      }
+    },
+    {
+      "file": "offer-filter-portrait.mp4",
+      "sourceSha256": "e3d3ee5501c1947fce62b64e7a407588e4e88c8356242c1d1fd5607cbf00fa00",
+      "sha256": "1e199019bcebc25ae792523d5392181b5d6044e959b47b44620ed6e4cfba129d",
+      "size": 3247229,
+      "audioPacketsUnchanged": true,
+      "audioPresentationTimingUnchanged": true,
+      "completeDecode": "pass",
+      "programs": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "width": 1080,
+          "height": 1920,
+          "r_frame_rate": "30/1",
+          "nb_read_frames": "555"
+        },
+        {
+          "codec_name": "aac",
+          "r_frame_rate": "0/0",
+          "nb_read_frames": "868"
+        }
+      ],
+      "format": {
+        "duration": "18.500000"
+      }
+    },
+    {
+      "file": "offer-filter-square.mp4",
+      "sourceSha256": "996156c19bd8aec1ad79040679ab49e0fb9ed90cbd7ffd850ad4120bac08352d",
+      "sha256": "c8913f21dcc19a6230411542cb0c631ae91b6a48e6b20834c4b9384404282355",
+      "size": 2609350,
+      "audioPacketsUnchanged": true,
+      "audioPresentationTimingUnchanged": true,
+      "completeDecode": "pass",
+      "programs": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "width": 1080,
+          "height": 1080,
+          "r_frame_rate": "30/1",
+          "nb_read_frames": "555"
+        },
+        {
+          "codec_name": "aac",
+          "r_frame_rate": "0/0",
+          "nb_read_frames": "868"
+        }
+      ],
+      "format": {
+        "duration": "18.500000"
+      }
+    },
+    {
+      "file": "offer-filter-portrait.webm",
+      "sourceSha256": "fdb5e35868e7b781190bc3514611a472a9a2cb04ceee7ec7ef53d3ef56e0fd5c",
+      "sha256": "ee94dbf65a42a70d1f2552e64d7002b52a9f46f7460a1d905f582d808746cd18",
+      "size": 2266919,
+      "audioPacketsUnchanged": true,
+      "audioPresentationTimingUnchanged": true,
+      "completeDecode": "pass",
+      "programs": [],
+      "streams": [
+        {
+          "codec_name": "vp9",
+          "width": 1080,
+          "height": 1920,
+          "r_frame_rate": "30/1",
+          "nb_read_frames": "555"
+        },
+        {
+          "codec_name": "opus",
+          "r_frame_rate": "0/0",
+          "nb_read_frames": "926"
+        }
+      ],
+      "format": {
+        "duration": "18.521000"
+      }
+    }
+  ]
+}
