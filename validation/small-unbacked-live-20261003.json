@@ -1,0 +1,39 @@
+{
+  "verifiedAt": "2026-10-04T00:48:05.654408+00:00",
+  "sourceCommit": "bf58f6ab1259272cd67e7395bf90d60b78a9797b",
+  "pagesRun": 37165910338,
+  "pagesConclusion": "success",
+  "url": "https://dillxn.github.io/offer-filter-site/",
+  "liveBytes": [
+    {
+      "path": "index.html",
+      "match": true,
+      "sha256": "27be6689a8a0a14d7c122439add761f14cd788fc8a67ffccc46814aef2c1f842",
+      "bytes": 7074
+    },
+    {
+      "path": "style.css",
+      "match": true,
+      "sha256": "ba2937a737a0a54eeabd1fab7bf6e0b44a578e17d295e94517a9787d8ae1889a",
+      "bytes": 11462
+    },
+    {
+      "path": "scene.js",
+      "match": true,
+      "sha256": "823ace44db86c34e5fab0cad51f43f7e4cfb6193b1e49bd65a95508709eb45fb",
+      "bytes": 5308
+    }
+  ],
+  "liveBrowser": {
+    "viewportWidth": 520,
+    "dayFilter": "brightness(0.58)",
+    "nightFilter": "brightness(0) invert(1)",
+    "signatureWidth": 160,
+    "background": "rgba(0, 0, 0, 0)",
+    "horizontalOverflow": false,
+    "completeEmblemLoaded": true,
+    "completePassageAltRetained": true
+  },
+  "scope": "Signature presentation only. No new film playback or physical-phone claim; film bytes unchanged.",
+  "screenshot": "validation/small-unbacked-live-20261003.jpg"
+}
