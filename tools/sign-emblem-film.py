@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Add the small white Jesus Loves You signature to the original closing scene.
+"""Add the small charcoal Jesus Loves You signature to the original closing scene.
 
 Operates only on the known, unsignatured 18.5-second clean-score exports, never
 on its own output. The original mascot, app title, call to action and scenery
@@ -22,6 +22,11 @@ SOURCE_SHA256 = {
     'offer-filter-portrait.webm': 'fdb5e35868e7b781190bc3514611a472a9a2cb04ceee7ec7ef53d3ef56e0fd5c',
 }
 
+# Format-specific clear space: wide sits below the CTA; tall/square sit beside
+# the heading because their CTA is already on the hills. Values are (width,x,y).
+SIGNATURE_LAYOUTS = {(1920,1080): (220,65,592), (1080,1920): (180,20,1090),
+                     (1080,1080): (200,40,590)}
+SIGNATURE_RGB = (52,58,64)  # #343A40, flat dark gray; no shadow or backing.
 
 def run(args):
     return subprocess.run(args, check=True, capture_output=True, text=True).stdout
@@ -48,15 +53,16 @@ def export(name, source, output, emblem):
         raise ValueError(f'{name}: refusing stale or already-overlaid input')
     original = probe(before)
     width, height = original['streams'][0]['width'], original['streams'][0]['height']
-    mark_width = 240 if width == height else 300
-    # A quiet corner signature, never a replacement for the app/mascot card.
-    # A faint shadow belongs to video compositing; the original sandstone PNG is unmodified; RGB is tinted white while alpha is retained.
+    if (width,height) not in SIGNATURE_LAYOUTS:
+        raise ValueError(f'{name}: unreviewed end-card dimensions {width}x{height}')
+    mark_width, mark_x, mark_y = SIGNATURE_LAYOUTS[(width,height)]
+    red, green, blue = SIGNATURE_RGB
+    # Preserve the original PNG alpha and full passage. No shadow layer.
     graph = (
-        f'[1:v]scale={mark_width}:-1:flags=lanczos,format=rgba,lutrgb=r=255:g=255:b=255,'
-        'fade=t=in:st=16.3:d=0.35:alpha=1,split=2[mark][shade];'
-        '[shade]colorchannelmixer=rr=0:gg=0:bb=0:aa=.8,gblur=sigma=2[shadow];'
-        '[0:v][shadow]overlay=x=42:y=H-h-68:shortest=1:format=auto[base];'
-        '[base][mark]overlay=x=40:y=H-h-70:shortest=1:format=auto[out]'
+        f'[1:v]scale={mark_width}:-1:flags=lanczos,format=rgba,'
+        f'lutrgb=r={red}:g={green}:b={blue},'
+        'fade=t=in:st=16.3:d=0.35:alpha=1[mark];'
+        f'[0:v][mark]overlay=x={mark_x}:y={mark_y}:shortest=1:format=auto[out]'
     )
     webm = before.suffix == '.webm'
     codec = (['-c:v', 'libvpx-vp9', '-crf', '28', '-b:v', '0', '-row-mt', '1',
@@ -79,7 +85,8 @@ def export(name, source, output, emblem):
     audio_timing = [(p['pts_time'],p.get('duration_time')) for p in before_audio] == [(p['pts_time'],p.get('duration_time')) for p in after_audio]
     assert audio_timing, f'{name}: audio presentation timing changed'
     return {'file': name, 'sourceSha256': digest(before), 'sha256': digest(after),
-            'size': after.stat().st_size, 'audioPacketsUnchanged': match,
+            'size': after.stat().st_size, 'signatureBox': {'width': mark_width, 'x': mark_x, 'y': mark_y},
+            'audioPacketsUnchanged': match,
             'audioPresentationTimingUnchanged': audio_timing,
             'completeDecode': 'pass', **metadata}
 
@@ -104,12 +111,13 @@ def main():
                       'BECAUSE HE LOVES US FIRST.', '1 JOHN 4:19'],
         'signatureBeginsSeconds': 16.3, 'signatureFullOpacitySeconds': 16.65,
         'contentDurationSeconds': 18.5, 'frames': 555, 'framesPerSecond': 30,
-        'signatureWidthPixels': {'landscape': 300, 'portrait': 300, 'square': 240},
-        'signaturePlacement': 'Lower-left; x40px,70px bottom inset; subtle shadow. Original mascot/app closing scene retained.',
+        'signatureWidthPixels': {'landscape': 220, 'portrait': 180, 'square': 200},
+        'signatureColor': '#343A40', 'shadow': False,
+        'signaturePlacement': 'Wide: x65/y592 below Android/tips copy, above hills. Portrait: x20/y1090; square: x40/y590 in clear sky beside the heading. Full passage retained without shadow or backing.',
         'audio': 'Every compressed packet and presentation time of the existing clean tonal score is unchanged.',
         'exports': results,
     }
-    (output / 'film-small-white-signature-validation.json').write_text(json.dumps(report, indent=2) + '\n')
+    (output / 'film-charcoal-signature-validation.json').write_text(json.dumps(report, indent=2) + '\n')
     print(json.dumps(report, indent=2))
 
 

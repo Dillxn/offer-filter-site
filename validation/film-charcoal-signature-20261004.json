@@ -1,0 +1,197 @@
+{
+  "emblem": "jesus-loves-you-emblem.png",
+  "emblemSha256": "9af7a75273865629d33a690622040b11ec9d1078f9bd9d2dcec7c540b5ab1a23",
+  "exactText": [
+    "JESUS",
+    "LOVES",
+    "YOU",
+    "WE LOVE EACH OTHER",
+    "BECAUSE HE LOVES US FIRST.",
+    "1 JOHN 4:19"
+  ],
+  "signatureBeginsSeconds": 16.3,
+  "signatureFullOpacitySeconds": 16.65,
+  "contentDurationSeconds": 18.5,
+  "frames": 555,
+  "framesPerSecond": 30,
+  "signatureWidthPixels": {
+    "landscape": 220,
+    "portrait": 180,
+    "square": 200
+  },
+  "signatureColor": "#343A40",
+  "shadow": false,
+  "signaturePlacement": "Wide: x65/y592 below Android/tips copy, above hills. Portrait: x20/y1090; square: x40/y590 in clear sky beside the heading. Full passage retained without shadow or backing.",
+  "audio": "Every compressed packet and presentation time of the existing clean tonal score is unchanged.",
+  "exports": [
+    {
+      "file": "offer-filter-landscape.mp4",
+      "sourceSha256": "287cc499c0f85b6b8a5c60814cdb8a0bd021ad0ca8b1768baf0476939abdc446",
+      "sha256": "7abb5336f4828c8aac63273e1159dbe6219eca96e2a3d0369484dd6b0e4deed6",
+      "size": 3249943,
+      "signatureBox": {
+        "width": 220,
+        "x": 65,
+        "y": 592
+      },
+      "audioPacketsUnchanged": true,
+      "audioPresentationTimingUnchanged": true,
+      "completeDecode": "pass",
+      "programs": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "width": 1920,
+          "height": 1080,
+          "r_frame_rate": "30/1",
+          "nb_read_frames": "555"
+        },
+        {
+          "codec_name": "aac",
+          "r_frame_rate": "0/0",
+          "nb_read_frames": "868"
+        }
+      ],
+      "format": {
+        "duration": "18.500000"
+      }
+    },
+    {
+      "file": "offer-filter-portrait.mp4",
+      "sourceSha256": "e3d3ee5501c1947fce62b64e7a407588e4e88c8356242c1d1fd5607cbf00fa00",
+      "sha256": "60052b7c802db39ee0955a696e172eb9ca60001cf18be37c91278426ae2172dd",
+      "size": 3189456,
+      "signatureBox": {
+        "width": 180,
+        "x": 20,
+        "y": 1090
+      },
+      "audioPacketsUnchanged": true,
+      "audioPresentationTimingUnchanged": true,
+      "completeDecode": "pass",
+      "programs": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "width": 1080,
+          "height": 1920,
+          "r_frame_rate": "30/1",
+          "nb_read_frames": "555"
+        },
+        {
+          "codec_name": "aac",
+          "r_frame_rate": "0/0",
+          "nb_read_frames": "868"
+        }
+      ],
+      "format": {
+        "duration": "18.500000"
+      }
+    },
+    {
+      "file": "offer-filter-square.mp4",
+      "sourceSha256": "996156c19bd8aec1ad79040679ab49e0fb9ed90cbd7ffd850ad4120bac08352d",
+      "sha256": "f6dee84a8b4f1e30aedb2c70906a081892bbf42e1c04822853ceae4a51a0265c",
+      "size": 2591319,
+      "signatureBox": {
+        "width": 200,
+        "x": 40,
+        "y": 590
+      },
+      "audioPacketsUnchanged": true,
+      "audioPresentationTimingUnchanged": true,
+      "completeDecode": "pass",
+      "programs": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "width": 1080,
+          "height": 1080,
+          "r_frame_rate": "30/1",
+          "nb_read_frames": "555"
+        },
+        {
+          "codec_name": "aac",
+          "r_frame_rate": "0/0",
+          "nb_read_frames": "868"
+        }
+      ],
+      "format": {
+        "duration": "18.500000"
+      }
+    },
+    {
+      "file": "offer-filter-portrait.webm",
+      "sourceSha256": "fdb5e35868e7b781190bc3514611a472a9a2cb04ceee7ec7ef53d3ef56e0fd5c",
+      "sha256": "f634b61819f79f651e4ebfed4a4766bf6ed8654e853a0a4d730592af7eda700c",
+      "size": 2208730,
+      "signatureBox": {
+        "width": 180,
+        "x": 20,
+        "y": 1090
+      },
+      "audioPacketsUnchanged": true,
+      "audioPresentationTimingUnchanged": true,
+      "completeDecode": "pass",
+      "programs": [],
+      "streams": [
+        {
+          "codec_name": "vp9",
+          "width": 1080,
+          "height": 1920,
+          "r_frame_rate": "30/1",
+          "nb_read_frames": "555"
+        },
+        {
+          "codec_name": "opus",
+          "r_frame_rate": "0/0",
+          "nb_read_frames": "926"
+        }
+      ],
+      "format": {
+        "duration": "18.521000"
+      }
+    }
+  ],
+  "sourceBase": "5892b598f515a0c795510c733a8461e354b655a3",
+  "scope": "Local renders, complete ffmpeg A/V decode, original compressed audio packet and presentation timing comparisons. No live publication or physical-phone claim.",
+  "independentVisualReview": {
+    "status": "pass",
+    "formats": [
+      "landscape",
+      "portrait",
+      "square"
+    ],
+    "findings": "Complete passage; no clipping or overlap with title, mascot, CTA or disclaimer. Flat charcoal with no shadow/backing."
+  },
+  "posters": {
+    "assets/film-poster-wide.jpg": {
+      "bytes": 125891,
+      "sha256": "b8e717445d6afd9fbcf5c989afd811585a6a38ed211b1b6633ef8b95423cfd5b",
+      "frameAtSeconds": 17.5
+    },
+    "assets/film-poster.jpg": {
+      "bytes": 128807,
+      "sha256": "a509d9c484c56ca45807616ca04b6584febfb6a471da719060a1e9611a565665",
+      "frameAtSeconds": 17.5
+    }
+  },
+  "unchangedAssets": {
+    "assets/jesus-loves-you-emblem.png": {
+      "bytes": 818026,
+      "sha256": "9af7a75273865629d33a690622040b11ec9d1078f9bd9d2dcec7c540b5ab1a23"
+    },
+    "style.css": {
+      "bytes": 11956,
+      "sha256": "e9a8cb431181d287738d32f83a7ac4ccd477718c94540cb8986f0baf03ffbe0e"
+    },
+    "scene.js": {
+      "bytes": 5308,
+      "sha256": "823ace44db86c34e5fab0cad51f43f7e4cfb6193b1e49bd65a95508709eb45fb"
+    },
+    "page.js": {
+      "bytes": 2466,
+      "sha256": "a68449faa1421040afb621ad6af4f16ff5c5589bbd51cc12683c499f985d0881"
+    }
+  }
+}

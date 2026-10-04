@@ -1,0 +1,64 @@
+{
+  "checkedAt": "2026-10-04T01:45:39.885Z",
+  "scope": "Local Chromium153; not live site or physical-phone evidence",
+  "cues": [
+    {
+      "start": 0,
+      "end": 2.4,
+      "text": "Less noise. A better rhythm for your dash."
+    },
+    {
+      "start": 2.4,
+      "end": 4.4,
+      "text": "Meet your filter. The little helper for your minimums."
+    },
+    {
+      "start": 4.4,
+      "end": 6.95,
+      "text": "Low offers? Declined. Below your settings means automatic decline."
+    },
+    {
+      "start": 6.95,
+      "end": 8.6,
+      "text": "You choose the good ones by default."
+    },
+    {
+      "start": 8.6,
+      "end": 11.4,
+      "text": "Your rules. Your rhythm. Tune your minimums. Learned minimums stay visible, too."
+    },
+    {
+      "start": 11.4,
+      "end": 14,
+      "text": "Every offer. In perspective. A skyline of your decisions."
+    },
+    {
+      "start": 14,
+      "end": 16,
+      "text": "Find your next spot.\nArea guidance based on your observed offers."
+    },
+    {
+      "start": 16,
+      "end": 18.5,
+      "text": "Jesus Loves You.\nWe love each other because He loves us first.\n1 John 4:19."
+    }
+  ],
+  "playback": {
+    "duration": 18.5,
+    "currentTime": 18.5,
+    "ended": true,
+    "error": null,
+    "readyState": 4,
+    "ratio": 1.777788919528704,
+    "poster": "http://127.0.0.1:43283/assets/film-poster-wide.jpg?v=charcoal-20261004",
+    "signatureWidth": 144,
+    "overflow": false
+  },
+  "phone": {
+    "width": 400,
+    "overflow": false,
+    "poster": "http://127.0.0.1:43283/assets/film-poster-wide.jpg?v=charcoal-20261004",
+    "signatureWidth": 144
+  },
+  "errors": []
+}
