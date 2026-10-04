@@ -1,0 +1,308 @@
+{
+  "path": "/tmp/offer-movie-credits-exports/your-time-matters-complete-credits.wav",
+  "sha256": "447927276cbc8811df2d28e666d4308a456488e96474620b1d83c5dc301279f0",
+  "duration": 24.0,
+  "peakLinear": 0.8420912027359009,
+  "peakDbFS": -1.4928174018859863,
+  "samplesAtOrAboveFullScale": 0,
+  "tailLast1sPeak": 0.0,
+  "originalPreservedThroughSeconds": 17.45,
+  "originalMaxAbsErrorThrough17_45": 1.189691829495132e-07,
+  "lastNonzeroSeconds": 22.92995833333333,
+  "asr": [
+    {
+      "start": 0.0,
+      "end": 6.1,
+      "text": " Your time matters. Set your minimums. Offer filter declines the offers below them.",
+      "words": [
+        {
+          "start": 0.0,
+          "end": 0.26,
+          "word": " Your",
+          "probability": 0.9401239156723022
+        },
+        {
+          "start": 0.26,
+          "end": 0.54,
+          "word": " time",
+          "probability": 0.995676577091217
+        },
+        {
+          "start": 0.54,
+          "end": 1.08,
+          "word": " matters.",
+          "probability": 0.9966668486595154
+        },
+        {
+          "start": 1.84,
+          "end": 2.06,
+          "word": " Set",
+          "probability": 0.9890350699424744
+        },
+        {
+          "start": 2.06,
+          "end": 2.22,
+          "word": " your",
+          "probability": 0.9977133274078369
+        },
+        {
+          "start": 2.22,
+          "end": 3.6,
+          "word": " minimums.",
+          "probability": 0.9898486137390137
+        },
+        {
+          "start": 3.82,
+          "end": 3.92,
+          "word": " Offer",
+          "probability": 0.9847164154052734
+        },
+        {
+          "start": 3.92,
+          "end": 4.36,
+          "word": " filter",
+          "probability": 0.9795210957527161
+        },
+        {
+          "start": 4.36,
+          "end": 4.84,
+          "word": " declines",
+          "probability": 0.9921783208847046
+        },
+        {
+          "start": 4.84,
+          "end": 5.14,
+          "word": " the",
+          "probability": 0.7498816251754761
+        },
+        {
+          "start": 5.14,
+          "end": 5.38,
+          "word": " offers",
+          "probability": 0.9928510189056396
+        },
+        {
+          "start": 5.38,
+          "end": 5.7,
+          "word": " below",
+          "probability": 0.9976577758789062
+        },
+        {
+          "start": 5.7,
+          "end": 6.1,
+          "word": " them.",
+          "probability": 0.9978134632110596
+        }
+      ]
+    },
+    {
+      "start": 7.2,
+      "end": 15.74,
+      "text": " You choose the good ones. See every offer in perspective. Find your next move. Free and open source.",
+      "words": [
+        {
+          "start": 7.2,
+          "end": 7.38,
+          "word": " You",
+          "probability": 0.9941558837890625
+        },
+        {
+          "start": 7.38,
+          "end": 7.6,
+          "word": " choose",
+          "probability": 0.9815781116485596
+        },
+        {
+          "start": 7.6,
+          "end": 7.78,
+          "word": " the",
+          "probability": 0.9956465363502502
+        },
+        {
+          "start": 7.78,
+          "end": 7.92,
+          "word": " good",
+          "probability": 0.9933016300201416
+        },
+        {
+          "start": 7.92,
+          "end": 8.3,
+          "word": " ones.",
+          "probability": 0.9963228702545166
+        },
+        {
+          "start": 9.22,
+          "end": 9.42,
+          "word": " See",
+          "probability": 0.9942223429679871
+        },
+        {
+          "start": 9.42,
+          "end": 9.74,
+          "word": " every",
+          "probability": 0.9974616765975952
+        },
+        {
+          "start": 9.74,
+          "end": 9.96,
+          "word": " offer",
+          "probability": 0.8817631602287292
+        },
+        {
+          "start": 9.96,
+          "end": 10.78,
+          "word": " in",
+          "probability": 0.9841383099555969
+        },
+        {
+          "start": 10.78,
+          "end": 10.78,
+          "word": " perspective.",
+          "probability": 0.9160358309745789
+        },
+        {
+          "start": 11.66,
+          "end": 11.92,
+          "word": " Find",
+          "probability": 0.9960378408432007
+        },
+        {
+          "start": 11.92,
+          "end": 12.16,
+          "word": " your",
+          "probability": 0.9912945628166199
+        },
+        {
+          "start": 12.16,
+          "end": 12.38,
+          "word": " next",
+          "probability": 0.9983288645744324
+        },
+        {
+          "start": 12.38,
+          "end": 12.86,
+          "word": " move.",
+          "probability": 0.9939793348312378
+        },
+        {
+          "start": 14.04,
+          "end": 14.36,
+          "word": " Free",
+          "probability": 0.9799403548240662
+        },
+        {
+          "start": 14.36,
+          "end": 15.1,
+          "word": " and",
+          "probability": 0.9061866402626038
+        },
+        {
+          "start": 15.1,
+          "end": 15.4,
+          "word": " open",
+          "probability": 0.9061073064804077
+        },
+        {
+          "start": 15.4,
+          "end": 15.74,
+          "word": " source.",
+          "probability": 0.9163230061531067
+        }
+      ]
+    }
+  ],
+  "seams": [
+    {
+      "time": 17.45,
+      "rmsDbFS": -31.535358428955078,
+      "maxSampleJump": 0.0027474164962768555,
+      "junctionSampleJump": 0.0006504058837890625
+    },
+    {
+      "time": 17.6,
+      "rmsDbFS": -31.895042419433594,
+      "maxSampleJump": 0.0027474164962768555,
+      "junctionSampleJump": 0.0004374980926513672
+    },
+    {
+      "time": 18.77,
+      "rmsDbFS": -32.412879943847656,
+      "maxSampleJump": 0.002557039260864258,
+      "junctionSampleJump": 0.0008082389831542969
+    },
+    {
+      "time": 18.97,
+      "rmsDbFS": -32.18217849731445,
+      "maxSampleJump": 0.002705693244934082,
+      "junctionSampleJump": 0.0009976625442504883
+    },
+    {
+      "time": 20.09,
+      "rmsDbFS": -32.412879943847656,
+      "maxSampleJump": 0.002557039260864258,
+      "junctionSampleJump": 0.0008082389831542969
+    },
+    {
+      "time": 20.29,
+      "rmsDbFS": -32.18217849731445,
+      "maxSampleJump": 0.002705693244934082,
+      "junctionSampleJump": 0.0009976625442504883
+    },
+    {
+      "time": 21.41,
+      "rmsDbFS": -32.412879943847656,
+      "maxSampleJump": 0.002557039260864258,
+      "junctionSampleJump": 0.0008082389831542969
+    },
+    {
+      "time": 21.61,
+      "rmsDbFS": -32.18217849731445,
+      "maxSampleJump": 0.002705693244934082,
+      "junctionSampleJump": 0.0009976625442504883
+    },
+    {
+      "time": 22.13,
+      "rmsDbFS": -31.666410446166992,
+      "maxSampleJump": 0.0021572113037109375,
+      "junctionSampleJump": 0.000492095947265625
+    },
+    {
+      "time": 22.93,
+      "rmsDbFS": -56.77610397338867,
+      "maxSampleJump": 0.0003083944320678711,
+      "junctionSampleJump": 0.0
+    }
+  ],
+  "fadeWindows": [
+    {
+      "time": 22.13,
+      "rmsDbFS": -31.13774299621582,
+      "peak": 0.07313990592956543
+    },
+    {
+      "time": 22.33,
+      "rmsDbFS": -30.846511840820312,
+      "peak": 0.07853984832763672
+    },
+    {
+      "time": 22.53,
+      "rmsDbFS": -37.556556701660156,
+      "peak": 0.040677666664123535
+    },
+    {
+      "time": 22.73,
+      "rmsDbFS": -46.35197448730469,
+      "peak": 0.01528632640838623
+    },
+    {
+      "time": 22.83,
+      "rmsDbFS": -53.76579666137695,
+      "peak": 0.007108092308044434
+    },
+    {
+      "time": 22.93,
+      "rmsDbFS": -240.00001525878906,
+      "peak": 0.0
+    }
+  ]
+}

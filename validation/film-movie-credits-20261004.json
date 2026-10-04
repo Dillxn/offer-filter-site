@@ -1,0 +1,569 @@
+{
+  "scope": "Local movie-credit ending candidate; not live publication evidence",
+  "baseCommit": "7375a837f75ea50afb7c3c293227b04cde627036",
+  "durationSeconds": 24,
+  "frames": 720,
+  "fps": 30,
+  "originalEditRetainedThroughSeconds": 15.65,
+  "fadeToBlack": [
+    15.65,
+    16.0
+  ],
+  "credits": [
+    16,
+    24
+  ],
+  "soundtrack": {
+    "sourceSha256": "b9faf89fb1a52ae1151a900c33ff1a1b828544964d00bf0e215501f47eca6dbc",
+    "editedWavSha256": "447927276cbc8811df2d28e666d4308a456488e96474620b1d83c5dc301279f0",
+    "allSpokenWordsRetained": true,
+    "finalLine": "Free and open source.",
+    "sourcePcmUnchangedThroughSeconds": 17.45,
+    "voiceSpeed": 1,
+    "voiceGainDb": 0,
+    "instrumentalSourceRange": [
+      16.08,
+      17.6
+    ],
+    "instrumentalRepetitions": 4,
+    "loopCrossfadeSeconds": 0.2,
+    "leadTailCrossfadeSeconds": 0.15,
+    "fadeOutRange": [
+      22.13,
+      22.93
+    ],
+    "quietTailSeconds": 1.07
+  },
+  "layout": {
+    "startSeconds": 16,
+    "durationSeconds": 8,
+    "frames": 240,
+    "fps": 30,
+    "whiteFadeSeconds": 0.65,
+    "driftSettlesAtSeconds": 20.8,
+    "finalHoldSeconds": 3.2,
+    "layouts": {
+      "landscape": {
+        "w": 1920,
+        "h": 1080,
+        "drift": 0,
+        "title": [
+          218,
+          56,
+          9
+        ],
+        "label": [
+          337,
+          24,
+          5
+        ],
+        "music": [
+          382,
+          34,
+          2
+        ],
+        "message": [
+          557,
+          68,
+          5
+        ],
+        "passage": [
+          [
+            657,
+            42,
+            2
+          ],
+          [
+            714,
+            42,
+            2
+          ]
+        ],
+        "verse": [
+          785,
+          32,
+          5
+        ],
+        "notice": [
+          [
+            966,
+            26,
+            0
+          ]
+        ],
+        "lines": [
+          {
+            "text": "OFFER FILTER",
+            "baseline": 218,
+            "fontSize": 56,
+            "tracking": 9,
+            "width": 464.790002822876,
+            "left": 727.604998588562,
+            "right": 1192.395001411438,
+            "alpha": 1
+          },
+          {
+            "text": "MUSIC & NARRATION",
+            "baseline": 337,
+            "fontSize": 24,
+            "tracking": 5,
+            "width": 320.1400022506714,
+            "left": 799.9299988746643,
+            "right": 1120.0700011253357,
+            "alpha": 0.65
+          },
+          {
+            "text": "Your Time Matters",
+            "baseline": 382,
+            "fontSize": 34,
+            "tracking": 2,
+            "width": 308.85999965667725,
+            "left": 805.5700001716614,
+            "right": 1114.4299998283386,
+            "alpha": 0.92
+          },
+          {
+            "text": "JESUS LOVES YOU",
+            "baseline": 557,
+            "fontSize": 68,
+            "tracking": 5,
+            "width": 651.3499946594238,
+            "left": 634.3250026702881,
+            "right": 1285.674997329712,
+            "alpha": 1
+          },
+          {
+            "text": "WE LOVE EACH OTHER",
+            "baseline": 657,
+            "fontSize": 42,
+            "tracking": 2,
+            "width": 469.43999671936035,
+            "left": 725.2800016403198,
+            "right": 1194.7199983596802,
+            "alpha": 1
+          },
+          {
+            "text": "BECAUSE HE LOVES US FIRST.",
+            "baseline": 714,
+            "fontSize": 42,
+            "tracking": 2,
+            "width": 635.5099992752075,
+            "left": 642.2450003623962,
+            "right": 1277.7549996376038,
+            "alpha": 1
+          },
+          {
+            "text": "1 JOHN 4:19",
+            "baseline": 785,
+            "fontSize": 32,
+            "tracking": 5,
+            "width": 222.69999742507935,
+            "left": 848.6500012874603,
+            "right": 1071.3499987125397,
+            "alpha": 0.78
+          },
+          {
+            "text": "Independent app. Not affiliated with DoorDash.",
+            "baseline": 966,
+            "fontSize": 26,
+            "tracking": 0,
+            "width": 539.5300045013428,
+            "left": 690.2349977493286,
+            "right": 1229.7650022506714,
+            "alpha": 0.6
+          }
+        ],
+        "opacity": 1
+      },
+      "portrait": {
+        "w": 1080,
+        "h": 1920,
+        "drift": 0,
+        "title": [
+          445,
+          64,
+          9
+        ],
+        "label": [
+          624,
+          28,
+          4
+        ],
+        "music": [
+          680,
+          42,
+          2
+        ],
+        "message": [
+          931,
+          68,
+          3
+        ],
+        "passage": [
+          [
+            1060,
+            45,
+            1
+          ],
+          [
+            1125,
+            45,
+            1
+          ]
+        ],
+        "verse": [
+          1207,
+          35,
+          4
+        ],
+        "notice": [
+          [
+            1560,
+            29,
+            0
+          ],
+          [
+            1605,
+            29,
+            0
+          ]
+        ],
+        "lines": [
+          {
+            "text": "OFFER FILTER",
+            "baseline": 445,
+            "fontSize": 64,
+            "tracking": 9,
+            "width": 517.0499973297119,
+            "left": 281.47500133514404,
+            "right": 798.524998664856,
+            "alpha": 1
+          },
+          {
+            "text": "MUSIC & NARRATION",
+            "baseline": 624,
+            "fontSize": 28,
+            "tracking": 4,
+            "width": 344.16000270843506,
+            "left": 367.91999864578247,
+            "right": 712.0800013542175,
+            "alpha": 0.65
+          },
+          {
+            "text": "Your Time Matters",
+            "baseline": 680,
+            "fontSize": 42,
+            "tracking": 2,
+            "width": 374.0099983215332,
+            "left": 352.9950008392334,
+            "right": 727.0049991607666,
+            "alpha": 0.92
+          },
+          {
+            "text": "JESUS LOVES YOU",
+            "baseline": 931,
+            "fontSize": 68,
+            "tracking": 3,
+            "width": 623.3499946594238,
+            "left": 228.3250026702881,
+            "right": 851.6749973297119,
+            "alpha": 1
+          },
+          {
+            "text": "WE LOVE EACH OTHER",
+            "baseline": 1060,
+            "fontSize": 45,
+            "tracking": 1,
+            "width": 483.600004196167,
+            "left": 298.1999979019165,
+            "right": 781.8000020980835,
+            "alpha": 1
+          },
+          {
+            "text": "BECAUSE HE LOVES US FIRST.",
+            "baseline": 1125,
+            "fontSize": 45,
+            "tracking": 1,
+            "width": 652.3900012969971,
+            "left": 213.80499935150146,
+            "right": 866.1950006484985,
+            "alpha": 1
+          },
+          {
+            "text": "1 JOHN 4:19",
+            "baseline": 1207,
+            "fontSize": 35,
+            "tracking": 4,
+            "width": 228.91000127792358,
+            "left": 425.5449993610382,
+            "right": 654.4550006389618,
+            "alpha": 0.78
+          },
+          {
+            "text": "Independent app.",
+            "baseline": 1560,
+            "fontSize": 29,
+            "tracking": 0,
+            "width": 227.0600004196167,
+            "left": 426.46999979019165,
+            "right": 653.5300002098083,
+            "alpha": 0.6
+          },
+          {
+            "text": "Not affiliated with DoorDash.",
+            "baseline": 1605,
+            "fontSize": 29,
+            "tracking": 0,
+            "width": 366.6000008583069,
+            "left": 356.69999957084656,
+            "right": 723.3000004291534,
+            "alpha": 0.6
+          }
+        ],
+        "opacity": 1
+      },
+      "square": {
+        "w": 1080,
+        "h": 1080,
+        "drift": 0,
+        "title": [
+          177,
+          56,
+          8
+        ],
+        "label": [
+          302,
+          24,
+          4
+        ],
+        "music": [
+          349,
+          36,
+          2
+        ],
+        "message": [
+          523,
+          64,
+          3
+        ],
+        "passage": [
+          [
+            623,
+            42,
+            1
+          ],
+          [
+            681,
+            42,
+            1
+          ]
+        ],
+        "verse": [
+          752,
+          32,
+          4
+        ],
+        "notice": [
+          [
+            947,
+            25,
+            0
+          ]
+        ],
+        "lines": [
+          {
+            "text": "OFFER FILTER",
+            "baseline": 177,
+            "fontSize": 56,
+            "tracking": 8,
+            "width": 453.790002822876,
+            "left": 313.104998588562,
+            "right": 766.895001411438,
+            "alpha": 1
+          },
+          {
+            "text": "MUSIC & NARRATION",
+            "baseline": 302,
+            "fontSize": 24,
+            "tracking": 4,
+            "width": 304.1400022506714,
+            "left": 387.9299988746643,
+            "right": 692.0700011253357,
+            "alpha": 0.65
+          },
+          {
+            "text": "Your Time Matters",
+            "baseline": 349,
+            "fontSize": 36,
+            "tracking": 2,
+            "width": 325.1499996185303,
+            "left": 377.42500019073486,
+            "right": 702.5749998092651,
+            "alpha": 0.92
+          },
+          {
+            "text": "JESUS LOVES YOU",
+            "baseline": 523,
+            "fontSize": 64,
+            "tracking": 3,
+            "width": 589.1399993896484,
+            "left": 245.43000030517578,
+            "right": 834.5699996948242,
+            "alpha": 1
+          },
+          {
+            "text": "WE LOVE EACH OTHER",
+            "baseline": 623,
+            "fontSize": 42,
+            "tracking": 1,
+            "width": 452.43999671936035,
+            "left": 313.7800016403198,
+            "right": 766.2199983596802,
+            "alpha": 1
+          },
+          {
+            "text": "BECAUSE HE LOVES US FIRST.",
+            "baseline": 681,
+            "fontSize": 42,
+            "tracking": 1,
+            "width": 610.5099992752075,
+            "left": 234.74500036239624,
+            "right": 845.2549996376038,
+            "alpha": 1
+          },
+          {
+            "text": "1 JOHN 4:19",
+            "baseline": 752,
+            "fontSize": 32,
+            "tracking": 4,
+            "width": 212.69999742507935,
+            "left": 433.6500012874603,
+            "right": 646.3499987125397,
+            "alpha": 0.78
+          },
+          {
+            "text": "Independent app. Not affiliated with DoorDash.",
+            "baseline": 947,
+            "fontSize": 25,
+            "tracking": 0,
+            "width": 518.8399968147278,
+            "left": 280.5800015926361,
+            "right": 799.4199984073639,
+            "alpha": 0.6
+          }
+        ],
+        "opacity": 1
+      }
+    }
+  },
+  "exports": [
+    {
+      "file": "offer-filter-landscape.mp4",
+      "sourceSha256": "98676283cfc8794210dedf640d014c570f02f3d5da422141afa7dc74a2a82f83",
+      "sha256": "13555d43d13c140835c1ee8cf922014dd7dbf0de372fcb679c8537355bca71ab",
+      "bytes": 3291950,
+      "completeDecode": "pass",
+      "programs": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "width": 1920,
+          "height": 1080,
+          "r_frame_rate": "30/1",
+          "nb_read_frames": "720"
+        },
+        {
+          "codec_name": "aac",
+          "sample_rate": "48000",
+          "channels": 2,
+          "r_frame_rate": "0/0",
+          "nb_read_frames": "1125"
+        }
+      ],
+      "format": {
+        "duration": "24.000000"
+      }
+    },
+    {
+      "file": "offer-filter-portrait.mp4",
+      "sourceSha256": "33c51bc1ec8c27537911046519c14cec4b73d8b97f6b62dabe780d9634555a5d",
+      "sha256": "f8f7c71e20ef5d557476303afcff8517be21d9d1aaf17f6c1eb3f0141917aaf3",
+      "bytes": 3227582,
+      "completeDecode": "pass",
+      "programs": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "width": 1080,
+          "height": 1920,
+          "r_frame_rate": "30/1",
+          "nb_read_frames": "720"
+        },
+        {
+          "codec_name": "aac",
+          "sample_rate": "48000",
+          "channels": 2,
+          "r_frame_rate": "0/0",
+          "nb_read_frames": "1125"
+        }
+      ],
+      "format": {
+        "duration": "24.000000"
+      }
+    },
+    {
+      "file": "offer-filter-square.mp4",
+      "sourceSha256": "abdf126185797ada2bf018c122f1a1aa3ed1aeac2a4487c6c052a551e7447b39",
+      "sha256": "4f67d8f7df8edceb6a36baca701e2279719808b7b4558407e1f99cd9ddac3a40",
+      "bytes": 2695124,
+      "completeDecode": "pass",
+      "programs": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "width": 1080,
+          "height": 1080,
+          "r_frame_rate": "30/1",
+          "nb_read_frames": "720"
+        },
+        {
+          "codec_name": "aac",
+          "sample_rate": "48000",
+          "channels": 2,
+          "r_frame_rate": "0/0",
+          "nb_read_frames": "1125"
+        }
+      ],
+      "format": {
+        "duration": "24.000000"
+      }
+    },
+    {
+      "file": "offer-filter-portrait.webm",
+      "sourceSha256": "1b505a06494776dc732553afbd5d31ab0522d08b5bc9d12d0a5ee331f11fa0ba",
+      "sha256": "57de82358f8a9aa40938be0dafb1c980625137cc770e66bce2e68d4694b6318c",
+      "bytes": 2479718,
+      "completeDecode": "pass",
+      "programs": [],
+      "streams": [
+        {
+          "codec_name": "vp9",
+          "width": 1080,
+          "height": 1920,
+          "r_frame_rate": "30/1",
+          "nb_read_frames": "720"
+        },
+        {
+          "codec_name": "opus",
+          "sample_rate": "48000",
+          "channels": 2,
+          "r_frame_rate": "0/0",
+          "nb_read_frames": "1201"
+        }
+      ],
+      "format": {
+        "duration": "24.008000"
+      }
+    }
+  ]
+}

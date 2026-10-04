@@ -1,0 +1,104 @@
+{
+  "checkedAt": "2026-10-04T07:43:44.369Z",
+  "scope": "Local Chromium153 desktop and400px viewport; no live website or physical phone claim",
+  "playback": {
+    "duration": 24,
+    "currentTime": 24,
+    "ended": true,
+    "error": null,
+    "readyState": 4,
+    "ratio": 1.777788919528704,
+    "poster": "http://127.0.0.1:44871/assets/film-poster-wide.jpg?v=movie-credits-20261004",
+    "muted": false,
+    "volume": 1,
+    "overflow": false
+  },
+  "phone": {
+    "width": 400,
+    "overflow": false,
+    "poster": "http://127.0.0.1:44871/assets/film-poster-wide.jpg?v=movie-credits-20261004"
+  },
+  "variants": [
+    {
+      "name": "offer-filter-portrait.mp4",
+      "duration": 24,
+      "ended": true,
+      "width": 1080,
+      "height": 1920,
+      "error": null
+    },
+    {
+      "name": "offer-filter-square.mp4",
+      "duration": 24,
+      "ended": true,
+      "width": 1080,
+      "height": 1080,
+      "error": null
+    },
+    {
+      "name": "offer-filter-portrait.webm",
+      "duration": 24.008,
+      "ended": true,
+      "width": 1080,
+      "height": 1920,
+      "error": null
+    }
+  ],
+  "cues": [
+    {
+      "start": 0,
+      "end": 1.28,
+      "text": "Your time matters."
+    },
+    {
+      "start": 1.78,
+      "end": 3.74,
+      "text": "Set your minimums."
+    },
+    {
+      "start": 3.74,
+      "end": 6.32,
+      "text": "Offer Filter declines the offers below them."
+    },
+    {
+      "start": 7.12,
+      "end": 8.5,
+      "text": "You choose the good ones."
+    },
+    {
+      "start": 9.14,
+      "end": 10.98,
+      "text": "See every offer in perspective."
+    },
+    {
+      "start": 11.62,
+      "end": 13.06,
+      "text": "Find your next move."
+    },
+    {
+      "start": 13.94,
+      "end": 15.92,
+      "text": "Free and open source."
+    },
+    {
+      "start": 15.92,
+      "end": 22.13,
+      "text": "[Instrumental music]"
+    },
+    {
+      "start": 22.13,
+      "end": 22.93,
+      "text": "[Music fades]"
+    }
+  ],
+  "errors": [],
+  "testedAssetSha256": {
+    "index.html": "6a8d8aaefa9b3f19ae25ab7072bcb02ff59a5866c705f3f99d349b88d0ad36ea",
+    "assets/film-captions.vtt": "aab4206c939e1829710c405e45ec1b44e6249dc538bbff939f1e5edb8bc554a7",
+    "assets/offer-filter-landscape.mp4": "13555d43d13c140835c1ee8cf922014dd7dbf0de372fcb679c8537355bca71ab",
+    "assets/offer-filter-portrait.mp4": "f8f7c71e20ef5d557476303afcff8517be21d9d1aaf17f6c1eb3f0141917aaf3",
+    "assets/offer-filter-square.mp4": "4f67d8f7df8edceb6a36baca701e2279719808b7b4558407e1f99cd9ddac3a40",
+    "assets/offer-filter-portrait.webm": "57de82358f8a9aa40938be0dafb1c980625137cc770e66bce2e68d4694b6318c"
+  },
+  "textScope": "Credit text is legible at source resolution and unchanged in browser; small 16:9 embedded credits remain small on phones, with native fullscreen available. No clipping or page overflow."
+}
