@@ -102,3 +102,9 @@ Prepared from main `44330c69a607f1bb6c30cd8307da06b7ed26539b` after the user req
 Local Chromium 153 checks passed at 320, 400 and 1280px in both themes: no horizontal overflow or script errors, 144px signature, exact green/white computed colors, transparent container, full accessible image name, one 16:9 video and no scenery crossing behind the signature. Two additional 400px checks removed the mask-support rule and confirmed the original image remains visible at the same size in both themes. The 400px day preview was visually reviewed. JavaScript syntax and whitespace checks passed. See `validation/small-forest-signature-20261003.json` and `validation/small-forest-day-400.jpg`.
 
 All media assets and the scene/page scripts remain byte-for-byte unchanged from the base. This is local presentation evidence only, with publication and live checks left to the coordinating thread.
+
+## Forest-green signature — live verification, October 4 UTC
+
+Source `c4b4e57a5e6627d863a8c87bcbf64bc867173471` deployed successfully through Pages run `37167356971`. The live HTML and CSS exactly match the published source bytes. At the observed 520px browser viewport, the footer signature is 144px wide, forest green `#36594b` in day mode, with a transparent backing, no horizontal overflow and its complete accessible passage. The live receipt and screenshot are `validation/forest-signature-live-20261004.json` and `validation/forest-signature-live-20261004.jpg`.
+
+This live check covers the observed day-theme viewport. The earlier local 320/400/1280px day/night checks remain separate evidence; no additional live viewport, night-mode, film-playback or handset outcome is claimed. Film/media files and the prior scenery placement remain unchanged.

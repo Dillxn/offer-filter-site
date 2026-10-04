@@ -1,0 +1,34 @@
+{
+  "verifiedAt": "2026-10-04T01:21:13.433912+00:00",
+  "sourceCommit": "c4b4e57a5e6627d863a8c87bcbf64bc867173471",
+  "pagesRun": 37167356971,
+  "pagesConclusion": "success",
+  "assets": [
+    {
+      "path": "index.html",
+      "bytes": 7072,
+      "matches": true,
+      "sha256": "70f45471e7025c1553e0698bc676d8b841bc728d7aa2c101f34a541e11cbf086"
+    },
+    {
+      "path": "style.css",
+      "bytes": 11956,
+      "matches": true,
+      "sha256": "e9a8cb431181d287738d32f83a7ac4ccd477718c94540cb8986f0baf03ffbe0e"
+    }
+  ],
+  "browser": {
+    "width": 520,
+    "signatureWidth": 144,
+    "dayInk": "#36594b",
+    "transparentBacking": true,
+    "overflow": false,
+    "fullAccessiblePassage": true
+  },
+  "filmUnchanged": true,
+  "screenshot": {
+    "path": "validation/forest-signature-live-20261004.jpg",
+    "bytes": 51986,
+    "sha256": "d9abe3b185ea1b4989d20e49a6791d952d8c17353567eeb09360b4dae1ce866e"
+  }
+}
