@@ -1,0 +1,145 @@
+{
+  "scope": "Local narration integration; not a live publication receipt",
+  "audioSource": "your-time-matters.mp3",
+  "audioSourceSha256": "b9faf89fb1a52ae1151a900c33ff1a1b828544964d00bf0e215501f47eca6dbc",
+  "audioDecodedDurationSeconds": 17.6,
+  "audioSpeed": 1,
+  "audioGainDecibels": 0,
+  "audioTailFadeStartsSeconds": 17.0,
+  "oldSoundtrackMixed": false,
+  "filmDurationSeconds": 18.5,
+  "silencePaddingSeconds": 0.9,
+  "videoReencoded": false,
+  "exports": [
+    {
+      "file": "offer-filter-landscape.mp4",
+      "sourceSha256": "f7ff19db33d8fc42f33fa835a80020d165e95ac1a97e147159d80d714a7b6d28",
+      "sha256": "7de106ac6e96510f850314661465743e2147975c85264d3c8ed7ac03f4576df6",
+      "size": 3438970,
+      "videoPacketsUnchanged": true,
+      "videoPresentationAndDecodeTimingUnchanged": true,
+      "completeDecode": "pass",
+      "programs": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "width": 1920,
+          "height": 1080,
+          "r_frame_rate": "30/1",
+          "nb_read_frames": "555"
+        },
+        {
+          "codec_name": "aac",
+          "sample_rate": "48000",
+          "channels": 2,
+          "r_frame_rate": "0/0",
+          "nb_read_frames": "868"
+        }
+      ],
+      "format": {
+        "duration": "18.500000"
+      }
+    },
+    {
+      "file": "offer-filter-portrait.mp4",
+      "sourceSha256": "1e199019bcebc25ae792523d5392181b5d6044e959b47b44620ed6e4cfba129d",
+      "sha256": "7936b8dbd3e21291e029c731d730b8b336dde79954c29b86fdae66a3a1084810",
+      "size": 3383870,
+      "videoPacketsUnchanged": true,
+      "videoPresentationAndDecodeTimingUnchanged": true,
+      "completeDecode": "pass",
+      "programs": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "width": 1080,
+          "height": 1920,
+          "r_frame_rate": "30/1",
+          "nb_read_frames": "555"
+        },
+        {
+          "codec_name": "aac",
+          "sample_rate": "48000",
+          "channels": 2,
+          "r_frame_rate": "0/0",
+          "nb_read_frames": "868"
+        }
+      ],
+      "format": {
+        "duration": "18.500000"
+      }
+    },
+    {
+      "file": "offer-filter-square.mp4",
+      "sourceSha256": "c8913f21dcc19a6230411542cb0c631ae91b6a48e6b20834c4b9384404282355",
+      "sha256": "43459f8cba1d54ab12198282c7a38b1191b9c5a856c9cc1dfeef8faced21d8b7",
+      "size": 2745991,
+      "videoPacketsUnchanged": true,
+      "videoPresentationAndDecodeTimingUnchanged": true,
+      "completeDecode": "pass",
+      "programs": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "width": 1080,
+          "height": 1080,
+          "r_frame_rate": "30/1",
+          "nb_read_frames": "555"
+        },
+        {
+          "codec_name": "aac",
+          "sample_rate": "48000",
+          "channels": 2,
+          "r_frame_rate": "0/0",
+          "nb_read_frames": "868"
+        }
+      ],
+      "format": {
+        "duration": "18.500000"
+      }
+    },
+    {
+      "file": "offer-filter-portrait.webm",
+      "sourceSha256": "ee94dbf65a42a70d1f2552e64d7002b52a9f46f7460a1d905f582d808746cd18",
+      "sha256": "b3e4742d8200e29d7f5ddae2461c344bc55ea22306c6ccca1345e50f4cee604b",
+      "size": 2400877,
+      "videoPacketsUnchanged": true,
+      "videoPresentationAndDecodeTimingUnchanged": true,
+      "completeDecode": "pass",
+      "programs": [],
+      "streams": [
+        {
+          "codec_name": "vp9",
+          "width": 1080,
+          "height": 1920,
+          "r_frame_rate": "30/1",
+          "nb_read_frames": "555"
+        },
+        {
+          "codec_name": "opus",
+          "sample_rate": "48000",
+          "channels": 2,
+          "r_frame_rate": "0/0",
+          "nb_read_frames": "926"
+        }
+      ],
+      "format": {
+        "duration": "18.514000"
+      }
+    }
+  ],
+  "audioVerification": {
+    "source": "Local faster-whisper base.en and small.en waveform transcription; identical seven-sentence transcript; no metadata or prompt supplied",
+    "lastSpokenWord": "source",
+    "lastSpokenWordEndSeconds": 15.72,
+    "fadeAfterSpeechSeconds": 1.28,
+    "sourceIntegratedLufs": -15.66,
+    "sourceTruePeakDbtp": -1.49,
+    "aacIntegratedLufs": -15.58,
+    "aacTruePeakDbtp": -1.49,
+    "opusIntegratedLufs": -15.58,
+    "opusTruePeakDbtp": -1.27,
+    "note": "Loudness measurements only; no normalization or gain change applied.",
+    "timingCaveat": "Approximate ASR timestamps; not manual listening verification."
+  }
+}

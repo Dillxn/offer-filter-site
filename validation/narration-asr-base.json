@@ -1,0 +1,267 @@
+{
+  "model": "base.en",
+  "language": "en",
+  "language_probability": 1,
+  "duration": 17.6,
+  "segments": [
+    {
+      "id": 1,
+      "seek": 0,
+      "start": 0.0,
+      "end": 5.92,
+      "text": " your time matters. Set your minimums. Offer filter declines the offers below them.",
+      "tokens": [
+        50363,
+        534,
+        640,
+        6067,
+        13,
+        5345,
+        534,
+        5288,
+        82,
+        13,
+        33085,
+        8106,
+        24459,
+        262,
+        4394,
+        2174,
+        606,
+        13,
+        50659
+      ],
+      "avg_logprob": -0.2620516934178092,
+      "compression_ratio": 1.4076923076923078,
+      "no_speech_prob": 0.0176126416772604,
+      "words": [
+        {
+          "start": 0.0,
+          "end": 0.22,
+          "word": " your",
+          "probability": 0.09660500288009644
+        },
+        {
+          "start": 0.22,
+          "end": 0.5,
+          "word": " time",
+          "probability": 0.9919723272323608
+        },
+        {
+          "start": 0.5,
+          "end": 0.88,
+          "word": " matters.",
+          "probability": 0.9971686005592346
+        },
+        {
+          "start": 2.02,
+          "end": 2.02,
+          "word": " Set",
+          "probability": 0.9366880059242249
+        },
+        {
+          "start": 2.02,
+          "end": 2.18,
+          "word": " your",
+          "probability": 0.9958089590072632
+        },
+        {
+          "start": 2.18,
+          "end": 2.82,
+          "word": " minimums.",
+          "probability": 0.9503386914730072
+        },
+        {
+          "start": 3.82,
+          "end": 3.84,
+          "word": " Offer",
+          "probability": 0.976212203502655
+        },
+        {
+          "start": 3.84,
+          "end": 4.26,
+          "word": " filter",
+          "probability": 0.8984411954879761
+        },
+        {
+          "start": 4.26,
+          "end": 4.6,
+          "word": " declines",
+          "probability": 0.965630054473877
+        },
+        {
+          "start": 4.6,
+          "end": 5.08,
+          "word": " the",
+          "probability": 0.5635688304901123
+        },
+        {
+          "start": 5.08,
+          "end": 5.28,
+          "word": " offers",
+          "probability": 0.9853406548500061
+        },
+        {
+          "start": 5.28,
+          "end": 5.66,
+          "word": " below",
+          "probability": 0.9973637461662292
+        },
+        {
+          "start": 5.66,
+          "end": 5.92,
+          "word": " them.",
+          "probability": 0.9957922697067261
+        }
+      ],
+      "temperature": 0.0
+    },
+    {
+      "id": 2,
+      "seek": 0,
+      "start": 7.32,
+      "end": 15.66,
+      "text": " You choose the good ones. See every offer in perspective. Find your next move. Free and open source.",
+      "tokens": [
+        50719,
+        921,
+        3853,
+        262,
+        922,
+        3392,
+        13,
+        4091,
+        790,
+        2897,
+        287,
+        6650,
+        13,
+        9938,
+        534,
+        1306,
+        1445,
+        13,
+        3232,
+        290,
+        1280,
+        2723,
+        13,
+        51231
+      ],
+      "avg_logprob": -0.2620516934178092,
+      "compression_ratio": 1.4076923076923078,
+      "no_speech_prob": 0.0176126416772604,
+      "words": [
+        {
+          "start": 7.32,
+          "end": 7.32,
+          "word": " You",
+          "probability": 0.9756948947906494
+        },
+        {
+          "start": 7.32,
+          "end": 7.54,
+          "word": " choose",
+          "probability": 0.9939268231391907
+        },
+        {
+          "start": 7.54,
+          "end": 7.74,
+          "word": " the",
+          "probability": 0.9987573623657227
+        },
+        {
+          "start": 7.74,
+          "end": 7.88,
+          "word": " good",
+          "probability": 0.9941520094871521
+        },
+        {
+          "start": 7.88,
+          "end": 8.08,
+          "word": " ones.",
+          "probability": 0.9974793791770935
+        },
+        {
+          "start": 9.34,
+          "end": 9.36,
+          "word": " See",
+          "probability": 0.9892183542251587
+        },
+        {
+          "start": 9.36,
+          "end": 9.66,
+          "word": " every",
+          "probability": 0.9968994855880737
+        },
+        {
+          "start": 9.66,
+          "end": 9.92,
+          "word": " offer",
+          "probability": 0.953278124332428
+        },
+        {
+          "start": 9.92,
+          "end": 10.12,
+          "word": " in",
+          "probability": 0.9941093921661377
+        },
+        {
+          "start": 10.12,
+          "end": 10.52,
+          "word": " perspective.",
+          "probability": 0.9830437302589417
+        },
+        {
+          "start": 11.76,
+          "end": 11.84,
+          "word": " Find",
+          "probability": 0.987680196762085
+        },
+        {
+          "start": 11.84,
+          "end": 12.1,
+          "word": " your",
+          "probability": 0.9943556785583496
+        },
+        {
+          "start": 12.1,
+          "end": 12.3,
+          "word": " next",
+          "probability": 0.9991554021835327
+        },
+        {
+          "start": 12.3,
+          "end": 12.62,
+          "word": " move.",
+          "probability": 0.9969545602798462
+        },
+        {
+          "start": 13.98,
+          "end": 14.2,
+          "word": " Free",
+          "probability": 0.9483806490898132
+        },
+        {
+          "start": 14.2,
+          "end": 15.06,
+          "word": " and",
+          "probability": 0.8237047791481018
+        },
+        {
+          "start": 15.06,
+          "end": 15.3,
+          "word": " open",
+          "probability": 0.9510954022407532
+        },
+        {
+          "start": 15.3,
+          "end": 15.66,
+          "word": " source.",
+          "probability": 0.9180276393890381
+        }
+      ],
+      "temperature": 0.0
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+[
+  {
+    "text": "Your time matters.",
+    "start": 0.0,
+    "end": 1.08,
+    "min_word_probability": 0.9117391109466553,
+    "mean_word_probability": 0.9677627285321554
+  },
+  {
+    "text": "Set your minimums.",
+    "start": 1.88,
+    "end": 3.54,
+    "min_word_probability": 0.9870036244392395,
+    "mean_word_probability": 0.9911785622437795
+  },
+  {
+    "text": "Offer Filter declines the offers below them.",
+    "start": 3.84,
+    "end": 6.12,
+    "min_word_probability": 0.7530692219734192,
+    "mean_word_probability": 0.956463064466204
+  },
+  {
+    "text": "You choose the good ones.",
+    "start": 7.22,
+    "end": 8.3,
+    "min_word_probability": 0.9825283288955688,
+    "mean_word_probability": 0.9925585627555847
+  },
+  {
+    "text": "See every offer in perspective.",
+    "start": 9.24,
+    "end": 10.78,
+    "min_word_probability": 0.9133256077766418,
+    "mean_word_probability": 0.9636247515678406
+  },
+  {
+    "text": "Find your next move.",
+    "start": 11.72,
+    "end": 12.86,
+    "min_word_probability": 0.9908629655838013,
+    "mean_word_probability": 0.9944771379232407
+  },
+  {
+    "text": "Free and open source.",
+    "start": 14.04,
+    "end": 15.72,
+    "min_word_probability": 0.9076266884803772,
+    "mean_word_probability": 0.9310481399297714
+  }
+]

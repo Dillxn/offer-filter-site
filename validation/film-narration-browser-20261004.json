@@ -1,0 +1,83 @@
+{
+  "checkedAt": "2026-10-04T02:55:46.078Z",
+  "scope": "Local Chromium153 desktop and400px viewport; no live website or physical phone claim",
+  "playback": {
+    "duration": 18.5,
+    "currentTime": 18.5,
+    "ended": true,
+    "error": null,
+    "readyState": 4,
+    "ratio": 1.777788919528704,
+    "poster": "http://127.0.0.1:34563/assets/film-poster-wide.jpg?v=narration-20261004",
+    "overflow": false
+  },
+  "phone": {
+    "width": 400,
+    "overflow": false,
+    "poster": "http://127.0.0.1:34563/assets/film-poster-wide.jpg?v=narration-20261004"
+  },
+  "variants": [
+    {
+      "name": "offer-filter-portrait.mp4",
+      "duration": 18.5,
+      "ended": true,
+      "width": 1080,
+      "height": 1920,
+      "error": null
+    },
+    {
+      "name": "offer-filter-square.mp4",
+      "duration": 18.5,
+      "ended": true,
+      "width": 1080,
+      "height": 1080,
+      "error": null
+    },
+    {
+      "name": "offer-filter-portrait.webm",
+      "duration": 18.514,
+      "ended": true,
+      "width": 1080,
+      "height": 1920,
+      "error": null
+    }
+  ],
+  "cues": [
+    {
+      "start": 0,
+      "end": 1.28,
+      "text": "Your time matters."
+    },
+    {
+      "start": 1.78,
+      "end": 3.74,
+      "text": "Set your minimums."
+    },
+    {
+      "start": 3.74,
+      "end": 6.32,
+      "text": "Offer Filter declines the offers below them."
+    },
+    {
+      "start": 7.12,
+      "end": 8.5,
+      "text": "You choose the good ones."
+    },
+    {
+      "start": 9.14,
+      "end": 10.98,
+      "text": "See every offer in perspective."
+    },
+    {
+      "start": 11.62,
+      "end": 13.06,
+      "text": "Find your next move."
+    },
+    {
+      "start": 13.94,
+      "end": 15.92,
+      "text": "Free and open source."
+    }
+  ],
+  "errors": []
+}

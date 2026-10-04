@@ -1,0 +1,267 @@
+{
+  "model": "small.en",
+  "language": "en",
+  "language_probability": 1,
+  "duration": 17.6,
+  "segments": [
+    {
+      "id": 1,
+      "seek": 0,
+      "start": 0.0,
+      "end": 6.12,
+      "text": " Your time matters. Set your minimums. Offer filter declines the offers below them.",
+      "tokens": [
+        50363,
+        3406,
+        640,
+        6067,
+        13,
+        5345,
+        534,
+        5288,
+        82,
+        13,
+        33085,
+        8106,
+        24459,
+        262,
+        4394,
+        2174,
+        606,
+        13,
+        50659
+      ],
+      "avg_logprob": -0.17024884406815877,
+      "compression_ratio": 1.4076923076923078,
+      "no_speech_prob": 0.0039320532232522964,
+      "words": [
+        {
+          "start": 0.0,
+          "end": 0.26,
+          "word": " Your",
+          "probability": 0.9117391109466553
+        },
+        {
+          "start": 0.26,
+          "end": 0.54,
+          "word": " time",
+          "probability": 0.9947894811630249
+        },
+        {
+          "start": 0.54,
+          "end": 1.08,
+          "word": " matters.",
+          "probability": 0.9967595934867859
+        },
+        {
+          "start": 1.88,
+          "end": 2.06,
+          "word": " Set",
+          "probability": 0.9870036244392395
+        },
+        {
+          "start": 2.06,
+          "end": 2.22,
+          "word": " your",
+          "probability": 0.9970681071281433
+        },
+        {
+          "start": 2.22,
+          "end": 3.54,
+          "word": " minimums.",
+          "probability": 0.9894639551639557
+        },
+        {
+          "start": 3.84,
+          "end": 3.92,
+          "word": " Offer",
+          "probability": 0.9823147058486938
+        },
+        {
+          "start": 3.92,
+          "end": 4.36,
+          "word": " filter",
+          "probability": 0.9781273603439331
+        },
+        {
+          "start": 4.36,
+          "end": 4.84,
+          "word": " declines",
+          "probability": 0.9933910369873047
+        },
+        {
+          "start": 4.84,
+          "end": 5.14,
+          "word": " the",
+          "probability": 0.7530692219734192
+        },
+        {
+          "start": 5.14,
+          "end": 5.4,
+          "word": " offers",
+          "probability": 0.9929137229919434
+        },
+        {
+          "start": 5.4,
+          "end": 5.7,
+          "word": " below",
+          "probability": 0.9979096055030823
+        },
+        {
+          "start": 5.7,
+          "end": 6.12,
+          "word": " them.",
+          "probability": 0.9975157976150513
+        }
+      ],
+      "temperature": 0.0
+    },
+    {
+      "id": 2,
+      "seek": 0,
+      "start": 7.22,
+      "end": 15.72,
+      "text": " You choose the good ones. See every offer in perspective. Find your next move. Free and open source.",
+      "tokens": [
+        50719,
+        921,
+        3853,
+        262,
+        922,
+        3392,
+        13,
+        4091,
+        790,
+        2897,
+        287,
+        6650,
+        13,
+        9938,
+        534,
+        1306,
+        1445,
+        13,
+        3232,
+        290,
+        1280,
+        2723,
+        13,
+        51235
+      ],
+      "avg_logprob": -0.17024884406815877,
+      "compression_ratio": 1.4076923076923078,
+      "no_speech_prob": 0.0039320532232522964,
+      "words": [
+        {
+          "start": 7.22,
+          "end": 7.38,
+          "word": " You",
+          "probability": 0.9938209652900696
+        },
+        {
+          "start": 7.38,
+          "end": 7.6,
+          "word": " choose",
+          "probability": 0.9825283288955688
+        },
+        {
+          "start": 7.6,
+          "end": 7.78,
+          "word": " the",
+          "probability": 0.995570957660675
+        },
+        {
+          "start": 7.78,
+          "end": 7.92,
+          "word": " good",
+          "probability": 0.9938921928405762
+        },
+        {
+          "start": 7.92,
+          "end": 8.3,
+          "word": " ones.",
+          "probability": 0.9969803690910339
+        },
+        {
+          "start": 9.24,
+          "end": 9.42,
+          "word": " See",
+          "probability": 0.9937665462493896
+        },
+        {
+          "start": 9.42,
+          "end": 9.74,
+          "word": " every",
+          "probability": 0.9975748658180237
+        },
+        {
+          "start": 9.74,
+          "end": 9.96,
+          "word": " offer",
+          "probability": 0.9133256077766418
+        },
+        {
+          "start": 9.96,
+          "end": 10.78,
+          "word": " in",
+          "probability": 0.9839093089103699
+        },
+        {
+          "start": 10.78,
+          "end": 10.78,
+          "word": " perspective.",
+          "probability": 0.9295474290847778
+        },
+        {
+          "start": 11.72,
+          "end": 11.92,
+          "word": " Find",
+          "probability": 0.9956520199775696
+        },
+        {
+          "start": 11.92,
+          "end": 12.14,
+          "word": " your",
+          "probability": 0.9908629655838013
+        },
+        {
+          "start": 12.14,
+          "end": 12.38,
+          "word": " next",
+          "probability": 0.9981112480163574
+        },
+        {
+          "start": 12.38,
+          "end": 12.86,
+          "word": " move.",
+          "probability": 0.9932823181152344
+        },
+        {
+          "start": 14.04,
+          "end": 14.36,
+          "word": " Free",
+          "probability": 0.9787988066673279
+        },
+        {
+          "start": 14.36,
+          "end": 15.1,
+          "word": " and",
+          "probability": 0.9076266884803772
+        },
+        {
+          "start": 15.1,
+          "end": 15.4,
+          "word": " open",
+          "probability": 0.9123290181159973
+        },
+        {
+          "start": 15.4,
+          "end": 15.72,
+          "word": " source.",
+          "probability": 0.9254380464553833
+        }
+      ],
+      "temperature": 0.0
+    }
+  ]
+}
