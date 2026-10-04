@@ -1,0 +1,46 @@
+{
+  "checkedAt": "2026-10-04T02:18:04.550Z",
+  "scope": "Local Chromium153 desktop and400px viewport; no live website or physical phone claim",
+  "playback": {
+    "duration": 18.5,
+    "currentTime": 18.5,
+    "ended": true,
+    "error": null,
+    "readyState": 4,
+    "ratio": 1.777788919528704,
+    "poster": "http://127.0.0.1:42343/assets/film-poster-wide.jpg?v=composition-20261004",
+    "overflow": false
+  },
+  "phone": {
+    "width": 400,
+    "overflow": false,
+    "poster": "http://127.0.0.1:42343/assets/film-poster-wide.jpg?v=composition-20261004"
+  },
+  "variants": [
+    {
+      "name": "offer-filter-portrait.mp4",
+      "duration": 18.5,
+      "ended": true,
+      "width": 1080,
+      "height": 1920,
+      "error": null
+    },
+    {
+      "name": "offer-filter-square.mp4",
+      "duration": 18.5,
+      "ended": true,
+      "width": 1080,
+      "height": 1080,
+      "error": null
+    },
+    {
+      "name": "offer-filter-portrait.webm",
+      "duration": 18.521,
+      "ended": true,
+      "width": 1080,
+      "height": 1920,
+      "error": null
+    }
+  ],
+  "errors": []
+}

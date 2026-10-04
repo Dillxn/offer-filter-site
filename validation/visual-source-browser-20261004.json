@@ -1,0 +1,24 @@
+{
+  "captions": 8,
+  "sourceLink": "https://github.com/Dillxn/offer-filter-site/tree/app-source",
+  "soundtrack": "Original clean tonal score; narration candidate not published",
+  "checkedAt": "2026-10-04T03:24:45.639Z",
+  "scope": "Local Chromium153 desktop and400px viewport; no live website or physical phone claim",
+  "playback": {
+    "duration": 18.5,
+    "currentTime": 18.5,
+    "ended": true,
+    "error": null,
+    "readyState": 4,
+    "ratio": 1.777788919528704,
+    "poster": "http://127.0.0.1:46857/assets/film-poster-wide.jpg?v=composition-source-20261004",
+    "overflow": false
+  },
+  "phone": {
+    "width": 400,
+    "overflow": false,
+    "poster": "http://127.0.0.1:46857/assets/film-poster-wide.jpg?v=composition-source-20261004"
+  },
+  "variants": "All four files hash-match independently decoded and browser-tested composition candidate 9ab0529; no redundant playback retest",
+  "errors": []
+}
