@@ -1,3 +1,7 @@
+## Verified visual publication — October 4, 03:29 UTC
+
+Product `df36981eac763f95138c4f87e4bb77073adb77a1` deployed through successful Pages run `37174049448`. Thirteen live HTML/CSS/caption/poster/video/favicon assets match the local verified bytes. Live embedded 18.5-second playback reached ended with no error at the available 520 px browser width; no horizontal overflow. Local 400 px and 1280 px checks pass with eight caption cues and the public source link. See `validation/visual-source-live-20261004.json` and `validation/visual-source-browser-20261004.json`. Existing clean tonal music retained; narrated candidate remains separate.
+
 ## Independent visual publication — October 4, 2026
 
 This product combines the already locally verified recomposed ending (9ab0529) with the source button and mascot favicon from candidate ec3d964. The supplied narration remains preserved on that candidate branch while its spoken open-source claim awaits a licensing/wording decision. Current exports deliberately retain the original clean tonal score and visual-summary captions; no speech was edited or published. The Android signature/theme candidate is separate and remains unsigned.

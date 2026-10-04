@@ -1,0 +1,98 @@
+{
+  "checkedAt": "2026-10-04T03:28:16.030583+00:00",
+  "sourceCommit": "df36981eac763f95138c4f87e4bb77073adb77a1",
+  "pagesRun": 37174049448,
+  "assets": [
+    {
+      "file": "index.html",
+      "bytes": 7482,
+      "sha256": "1beece0dd97988ce5be6f5f7da0f974731bb7d9abafafb2f19ef3f79e7efe0cc",
+      "matches": true
+    },
+    {
+      "file": "style.css",
+      "bytes": 12661,
+      "sha256": "168d567139683305c11a40e417b4632bc35412ac2a1fc64476cff7a712f90558",
+      "matches": true
+    },
+    {
+      "file": "assets/film-captions.vtt",
+      "bytes": 690,
+      "sha256": "2403e13655919b4372a95bb81674bde70340713c83ddd8d6203489452d2cbc5a",
+      "matches": true
+    },
+    {
+      "file": "assets/film-poster.jpg",
+      "bytes": 118773,
+      "sha256": "a9dd419917cdeac6ce90ca1ecdc29d6a620f91b701d38beceed4afc04c74c210",
+      "matches": true
+    },
+    {
+      "file": "assets/film-poster-wide.jpg",
+      "bytes": 114216,
+      "sha256": "64c753c3b8bad96136093361ea4a7db48d8bcb99afa4126768e0d649cbd7e571",
+      "matches": true
+    },
+    {
+      "file": "assets/offer-filter-landscape.mp4",
+      "bytes": 3302329,
+      "sha256": "f7ff19db33d8fc42f33fa835a80020d165e95ac1a97e147159d80d714a7b6d28",
+      "matches": true
+    },
+    {
+      "file": "assets/offer-filter-portrait.mp4",
+      "bytes": 3247229,
+      "sha256": "1e199019bcebc25ae792523d5392181b5d6044e959b47b44620ed6e4cfba129d",
+      "matches": true
+    },
+    {
+      "file": "assets/offer-filter-portrait.webm",
+      "bytes": 2266919,
+      "sha256": "ee94dbf65a42a70d1f2552e64d7002b52a9f46f7460a1d905f582d808746cd18",
+      "matches": true
+    },
+    {
+      "file": "assets/offer-filter-square.mp4",
+      "bytes": 2609350,
+      "sha256": "c8913f21dcc19a6230411542cb0c631ae91b6a48e6b20834c4b9384404282355",
+      "matches": true
+    },
+    {
+      "file": "assets/favicon.svg",
+      "bytes": 84118,
+      "sha256": "47b4cda4bcbc1e907c7b568a15b8fc24db8bf590001226dc5ca6975f4d2467e0",
+      "matches": true
+    },
+    {
+      "file": "assets/favicon-16.png",
+      "bytes": 657,
+      "sha256": "14fe754761b5f33364151f9ea210c08726939a16980f9012291e0080fb1249b8",
+      "matches": true
+    },
+    {
+      "file": "assets/favicon-32.png",
+      "bytes": 1567,
+      "sha256": "cfb0e3ebb1b1f1bfcb0609b9b59df5ad00ad9deeb788b73876f5f1164e3b5247",
+      "matches": true
+    },
+    {
+      "file": "assets/apple-touch-icon.png",
+      "bytes": 12762,
+      "sha256": "9a978d0f819af474139fdf72686864ef295e5c716b2ef7c0dfd192a7ee50ebd8",
+      "matches": true
+    }
+  ],
+  "browser": {
+    "checkedAt": "2026-10-04T03:28:45Z",
+    "width": 520,
+    "overflow": false,
+    "duration": 18.5,
+    "currentTime": 18.5,
+    "ended": true,
+    "error": null,
+    "sourceLink": "https://github.com/Dillxn/offer-filter-site/tree/app-source",
+    "mascotFaviconsPresent": true,
+    "url": "https://dillxn.github.io/offer-filter-site/",
+    "captionScope": "Eight cues verified locally; live VTT byte-match, no independent live cue parse claimed"
+  }
+}
