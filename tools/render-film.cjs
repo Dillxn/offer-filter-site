@@ -9,7 +9,10 @@ const FORMATS={landscape:[1920,1080],portrait:[1080,1920],square:[1080,1080]};
 const OUT=path.resolve(process.argv[3]||'/tmp/offer-filter-film');fs.mkdirSync(OUT,{recursive:true});
 const times=[1.1,2.9,5.8,8.3,10.5,12.9,15.8,19.6];
 async function main(){
- const emblem=await loadImage(path.join(root,'assets/jesus-loves-you-emblem.png'));
+ const emblemSource=await loadImage(path.join(root,'assets/jesus-loves-you-emblem.png'));
+ const emblem=createCanvas(emblemSource.width,emblemSource.height),ink=emblem.getContext('2d');
+ ink.drawImage(emblemSource,0,0);ink.globalCompositeOperation='source-in';
+ ink.fillStyle='#315B54';ink.fillRect(0,0,emblem.width,emblem.height);
  const mode=process.argv[2]||'stills';
  for(const[name,[w,h]]of Object.entries(FORMATS)){
   if(mode!=='stills'&&mode!=='audit'&&name!==mode)continue;

@@ -6,8 +6,8 @@
   // throughout playback. No crop, autoplay, or reset when the viewport changes.
   if (matchMedia('(max-width: 600px)').matches) {
     const source = film.querySelector('source');
-    source.src = 'assets/offer-filter-square.mp4?v=illustrated-film-20261004';
-    film.poster = 'assets/film-poster-square.jpg?v=illustrated-film-20261004';
+    source.src = 'assets/offer-filter-square.mp4?v=open-ending-20261004';
+    film.poster = 'assets/film-poster-square.jpg?v=open-ending-20261004';
     film.width = film.height = 1080;
     film.closest('.film-stage').classList.add('film-square');
     film.load();

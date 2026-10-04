@@ -1,0 +1,158 @@
+{
+  "change": "Rebalanced closing composition; plain URL, transparent forest emblem, and unbacked radar labels.",
+  "renderedLocally": true,
+  "visibleMusicCredit": false,
+  "audio": {
+    "sourceSha256": "b9faf89fb1a52ae1151a900c33ff1a1b828544964d00bf0e215501f47eca6dbc",
+    "duration": 21,
+    "originalPcmUnchangedThroughSeconds": 17.45,
+    "voiceSpeed": 1,
+    "voiceGainDb": 0,
+    "completeFinalLine": "Free and open source.",
+    "instrumentalSourceSeconds": [
+      16.08,
+      17.6
+    ],
+    "instrumentalCopies": 2,
+    "fadeOut": [
+      19.49,
+      20.29
+    ],
+    "silentHold": 0.71,
+    "peakAmplitude": 0.8420912623405457
+  },
+  "text": {
+    "landscape": {
+      "format": "landscape",
+      "width": 1920,
+      "height": 1080,
+      "frames": 630,
+      "fps": 30,
+      "duration": 21,
+      "minimumTextMargins": {
+        "left": 120,
+        "top": 255,
+        "right": 303.8126473635534,
+        "bottom": 84
+      },
+      "checkedTextDraws": {
+        "time": 114,
+        "minimums": 501,
+        "decline": 312,
+        "choose": 301,
+        "perspective": 394,
+        "direction": 218,
+        "close": 856
+      },
+      "violations": []
+    },
+    "portrait": {
+      "format": "portrait",
+      "width": 1080,
+      "height": 1920,
+      "frames": 630,
+      "fps": 30,
+      "duration": 21,
+      "minimumTextMargins": {
+        "left": 86,
+        "top": 155,
+        "right": 98.4375,
+        "bottom": 98
+      },
+      "checkedTextDraws": {
+        "time": 114,
+        "minimums": 501,
+        "decline": 312,
+        "choose": 301,
+        "perspective": 394,
+        "direction": 218,
+        "close": 856
+      },
+      "violations": []
+    },
+    "square": {
+      "format": "square",
+      "width": 1080,
+      "height": 1080,
+      "frames": 630,
+      "fps": 30,
+      "duration": 21,
+      "minimumTextMargins": {
+        "left": 76,
+        "top": 78,
+        "right": 276.4571228027344,
+        "bottom": 68
+      },
+      "checkedTextDraws": {
+        "time": 114,
+        "minimums": 501,
+        "decline": 312,
+        "choose": 301,
+        "perspective": 394,
+        "direction": 218,
+        "close": 856
+      },
+      "violations": []
+    }
+  },
+  "media": [
+    {
+      "path": "assets/offer-filter-landscape.mp4",
+      "bytes": 3799386,
+      "sha256": "660abc2588f736a1a848530229ee17799bfbb729ce8ed17a7ce1032fd2943516",
+      "width": 1920,
+      "height": 1080,
+      "duration": 21.0,
+      "frames": 630,
+      "fps": 30,
+      "videoCodec": "h264",
+      "audioCodec": "aac",
+      "fullDecode": "passed",
+      "blackFrames": false
+    },
+    {
+      "path": "assets/offer-filter-portrait.mp4",
+      "bytes": 3639459,
+      "sha256": "a7ca9d9713b725f4f7c855bf35ac102597dbd14d669afb07251c64c5aa1257c8",
+      "width": 1080,
+      "height": 1920,
+      "duration": 21.0,
+      "frames": 630,
+      "fps": 30,
+      "videoCodec": "h264",
+      "audioCodec": "aac",
+      "fullDecode": "passed",
+      "blackFrames": false
+    },
+    {
+      "path": "assets/offer-filter-portrait.webm",
+      "bytes": 2795433,
+      "sha256": "538ce64ac71055fb40c07f0c2eec6720764aa30a51e847c03f099423b58da136",
+      "width": 1080,
+      "height": 1920,
+      "duration": 21.021,
+      "frames": 630,
+      "fps": 30,
+      "videoCodec": "vp9",
+      "audioCodec": "opus",
+      "fullDecode": "passed",
+      "blackFrames": false
+    },
+    {
+      "path": "assets/offer-filter-square.mp4",
+      "bytes": 2798507,
+      "sha256": "65970e98e4954e084760499d9dc9f30418da8b79d02c79d828fde812665d31ba",
+      "width": 1080,
+      "height": 1080,
+      "duration": 21.0,
+      "frames": 630,
+      "fps": 30,
+      "videoCodec": "h264",
+      "audioCodec": "aac",
+      "fullDecode": "passed",
+      "blackFrames": false
+    }
+  ],
+  "verification": "Every frame measured for text bounds; all encoded media fully decoded and checked for black frames. Ending frames visually inspected. Player behavior unchanged.",
+  "originalEmblemGitBlob": "94c98c786220f3618c6ece23418f404fcecc285e"
+}

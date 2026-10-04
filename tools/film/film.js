@@ -107,9 +107,9 @@ function rules(c,w,h,t,l){
  for(let k=1;k<=4;k++){c.beginPath();c.arc(cx,cy,r*k/4,0,TAU);c.strokeStyle=k===4?'#769DCF':'#3E587B';c.lineWidth=k===4?2.6:1.6;c.stroke();}
  const points=vals.map((v,i)=>[cx+Math.cos(angs[i])*r*v,cy+Math.sin(angs[i])*r*v]);
  angs.forEach((a,i)=>{const x=cx+Math.cos(a)*r,y=cy+Math.sin(a)*r;stroke(c,[[cx,cy],[x,y]],'#557399',2);
-  const lx=cx+Math.cos(a)*r*1.21,ly=cy+Math.sin(a)*r*1.21;dot(c,lx,ly,l.square?34:43,C.cream);body(c,['$','/mi','/min','/stop'][i],lx,ly+8,i?l.square?19:24:34,C.ink,{align:'center'});});
+  const lx=cx+Math.cos(a)*r*1.21,ly=cy+Math.sin(a)*r*1.21;body(c,['$','/mi','/min','/stop'][i],lx,ly+8,i?l.square?24:29:38,C.cream,{align:'center'});});
  c.beginPath();points.forEach((p,i)=>i?c.lineTo(...p):c.moveTo(...p));c.closePath();c.fillStyle='rgba(91,154,249,.3)';c.fill();c.strokeStyle=C.sky;c.lineWidth=5;c.stroke();points.forEach(p=>dot(c,...p,10,C.sky));
- const p=points[1];dot(c,...p,24+Math.sin(t*3)*4,'rgba(161,205,255,.23)');box(c,p[0]-93,p[1]-75,186,53,25,C.cream);text(c,`$${lerp(2,3,smooth((t-.25)/1.1)).toFixed(2)}/mi`,p[0],p[1]-39,30,C.ink,{align:'center'});
+ const p=points[1];dot(c,...p,24+Math.sin(t*3)*4,'rgba(161,205,255,.23)');text(c,`$${lerp(2,3,smooth((t-.25)/1.1)).toFixed(2)}/mi`,cx,cy+r+76,l.square?36:42,C.sky,{align:'center'});
  supporting(c,'You set the pace.',l,l.ty+l.head*2.25);
 }
 function decline(c,w,h,t,l){
@@ -163,22 +163,22 @@ function android(c,x,y,s,col){c.save();c.translate(x,y);c.scale(s,s);c.lineCap='
 function close(c,w,h,t,l,emblem){
  background(c,w,h,t+14,1);skyline(c,w,h,t,1);
  const wide=l.wide,sq=l.square;
- const mx=wide?1390:540,my=wide?442:sq?387:565,ms=wide?3.25:sq?2.03:3.25;
+ // Wide: a paired illustration and type column. Stacked: one shared centerline.
+ const mx=wide?1390:540,my=wide?530:sq?250:520,ms=wide?3.45:sq?1.72:3.2;
  const p=ease(t/.55);mascot(c,mx,my,ms*(.93+.07*p),t+8);
  for(let i=0;i<4;i++){const a=i*TAU/4+.3;A.sparkle(c,mx+Math.cos(a)*ms*115,my+Math.sin(a)*ms*107,(wide?16:12)*(1+.12*Math.sin(t+i)),i%2?C.gold:'#7AADE3');}
- const tx=wide?135:w/2,align=wide?'left':'center',ty=wide?355:sq?132:1030;
- text(c,'Offer Filter',tx,ty,wide?148:sq?107:145,C.ink,{align,maxWidth:wide?920:930});
- body(c,'A little more calm.',tx,ty+(wide?75:sq?58:80),wide?54:sq?40:52,'#276BAE',{align});
- const fy=wide?571:sq?719:1230;
- const freeSize=wide?38:sq?36:42;c.font=`400 ${freeSize}px \"Atkinson Hyperlegible\"`;const freeWidth=c.measureText('Free & open source').width;const freeX=wide?198:(w-freeWidth)/2+25;android(c,freeX-38,fy-5,.75,'#2D7865');body(c,'Free & open source',freeX,fy,freeSize,'#285D59');
- const by=wide?644:sq?758:1290,bw=wide?410:sq?394:470,bh=wide?91:sq?80:100,bx=wide?132:(w-bw)/2;
- box(c,bx,by,bw,bh,bh/2,'#276FBE');text(c,'offerfilter.org',bx+bw/2,by+bh*.66,wide?42:sq?39:48,'#FFF7DF',{align:'center'});
- // The original artwork stays unchanged and complete, including the passage
- // and reference. Its backing is a colored evening sky inside the dawn world.
- const mw=wide?250:sq?172:290,mh=mw*emblem.height/emblem.width,ex=wide?770:sq?802:395,ey=wide?640:sq?528:1458;
- c.save();c.globalAlpha*=ease((t-.5)/.6);box(c,ex-21,ey-16,mw+42,mh+32,24,'#366A79');c.drawImage(emblem,ex,ey,mw,mh);c.restore();
+ const tx=wide?165:w/2,align=wide?'left':'center',ty=wide?395:sq?529:990;
+ text(c,'Offer Filter',tx,ty,wide?146:sq?109:145,C.ink,{align,maxWidth:wide?850:910});
+ const fy=wide?510:sq?590:1100;
+ const freeSize=wide?38:sq?34:43;c.font=`400 ${freeSize}px \"Atkinson Hyperlegible\"`;const freeWidth=c.measureText('Free & open source').width;const freeX=wide?tx+48:(w-freeWidth)/2+25;
+ android(c,freeX-38,fy-5,.75,'#315B54');body(c,'Free & open source',freeX,fy,freeSize,'#315B54');
+ text(c,'offerfilter.org',tx,wide?594:sq?657:1193,wide?52:sq?48:56,'#276BAE',{align});
+ // A quiet signature on the same alignment, without a filled badge. The
+ // renderer tints only the original ink and preserves the alpha silhouette.
+ const mw=wide?224:sq?198:270,mh=mw*emblem.height/emblem.width,ex=wide?tx:(w-mw)/2,ey=wide?698:sq?704:1324;
+ c.save();c.globalAlpha*=ease((t-.5)/.6);c.drawImage(emblem,ex,ey,mw,mh);c.restore();
  const ny=wide?992:sq?1008:1818;
- body(c,'Independent app. Not affiliated with DoorDash.',wide?135:76,ny,wide?26:sq?22:27,'#183D4E',{maxWidth:wide?920:sq?690:928});
+ body(c,'Independent app. Not affiliated with DoorDash.',wide?165:w/2,ny,wide?26:sq?22:27,'#183D4E',{align,maxWidth:wide?920:sq?690:928});
 }
 const DRAW=[intro,rules,decline,choose,history,direction,close];
 function draw(c,w,h,t,i,emblem){c.save();c.lineJoin='round';c.lineCap='round';scene=SHOTS[i].name;DRAW[i](c,w,h,t-SHOTS[i].from,layout(w,h),emblem);c.restore();}
