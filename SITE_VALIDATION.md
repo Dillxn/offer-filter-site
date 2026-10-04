@@ -1,3 +1,13 @@
+## Latest live film verification — October 4, 01:51 UTC
+
+Product source `449f3427dd5d1f25e93b27c75e2e6595060199ca` deployed successfully in Pages run `37169163910`. Eight live HTML/caption/poster/video files match the committed local exports exactly. Live inline playback reached18.5 seconds with ended=true and no media error; the520px browser had no horizontal overflow. The structured receipt is `validation/film-charcoal-live-20261004.json`. A live screenshot was captured and visually reviewed, but its shared-file transfer did not arrive within the documented five-second window; no missing screenshot is linked here.
+
+All four exports now use the complete small signature in flat charcoal (#343A40), without a shadow. The wide signature is smaller and raised into the light area beneath the secondary text and above the foreground hills. Both posters were refreshed. The144px forest-green day / white night transparent footer and header mascot remain unchanged. Original compressed clean-tonal audio packets and timing are unchanged; no generated narration has been added.
+
+The malformed last caption cue was repaired into eight valid contiguous cues. Local Chromium parsed all eight and completed playback; live VTT bytes match. The root live browser had captions disabled, so its zero loaded cues do not independently verify caption parsing. Local400px poster layout had no overflow. Full local decode/audio and UI receipts are retained below.
+
+`SUNO_MUSIC_BRIEF.md` contains the new copy-ready music direction, spoken narration and timing guide. It is a production brief, not a Suno submission or generated voice track. The film remains an original marketing draft, not a claim of final pdoom-level polish or physical-phone behavior.
+
 # Website continuation checkpoint — October 3, 2026
 
 Published source: `9c1c37a431aaf3689842684b67fa55e3e3a9fc30` (parent `45b6e23424364e44d583e9bdf434205a023c619c`). GitHub Pages deployment `37147871307` completed successfully.
