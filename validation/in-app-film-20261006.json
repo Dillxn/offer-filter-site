@@ -297,5 +297,40 @@
       ]
     },
     "testLaunchHelp": "passes all eight combinations (day and night, 1280 and 400 px, help and deep link), no page errors"
+  },
+  "live": {
+    "publishedCommit": "fd8ce60d74ea495e44e02ef96331366b75d8c0de",
+    "pagesRun": 37532310515,
+    "servedAfterSeconds": 15,
+    "bytesMatch": {
+      "checked": 37,
+      "mismatched": 0,
+      "note": "cache-busted fetches of https://offerfilter.org/ against the committed files"
+    },
+    "playback": [
+      {
+        "width": 1280,
+        "sync": -0.008,
+        "version": "v=20261006-app",
+        "overflow": 0,
+        "errors": [],
+        "modules": 8
+      },
+      {
+        "width": 400,
+        "sync": -0.008,
+        "version": "v=20261006-app",
+        "overflow": 0,
+        "errors": [],
+        "modules": 8
+      }
+    ],
+    "appMomentsDrawn": [
+      4.4,
+      10.4,
+      12.5,
+      14.9
+    ],
+    "scope": "Headless Chromium through the session proxy; not a physical phone"
   }
 }
