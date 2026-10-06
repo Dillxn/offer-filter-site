@@ -3,12 +3,18 @@
 
     python3 tools/build-legal.py                    # from ../dasher-offer-filter
     python3 tools/build-legal.py --app-repo PATH    # another checkout of the app repository
-    python3 tools/build-legal.py --check            # exit 1 if a page is out of date
+    python3 tools/build-legal.py --check            # exit 1 if a page is out of date or a text is still a draft
+    python3 tools/build-legal.py --allow-draft      # preview only: build from texts that are still drafts
 
 Re-run it whenever the app's legal texts change, and at every release, so the site shows the same words the app
 does. It writes terms/index.html, privacy/index.html and license/index.html (directory index files, so the clean
 URLs work on GitHub Pages). Privacy gets one extra section at the end, "This website", which is maintained here in
 WEBSITE_PRIVACY below.
+
+It refuses to build (and --check fails) while a text still carries a drafting note, such as "Draft of 6 October.
+Not legal advice; have a lawyer review before public release" or "not yet configured", and prints each such line.
+Published texts carry an effective date instead. --allow-draft builds anyway, for a local preview; pages built that
+way must not be deployed, and tools/test-launch-help.cjs fails on them.
 
 Only the Python standard library is used. The converter handles the Markdown the texts use and a little more
 (headings, paragraphs, nested lists, block quotes, fenced code, tables, rules, bold, italics, code, links and bare
@@ -25,8 +31,15 @@ import sys
 SITE = pathlib.Path(__file__).resolve().parents[1]
 ORIGIN = 'https://offerfilter.org'
 SOURCE_CODE = 'https://github.com/Dillxn/dasher-offer-filter'
+# The one private address, for privacy, deletion and security requests only (feedback stays anonymous). The same
+# address is on the home page's Help dialog, the install page and the 404 page, and the app's PRIVACY.md names it.
+CONTACT = 'privacy@offerfilter.org'
 
-WEBSITE_PRIVACY = """\
+# Notes written for the author while a text is being drafted. They must never reach the public pages.
+DRAFT_MARKERS = re.compile(r'have a lawyer|not legal advice|no attorney review|draft of \d|not yet configured'
+                           r'|to add before public release|\b(?:TODO|TBD|FIXME)\b', re.I)
+
+WEBSITE_PRIVACY = f"""\
 ## This website
 
 The sections above describe the app. This one covers offerfilter.org itself.
@@ -49,6 +62,10 @@ you directly. Please leave out customer names, addresses, payment, account or pa
 current version number from offerfilter.org.
 - **Tips and other links.** The tip links open Cash App or Venmo; the site sends them nothing and counts nothing. \
 Source-code links open GitHub. Those services handle your visit under their own policies.
+- **Contact.** For privacy, data deletion or security requests, email {CONTACT}. Unlike feedback, email isn't \
+anonymous: the developer sees your address and uses it only to answer you. To ask about feedback you sent, include \
+its reference: feedback has no name or account, so the reference is how it can be found. Please send everything else \
+as anonymous feedback.
 """
 
 PAGES = {
@@ -323,7 +340,9 @@ def page(slug_name, meta, title, intro, body, source_note):
 <title>{meta['title']} · Offer Filter</title>
 <meta name="description" content="{html.escape(meta['description'])}">
 <link rel="canonical" href="{ORIGIN}/{slug_name}/">
-<meta name="theme-color" content="#efe9db">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#efe9db" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#102032" media="(prefers-color-scheme: dark)">
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png?v={v}">
 <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg?v={v}">
 <link rel="apple-touch-icon" sizes="180x180" href="../assets/apple-touch-icon.png?v={v}">
@@ -346,6 +365,7 @@ def page(slug_name, meta, title, intro, body, source_note):
 <footer class="site-footer">
 <nav aria-label="Legal and source"><a href="../">Home</a><a href="../install/">Install</a><a href="../privacy/">Privacy</a><a href="../terms/">Terms</a><a href="../license/">License</a><a href="{SOURCE_CODE}">Source code (MIT)</a></nav>
 <p class="independent">Offer Filter is independent and isn’t affiliated with DoorDash.</p>
+<p class="contact">Privacy, data deletion or security: <a href="mailto:{CONTACT}">{CONTACT}</a></p>
 <div class="signature"><picture><source type="image/webp" srcset="../assets/jesus-loves-you-signature.webp?v={v}"><img src="../assets/jesus-loves-you-signature.png?v={v}" width="432" height="341" loading="lazy" decoding="async" alt="Jesus Loves You. We love each other because He loves us first. 1 John 4:19."></picture></div>
 </footer>
 </body>
@@ -353,13 +373,27 @@ def page(slug_name, meta, title, intro, body, source_note):
 '''
 
 
-def build(repo):
-    pages = {}
+def drafting_notes(name, text):
+    """'FILE:LINE: text' for every line of a source that still carries a note meant for its author."""
+    return [f'{name}:{n}: {line.strip()}' for n, line in enumerate(text.splitlines(), 1) if DRAFT_MARKERS.search(line)]
+
+
+def build(repo, allow_draft=False):
+    pages, notes = {}, []
     for name, meta in PAGES.items():
         source = repo / meta['file']
         if not source.is_file():
             sys.exit(f'build-legal: {source} not found; pass --app-repo or set OFFER_FILTER_APP_REPO')
-        text = source.read_text(encoding='utf-8')
+        notes += drafting_notes(meta['file'], source.read_text(encoding='utf-8'))
+    if notes:
+        print('\n'.join(notes), file=sys.stderr)
+        if not allow_draft:
+            sys.exit('build-legal: the lines above are drafting notes, so these texts are not ready to publish. The '
+                     'published texts carry an effective date instead ("Beta terms, effective <date>"). Ask for the final '
+                     'texts and re-run; --allow-draft builds a local preview only.')
+        print('build-legal: --allow-draft: building from draft texts. Do not deploy these pages.', file=sys.stderr)
+    for name, meta in PAGES.items():
+        text = (repo / meta['file']).read_text(encoding='utf-8')
         note = f"dasher-offer-filter/{meta['file']} (sha256 {hashlib.sha256(text.encode()).hexdigest()[:16]})"
         if name == 'license':
             title, body = plain_text(text)
@@ -388,11 +422,18 @@ def build(repo):
 def main():
     parser = argparse.ArgumentParser(description=__doc__.split('\n\n')[0])
     parser.add_argument('--app-repo', type=pathlib.Path, default=None, help='app repository checkout')
-    parser.add_argument('--check', action='store_true', help='compare only; exit 1 when a page is out of date')
+    parser.add_argument('--check', action='store_true',
+                        help='compare only; exit 1 when a page is out of date or a text is still a draft')
+    parser.add_argument('--allow-draft', action='store_true',
+                        help='build even though a text still carries drafting notes (local preview; never deploy)')
     args = parser.parse_args()
     repo = args.app_repo or pathlib.Path(os.environ.get('OFFER_FILTER_APP_REPO') or SITE.parent / 'dasher-offer-filter')
+    privacy = repo / PAGES['privacy']['file']
+    if privacy.is_file() and CONTACT not in privacy.read_text(encoding='utf-8'):
+        print(f'build-legal: warning: {PAGES["privacy"]["file"]} does not name {CONTACT}, the contact this site '
+              'shows; the test fails until both name the same address.', file=sys.stderr)
     stale = []
-    for path, text in build(repo).items():
+    for path, text in build(repo, args.allow_draft).items():
         current = path.read_text(encoding='utf-8') if path.is_file() else ''
         if current == text:
             print('current ' + str(path.relative_to(SITE)))

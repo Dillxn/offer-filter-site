@@ -1,6 +1,7 @@
 (() => {
   'use strict';
   const $ = id => document.getElementById(id);
+  const PAGE_URL = 'https://offerfilter.org/install/';
 
   // Who is reading: the app is Android-only, so say so to iPhone and computer visitors.
   const ua = navigator.userAgent || '';
@@ -8,9 +9,32 @@
   const ios = /iPhone|iPad|iPod/i.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
   const note = $('platform-note');
   if (ios) {
-    note.textContent = 'This is an Android app. Offer Filter isn’t available for iPhone or iPad.';
+    // An APK can't be opened on an iPhone or iPad: no download here, just a way to send this page to an Android phone.
+    note.textContent = 'This is an Android app. Offer Filter isn’t available for iPhone or iPad. To install it on an ' +
+      'Android phone, open offerfilter.org/install there, or send yourself the link.';
+    const share = document.createElement('button');
+    share.type = 'button';
+    share.className = 'button-secondary';
+    share.id = 'share-link';
+    share.textContent = navigator.share ? 'Share the link' : 'Copy the link';
+    share.addEventListener('click', async () => {
+      if (navigator.share) {
+        try { await navigator.share({title: 'Install Offer Filter', url: PAGE_URL}); } catch (error) { /* closed */ }
+        return;
+      }
+      try {
+        await navigator.clipboard.writeText(PAGE_URL);
+        share.textContent = 'Link copied';
+      } catch (error) {
+        share.textContent = 'Couldn’t copy; the address is offerfilter.org/install';
+      }
+    });
+    note.append(document.createElement('br'), share);
     note.hidden = false;
-  } else if (!android && !/Mobi/i.test(ua)) {
+    for (const id of ['download-apk', 'download-meta']) $(id).hidden = true;
+    return;
+  }
+  if (!android && !/Mobi/i.test(ua)) {
     note.innerHTML = 'On a computer? Open <strong>offerfilter.org/install</strong> on your Android phone, ' +
       'or scan this code with its camera.<img src="../assets/install-qr.svg?v=20261006" width="132" height="132" ' +
       'alt="QR code for offerfilter.org/install">';
@@ -27,10 +51,10 @@
     .then(response => response.ok ? response.json() : Promise.reject(new Error('release.json ' + response.status)))
     .then(release => {
       if (!release || !release.versionName || !(release.sizeBytes > 0)) return;
-      const size = formatSize(release.sizeBytes);
-      const button = $('download-apk');
-      button.lastChild.textContent = 'Download Offer Filter ' + release.versionName + ' · ' + size;
-      if (/^https:\/\//.test(release.apkUrl || '')) button.href = release.apkUrl;
+      const version = $('download-version');
+      version.textContent = release.versionName + ' · ' + formatSize(release.sizeBytes);
+      version.hidden = false;
+      if (/^https:\/\//.test(release.apkUrl || '')) $('download-apk').href = release.apkUrl;
       const released = release.date ? formatDate(release.date) : '';
       $('download-meta').textContent = 'Version ' + release.versionName + (released ? ', released ' + released : '') +
         '. Android 8 or later. A signed APK from Offer Filter’s update server, dash-offer-filter-build.onrender.com, ' +
@@ -39,11 +63,14 @@
         $('download-sha').textContent = release.sha256;
         $('download-check').hidden = false;
       }
+      // Until the upcoming beta is published, say so next to the button: parts of this guide are for it.
       const upcoming = $('whats-new');
       const pending = $('beta-pending');
       if (upcoming && pending && Number(release.versionCode) < Number(upcoming.dataset.versionCode)) {
-        pending.textContent = upcoming.dataset.versionName + ' is on its way. Until it’s published, the download is ' +
-          release.versionName + ', which doesn’t have these yet; once installed, Offer Filter updates itself.';
+        const next = upcoming.dataset.versionName;
+        pending.textContent = next + ' is on its way. Until it’s published, this download is ' + release.versionName +
+          ': it works differently in places and doesn’t have the parts marked “New in ' + next + '”. Once ' +
+          'installed, Offer Filter updates itself.';
         pending.hidden = false;
       }
     })

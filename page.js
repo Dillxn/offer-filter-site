@@ -17,6 +17,9 @@
   }
   film.poster = square ? film.dataset.posterSquare : film.dataset.posterWide;
   play.hidden = false;
+  // The player's controls appear once the film plays. Before that (and after it ends) they would cover the poster's
+  // last line, "Independent app. Not affiliated with DoorDash." The HTML keeps them for visitors without JavaScript.
+  film.controls = false;
 
   // Captions: a visible switch that follows the player's own captions menu too. Its name stays "Captions"; the
   // state is aria-pressed (the on/off word is for sighted visitors only).
@@ -119,8 +122,8 @@
     offline: 'You’re offline. Your message is still here; send it when you have signal.',
     network: 'Couldn’t reach the feedback service. Your message is still here; check your connection and try again.',
     timeout: 'No answer after 15 seconds. Your message is still here; try again when your signal is better.',
-    rateLimited: 'Too many sends from this network — try again in a few minutes.',
-    rejected: 'Couldn’t be accepted — shorten it?',
+    rateLimited: 'Too many messages from this connection. Your message is still here; try again in about 10 minutes.',
+    rejected: 'That message couldn’t be accepted. Shorten it and try again; your text is still here.',
     unavailable: 'The feedback service isn’t available right now. Your message is still here; please try again later.',
   };
   let sending = false;
@@ -195,24 +198,48 @@
     }
   });
 
-  // Film.
-  play.addEventListener('click', () => {
-    film.play().catch(() => { play.hidden = false; syncMotion(); });
+  // A privacy question that needs an answer goes to the private address; feedback can't be answered.
+  const category = $('feedback-category'), hint = $('feedback-hint');
+  const generalHint = hint.textContent;
+  category.addEventListener('change', () => {
+    if (category.value === 'privacy') {
+      hint.innerHTML = 'Need an answer, or something deleted? Email ' +
+        '<a href="mailto:privacy@offerfilter.org">privacy@offerfilter.org</a> instead.';
+    } else {
+      hint.textContent = generalHint;
+    }
   });
-  film.addEventListener('play', () => { play.hidden = true; syncMotion(); });
+
+  // Film.
+  const startFilm = () => film.play().catch(() => { play.hidden = false; syncMotion(); });
+  play.addEventListener('click', startFilm);
+  film.addEventListener('click', () => { if (!film.controls) startFilm(); });
+  film.addEventListener('play', () => { play.hidden = true; film.controls = true; syncMotion(); });
   film.addEventListener('pause', syncMotion);
   film.addEventListener('error', syncMotion);
   film.addEventListener('ended', () => {
+    film.controls = false;
     play.hidden = false;
     play.querySelector('b').textContent = 'Replay film';
     play.setAttribute('aria-label', 'Replay the Offer Filter film');
     syncMotion();
   });
 
-  // Sky.
-  $('sky-toggle').addEventListener('click', () => {
-    const night = document.body.classList.toggle('night');
-    $('sky-toggle').setAttribute('aria-label', night ? 'Switch to day' : 'Switch to night');
+  // Sky: night when the phone or computer is in dark mode (a script at the top of <body> sets it before the first
+  // paint), following the system's changes until the visitor chooses with the sky button. Nothing is stored.
+  const skyButton = $('sky-toggle'), themeColor = document.querySelector('meta[name="theme-color"]');
+  const darkScheme = matchMedia('(prefers-color-scheme: dark)');
+  let skyChosen = false;
+  function labelSky(night) {
+    skyButton.setAttribute('aria-label', night ? 'Switch to day' : 'Switch to night');
+    if (themeColor) themeColor.content = night ? '#102032' : '#efe9db';
+  }
+  function setSky(night) {
+    document.body.classList.toggle('night', night);
+    labelSky(night);
     window.setSceneNight?.(night);
-  });
+  }
+  labelSky(document.body.classList.contains('night'));
+  skyButton.addEventListener('click', () => { skyChosen = true; setSky(!document.body.classList.contains('night')); });
+  darkScheme.addEventListener?.('change', event => { if (!skyChosen) setSky(event.matches); });
 })();

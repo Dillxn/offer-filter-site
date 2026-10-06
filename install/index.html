@@ -7,12 +7,14 @@
 <title>Install Offer Filter · free Android beta for Dashers</title>
 <meta name="description" content="Download Offer Filter, the free Android offer filter for Dashers, and set it up step by step: Chrome’s download warning, Play Protect, Samsung Auto Blocker, Android’s restricted settings and updates. Public beta in the Cincinnati area.">
 <link rel="canonical" href="https://offerfilter.org/install/">
-<meta name="theme-color" content="#efe9db">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#efe9db" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#102032" media="(prefers-color-scheme: dark)">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Offer Filter">
 <meta property="og:url" content="https://offerfilter.org/install/">
 <meta property="og:title" content="Install Offer Filter — free Android beta for Dashers">
-<meta property="og:description" content="Download the app and follow the exact setup steps for Android 8–16, Samsung and Pixel. Public beta in the Cincinnati area.">
+<meta property="og:description" content="Download the app and follow the setup steps for Android 8–16. Public beta in the Cincinnati area.">
 <meta property="og:image" content="https://offerfilter.org/assets/film-poster-wide.jpg">
 <meta property="og:image:width" content="1920">
 <meta property="og:image:height" content="1080">
@@ -33,12 +35,13 @@
 <main id="main" class="doc">
 <p class="eyebrow">Android 8–16 · Free public beta · Cincinnati area</p>
 <h1>Install Offer Filter</h1>
-<p class="lede">Offer Filter is a free Android app for Dashers: set your minimums, and it declines Dasher offers below them. Setting it up takes about ten minutes, once, while you’re parked. Every screen your phone may show is below, in order.</p>
+<p class="lede">Offer Filter is a free Android app for Dashers: set your minimums, and it declines Dasher offers below them. Setting it up takes about ten minutes, once, while you’re parked. The screens you’re most likely to see are below, in order.</p>
 
 <div class="download" id="download">
 <p class="platform-note" id="platform-note" hidden></p>
-<a class="button-primary" id="download-apk" href="https://dash-offer-filter-build.onrender.com/OfferFilter.apk"><span aria-hidden="true">↓</span>Download Offer Filter</a>
+<a class="button-primary" id="download-apk" href="https://dash-offer-filter-build.onrender.com/OfferFilter.apk"><span aria-hidden="true">↓</span><span class="download-text"><span>Download Offer Filter</span> <span class="download-version" id="download-version" hidden></span></span></a>
 <p class="download-meta" id="download-meta">Android 8 or later. A signed APK from Offer Filter’s update server, dash-offer-filter-build.onrender.com, the same place the app gets its own updates.</p>
+<p class="platform-note" id="beta-pending" hidden></p>
 <details id="download-check" hidden><summary>Check the file</summary><p>SHA-256: <code id="download-sha"></code></p></details>
 </div>
 
@@ -46,8 +49,9 @@
 <h2 id="before-title">Before you install</h2>
 <ul>
 <li><strong>It’s a beta.</strong> It can misread an offer, decline one you wanted, or, if you turn on Auto-accept, accept one you didn’t want. Check your Dasher history.</li>
-<li><strong>Declines can lower your acceptance rate.</strong> Autopilot’s acceptance-rate goal helps, but nothing here guarantees a rate or any earnings.</li>
+<li><strong>Declines can lower your acceptance rate.</strong> Autopilot’s acceptance-rate goal (new in 0.5.0) helps, but nothing here guarantees a rate or any earnings.</li>
 <li><strong>It’s independent.</strong> Offer Filter isn’t made, endorsed or supported by DoorDash. Using it may conflict with DoorDash’s terms, and DoorDash could limit or deactivate your account.</li>
+<li><strong>It needs two Android permissions.</strong> Accessibility, to read Dasher’s screen and tap Decline, and notification access, to see Dasher’s offer alerts. Peek, on by default, briefly opens Dasher when an offer arrives while another app is in front; you can turn it off.</li>
 <li><strong>Set it up while parked.</strong> Don’t handle your phone while driving.</li>
 </ul>
 <p>The app shows its <a href="../terms/">terms</a> and asks you to accept them before it does anything. <a href="../privacy/">Privacy</a> explains what it reads and keeps.</p>
@@ -98,8 +102,8 @@
 <h2 id="first-dash">Before your first dash</h2>
 <ol class="steps" start="11">
 <li><h3>Set your minimums</h3>
-<p>Choose your minimum pay, pay per mile, pay per minute, and items for shopping orders, plus the most stops you’ll take. Offers below a minimum are declined; the rest are left to you. Auto-accept stays off unless you turn it on separately and confirm.</p></li>
-<li><h3>Turn on Autopilot</h3>
+<p>Choose your minimum pay, pay per mile, pay per minute, and pay per item on shopping orders, plus the most stops you’ll take. Offers below a minimum are declined; the rest are left to you. Auto-accept stays off unless you turn it on separately and confirm.</p></li>
+<li><h3>Turn on Autopilot <span class="since">New in 0.5.0</span></h3>
 <p>Autopilot asks what matters more; an acceptance rate of 70% is suggested. It then adjusts how strict the filter is from how often offers arrive, what they pay for your time, and your goal, reading your current acceptance rate from Dasher’s own decline confirmation. Long-press Autopilot to change the goal later. It’s new: watch how it does on your first dashes.</p></li>
 <li><h3>Dash in Earn per Offer</h3>
 <p>Offer Filter works with <strong>Earn per Offer</strong>. <strong>Earn by Time</strong> isn’t supported in this beta, so pause Offer Filter if you dash by time.</p></li>
@@ -117,20 +121,19 @@
 <ol class="steps" start="15">
 <li><h3>Pause any time</h3>
 <p>Tap the mascot on Offer Filter’s home screen to pause or resume. If anything seems off, pause it and use Dasher directly. To stop completely, turn off Offer Filter’s Accessibility and notification access, or uninstall it.</p>
-<p class="note">During a dash Offer Filter keeps your screen from timing out. The power button still locks it, and it lets the screen sleep when battery saver is on or the battery is low. Peek waits while the phone is locked; unlock while an offer is still up and it picks it back up.</p></li>
+<p class="note"><span class="since">New in 0.5.0</span> During a dash Offer Filter keeps your screen from timing out. The power button still locks it, and it lets the screen sleep when battery saver is on or the battery is low. Peek waits while the phone is locked; unlock while an offer is still up and it picks it back up.</p></li>
 <li><h3>Tell us what happened</h3>
-<p>Use <strong>Send anonymous feedback</strong> in Offer Filter’s Settings, or the <a href="../#feedback">feedback form</a> on this site. No account needed. Your phone model and Android version help; leave out customer names, addresses and payment details. We can’t reply to anonymous messages.</p></li>
+<p>Use <strong>Send anonymous feedback</strong> in Offer Filter’s Settings (new in 0.5.0), or the <a href="../#feedback">feedback form</a> on this site. No account needed. Your phone model and Android version help; leave out customer names, addresses and payment details. We can’t reply to anonymous messages.</p></li>
 </ol>
 
 <section id="whats-new" data-version-code="80" data-version-name="0.5.0" aria-labelledby="whats-new-title">
 <h2 id="whats-new-title">What’s in the 0.5.0 beta</h2>
-<p class="platform-note" id="beta-pending" hidden></p>
 <ul>
 <li><strong>Autopilot.</strong> Adjusts how strict the filter is from how often offers arrive, what they pay for your time, and an acceptance-rate goal you choose at setup (70% suggested), using your real acceptance rate from Dasher’s decline confirmation.</li>
-<li><strong>Simpler rules.</strong> Strict minimums for pay, pay per mile, pay per minute and items on shopping orders, plus a maximum number of stops.</li>
+<li><strong>Simpler rules.</strong> Strict minimums for pay, pay per mile, pay per minute and pay per item on shopping orders, plus a maximum number of stops.</li>
 <li><strong>Better Peek.</strong> It picks an offer back up after you unlock, and your phone doesn’t time out mid-dash.</li>
 <li><strong>Fewer notifications.</strong> No duplicate cards when Dasher’s own notification already has the offer.</li>
-<li><strong>Feedback without an account.</strong> Send it from the app or this site; attaching anonymous diagnostics is optional and off unless you choose it.</li>
+<li><strong>Feedback without an account.</strong> Send it from the app or this site. Optional diagnostics: turn on <strong>Attach masked diagnostics</strong> for one message, or <strong>Share anonymous diagnostics after each dash</strong> in Settings. Both start off.</li>
 </ul>
 <p class="note">It’s a beta: it can misread an offer, and it makes no promise about earnings or your acceptance rate.</p>
 </section>
@@ -138,6 +141,7 @@
 <footer class="site-footer">
 <nav aria-label="Legal and source"><a href="../">Home</a><a href="../#help">Help</a><a href="../privacy/">Privacy</a><a href="../terms/">Terms</a><a href="../license/">License</a><a href="https://github.com/Dillxn/dasher-offer-filter">Source code (MIT)</a></nav>
 <p class="independent">Offer Filter is independent and isn’t affiliated with DoorDash.</p>
+<p class="contact">Privacy, data deletion or security: <a href="mailto:privacy@offerfilter.org">privacy@offerfilter.org</a></p>
 <div class="signature"><picture><source type="image/webp" srcset="../assets/jesus-loves-you-signature.webp?v=20261006"><img src="../assets/jesus-loves-you-signature.png?v=20261006" width="432" height="341" loading="lazy" decoding="async" alt="Jesus Loves You. We love each other because He loves us first. 1 John 4:19."></picture></div>
 </footer>
 <script src="install.js?v=20261006"></script>

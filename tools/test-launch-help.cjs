@@ -10,6 +10,15 @@
  * (#help, #feedback, ...), reduced motion and the 30 fps cap, and that a phone fetches one poster and one small
  * signature image.
  *
+ * It also checks dark mode (the home page starts at night; the reading pages switch palette, with readable contrast),
+ * the iPhone visitor's path, the film's controls, and that the landscape copies its still backdrop instead of
+ * redrawing it.
+ *
+ * Release gates come last. The site may be deployed only when they pass: the legal pages carry no drafting notes,
+ * the app's own privacy text names the same private contact as the site, and once assets/release.json is 0.5.0 or
+ * later, the terms and privacy describe Autopilot and drop the retired area mode and 0.4.73 wording. A failed gate
+ * fails the run with "NOT READY TO DEPLOY", after every other check has run and passed.
+ *
  * Nothing leaves this machine: every request that is not to the local server is answered by a fake or aborted, so
  * the real feedback endpoint never receives anything. Needs Playwright with Chromium (set CHROMIUM_EXECUTABLE_PATH
  * to use a specific browser binary).
@@ -22,6 +31,11 @@ const path = require('node:path');
 const root = path.resolve(__dirname, '..');
 const FEEDBACK = 'https://zlnfvqyyjsltmkmmpgzp.supabase.co/functions/v1/offer-filter-feedback';
 const APK = 'https://dash-offer-filter-build.onrender.com/OfferFilter.apk';
+const CONTACT = 'privacy@offerfilter.org';
+// The same notes tools/build-legal.py refuses (DRAFT_MARKERS there).
+const DRAFT_MARKERS = /have a lawyer|not legal advice|no attorney review|draft of \d|not yet configured|to add before public release|\b(?:TODO|TBD|FIXME)\b/i;
+const AUTOPILOT_VERSION_CODE = 80; // 0.5.0
+const IPHONE_UA = 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1';
 const PAGES = ['/', '/install/', '/privacy/', '/terms/', '/license/', '/404.html'];
 const WIDTHS = [360, 1366];
 const MIME = {
@@ -79,10 +93,40 @@ const smallText = () => {
   return small;
 };
 
+// Contrast of the reading pages' text against every background it sits on (the sky gradient's stops, the callout,
+// the platform note, the primary button, the 0.5.0 tag). Colors come from the page's own CSS variables.
+const readingContrast = () => {
+  const probe = document.createElement('i');
+  document.body.appendChild(probe);
+  const rgb = value => {
+    probe.style.color = '';
+    probe.style.color = value;
+    const [r, g, b] = getComputedStyle(probe).color.match(/[\d.]+/g).map(Number);
+    return [r, g, b];
+  };
+  const lum = c => c.map(v => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; })
+    .reduce((sum, v, i) => sum + v * [0.2126, 0.7152, 0.0722][i], 0);
+  const ratio = (a, b) => { const x = lum(rgb(a)), y = lum(rgb(b)); return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05); };
+  const css = getComputedStyle(document.documentElement);
+  const v = name => css.getPropertyValue(name).trim();
+  const out = {};
+  const check = (name, fg, backgrounds) => { out[name] = +Math.min(...backgrounds.map(bg => ratio(fg, bg))).toFixed(2); };
+  const sky = [v('--sky-top'), v('--sky-mid'), v('--sky-low')];
+  check('text', v('--text'), [...sky, v('--sand')]);
+  check('muted', v('--muted'), [...sky, v('--sand')]);
+  check('links and headings', v('--ink'), [...sky, v('--sand'), v('--sage')]);
+  check('button', v('--on-ink'), [v('--ink'), v('--ink-hover')]);
+  check('note and tag', v('--ink'), [v('--sage')]);
+  probe.remove();
+  return out;
+};
+
 const release = JSON.parse(fs.readFileSync(path.join(root, 'assets/release.json'), 'utf8'));
 const releaseSize = release.sizeBytes >= 1e6 ? (release.sizeBytes / 1e6).toFixed(1) + ' MB' : Math.round(release.sizeBytes / 1e3) + ' KB';
 const results = [];
 const pass = (name, detail) => { results.push(detail === undefined ? name : `${name}: ${detail}`); };
+const gates = {passed: [], failed: []};
+const gate = (name, ok, detail) => { (ok ? gates.passed : gates.failed).push(ok || !detail ? name : `${name}: ${detail}`); };
 
 async function main() {
   const {chromium} = loadPlaywright();
@@ -244,9 +288,38 @@ async function main() {
       assert.equal(release.apkUrl, APK);
       assert.equal(await page.locator('#download-sha').textContent(), release.sha256);
       assert.match(await page.locator('#download-meta').textContent(), new RegExp('Version ' + release.versionName.replace(/\./g, '\\.')));
+      // At 360 px the version and size sit on their own line, whole, under "Download Offer Filter".
+      const lines = await page.evaluate(() => {
+        const [name, version] = document.querySelectorAll('#download-apk .download-text > span');
+        const a = name.getBoundingClientRect(), b = version.getBoundingClientRect();
+        return {nameBottom: a.bottom, versionTop: b.top, versionLines: Math.round(b.height / parseFloat(getComputedStyle(version).lineHeight))};
+      });
+      assert(lines.versionTop >= lines.nameBottom - 1, 'version on its own line: ' + JSON.stringify(lines));
+      assert.equal(lines.versionLines, 1, 'version and size kept on one line: ' + JSON.stringify(lines));
+      // While the published app is older than the guide's beta, the note sits right under the download facts.
       const upcoming = Number(await page.locator('#whats-new').getAttribute('data-version-code'));
       assert.equal(await page.locator('#beta-pending').isVisible(), release.versionCode < upcoming, 'pending-release note');
+      assert.equal(await page.evaluate(() => document.getElementById('download-meta').nextElementSibling.id), 'beta-pending');
+      if (release.versionCode < upcoming) {
+        const note = await page.locator('#beta-pending').textContent();
+        assert(note.includes(release.versionName) && note.includes('New in 0.5.0'), 'pending note: ' + note);
+        const gap = await page.evaluate(() => document.getElementById('beta-pending').getBoundingClientRect().top - document.getElementById('download-apk').getBoundingClientRect().bottom);
+        assert(gap < 200, 'pending note close to the button: ' + gap);
+      }
       await ctx.close();
+      // iPhone: no APK button (it can't be installed there), a way to send the page to an Android phone instead.
+      const iphone = await context({viewport: {width: 390, height: 844}, userAgent: IPHONE_UA, isMobile: true, hasTouch: true});
+      await iphone.grantPermissions(['clipboard-read', 'clipboard-write'], {origin: base});
+      const ios = await iphone.newPage();
+      await ios.addInitScript(() => { Object.defineProperty(navigator, 'share', {value: undefined}); });
+      await ios.goto(base + '/install/', {waitUntil: 'networkidle'});
+      assert(await ios.locator('#platform-note').isVisible(), 'iPhone note');
+      assert.match(await ios.locator('#platform-note').textContent(), /isn’t available for iPhone or iPad/);
+      assert(!(await ios.locator('#download-apk').isVisible()) && !(await ios.locator('#download-meta').isVisible()), 'no APK button on iPhone');
+      await ios.click('#share-link');
+      await ios.waitForFunction(() => document.getElementById('share-link').textContent === 'Link copied');
+      assert.equal(await ios.evaluate(() => navigator.clipboard.readText()), 'https://offerfilter.org/install/');
+      await iphone.close();
       const noJs = await context({viewport: {width: 360, height: 800}, javaScriptEnabled: false});
       const plain = await noJs.newPage();
       await plain.goto(base + '/', {waitUntil: 'load'});
@@ -255,7 +328,7 @@ async function main() {
       assert.equal(await plain.locator('#download-apk').getAttribute('href'), APK);
       assert.match(await plain.locator('#download-apk').textContent(), /Download Offer Filter/);
       await noJs.close();
-      pass('download', `"${label}" → ${APK}; works without JavaScript`);
+      pass('download', `"${label}" → ${APK}, version on its own line; pending note under it; works without JavaScript; iPhone gets a link to share instead`);
     }
 
     // 5. Install steps, visible risk text, legal pages and the links to them.
@@ -270,9 +343,19 @@ async function main() {
         'Allow Offer Filter to send you notifications?', 'Updates can’t install', 'Autopilot', '70%', 'Earn per Offer',
         'Earn by Time', 'Dasher full screen', 'Google Maps or Waze full screen', 'Peek', 'split screen',
         'for planning', 'Tap the mascot', 'Send anonymous feedback', 'feedback form', 'Android 8',
-        'acceptance rate', 'DoorDash', 'driving']) {
+        'acceptance rate', 'DoorDash', 'driving', 'pay per item on shopping orders', 'It needs two Android permissions',
+        'Accessibility, to read Dasher’s screen and tap Decline', 'notification access, to see Dasher’s offer alerts',
+        'Peek, on by default', 'New in 0.5.0', 'Attach masked diagnostics', 'Share anonymous diagnostics after each dash',
+        'Both start off', 'The screens you’re most likely to see']) {
         assert(text.includes(phrase), 'install page lacks: ' + phrase);
       }
+      for (const stale of ['items on shopping orders', 'items for shopping orders', 'Every screen your phone may show', 'anonymous diagnostics is optional']) {
+        assert(!text.includes(stale), 'install page still says: ' + stale);
+      }
+      assert(!/exact setup steps/.test(await page.locator('meta[property="og:description"]').getAttribute('content')), 'og:description overclaims');
+      // "Before you install" names the two permissions and Peek before anyone installs.
+      const before = await page.locator('#before-title + ul').innerText();
+      assert(/Accessibility/.test(before) && /notification access/.test(before) && /Peek, on by default/.test(before), 'Before you install: permissions and Peek');
       const steps = await page.locator('ol.steps > li').count();
       assert(steps >= 16, 'install steps: ' + steps);
       // Numbering continues across the guide's sections (each list's start follows the previous list).
@@ -283,7 +366,7 @@ async function main() {
       for (const link of ['../terms/', '../privacy/', '../license/']) assert(await page.locator(`a[href="${link}"]`).count(), 'install page links ' + link);
       for (const [pathname, phrases] of [
         ['/terms/', ['terms of use', 'Acceptance-rate risk', 'No warranty']],
-        ['/privacy/', ['This website', 'GitHub Pages', 'No cookies, no analytics', 'Supabase', 'Cloudflare', '90 days', 'Claude', 'ChatGPT/Codex', 'Cash App']],
+        ['/privacy/', ['This website', 'GitHub Pages', 'No cookies, no analytics', 'Supabase', 'Cloudflare', '90 days', 'Claude', 'ChatGPT/Codex', 'Cash App', 'Contact.', CONTACT]],
         ['/license/', ['MIT License', 'Permission is hereby granted', 'Dillxn/dasher-offer-filter']],
       ]) {
         await page.goto(base + pathname, {waitUntil: 'networkidle'});
@@ -302,8 +385,27 @@ async function main() {
       const copy = await page.evaluate(() => document.body.textContent);
       assert(!/GitHub account/i.test(copy), 'no GitHub-account copy');
       assert(copy.includes('No account needed'), 'No account needed');
+      // The home page doesn't read release.json, so what only 0.5.0 has says so; the rule is pay per item.
+      const about = await page.locator('#about-dialog').textContent();
+      assert(about.includes('pay per item on shopping orders') && about.includes('From 0.5.0: Autopilot'), 'About wording');
+      const help = await page.locator('#help-dialog').textContent();
+      assert(help.includes('From 0.5.0: turn on Autopilot'), 'Help step 4 says Autopilot is 0.5.0');
+      assert(help.includes('In Offer Filter, tap the mascot on its home screen'), 'Help names which mascot');
+      assert(!/items on shopping orders|items for shopping orders/.test(copy), 'home page item wording');
+      // The home page says it's independent, in the footer, readable size.
+      const independent = page.locator('footer .independent');
+      assert.equal((await independent.textContent()).trim(), 'Offer Filter is independent and isn’t affiliated with DoorDash.');
+      assert.equal(await independent.evaluate(el => getComputedStyle(el).fontSize), '13px');
+      // One private address, for privacy, deletion and security only, on the Help dialog and every reading page.
+      assert(await page.locator(`#help-dialog a[href="mailto:${CONTACT}"]`).count(), 'Help names the private contact');
+      for (const pathname of ['/install/', '/privacy/', '/terms/', '/license/', '/404.html']) {
+        await page.goto(base + pathname, {waitUntil: 'domcontentloaded'});
+        assert.equal(await page.locator(`.site-footer .contact a[href="mailto:${CONTACT}"]`).count(), 1, pathname + ' footer contact');
+        const mail = await page.evaluate(() => [...document.querySelectorAll('a[href^="mailto:"]')].map(a => a.getAttribute('href')));
+        assert(mail.every(href => href === 'mailto:' + CONTACT), pathname + ' mail links: ' + mail);
+      }
       await ctx.close();
-      pass('content', `${steps} install steps, risk text at ${risk.size}px, terms/privacy/license present and linked`);
+      pass('content', `${steps} install steps, risk text at ${risk.size}px, terms/privacy/license present and linked; 0.5.0 marked; pay per item; independence line and private contact on every page`);
     }
 
     // 6. Feedback: each response maps to an honest message; text is kept on failure; nothing real is sent.
@@ -350,9 +452,9 @@ async function main() {
 
       const message = '  The pass chime played twice.  ';
       const cases = [
-        ['rate', 'Too many sends from this network — try again in a few minutes.'],
-        ['invalid', 'Couldn’t be accepted — shorten it?'],
-        ['large', 'Couldn’t be accepted — shorten it?'],
+        ['rate', 'Too many messages from this connection. Your message is still here; try again in about 10 minutes.'],
+        ['invalid', 'That message couldn’t be accepted. Shorten it and try again; your text is still here.'],
+        ['large', 'That message couldn’t be accepted. Shorten it and try again; your text is still here.'],
         ['server', 'The feedback service isn’t available right now. Your message is still here; please try again later.'],
         ['network', 'Couldn’t reach the feedback service. Your message is still here; check your connection and try again.'],
       ];
@@ -387,6 +489,12 @@ async function main() {
       const disclosure = await page.locator('#feedback-dialog').innerText();
       assert(disclosure.includes('AI assistants such as Anthropic’s Claude or OpenAI’s ChatGPT/Codex'), 'AI-review disclosure');
       assert(disclosure.includes('No account needed') && !/GitHub/.test(disclosure), 'accountless copy');
+      // Choosing Privacy points to the private address (feedback can't be answered); other types restore the hint.
+      const hint = page.locator('#feedback-hint');
+      await page.selectOption('#feedback-category', 'privacy');
+      assert(await page.locator(`#feedback-hint a[href="mailto:${CONTACT}"]`).count(), 'privacy hint names the contact');
+      await page.selectOption('#feedback-category', 'general');
+      assert.equal(await hint.textContent(), 'Your phone model and Android version help.');
       assert.deepEqual(errors.filter(e => !/net::ERR_INTERNET_DISCONNECTED|net::ERR_FAILED|Failed to load resource/.test(e)), [], 'feedback page errors');
       await ctx.close();
       pass('feedback', `whitespace, counter, 201/429/400/413/502/network/timeout/offline mapped; ${sent.length} faked sends`);
@@ -451,25 +559,49 @@ async function main() {
       const pressed = await page.locator('#captions-toggle').getAttribute('aria-pressed');
       await page.click('#captions-toggle');
       assert.notEqual(await page.locator('#captions-toggle').getAttribute('aria-pressed'), pressed, 'captions toggle');
+      // The player's controls stay off the poster (and its "Not affiliated with DoorDash" line) until the film plays,
+      // and leave again when it ends. Without JavaScript the HTML's own controls remain.
+      assert.match(fs.readFileSync(path.join(root, 'index.html'), 'utf8'), /<video id="film" controls /, 'controls without JavaScript');
+      const film = page.locator('#film');
+      assert.equal(await film.evaluate(v => v.controls), false, 'no controls over the poster');
+      await film.evaluate(v => v.dispatchEvent(new Event('play')));
+      assert.equal(await film.evaluate(v => v.controls), true, 'controls while the film plays');
+      await film.evaluate(v => v.dispatchEvent(new Event('ended')));
+      assert.equal(await film.evaluate(v => v.controls), false, 'controls leave when it ends');
+      assert.equal(await page.locator('#film-play').textContent(), '▶Replay film');
       assert.deepEqual(errors, [], 'dialog errors');
       await ctx.close();
-      pass('dialogs', 'labelled; Tab/Enter/Escape; #help/#feedback addresses; Feedback→Help; Back closes; captions switch');
+      pass('dialogs', 'labelled; Tab/Enter/Escape; #help/#feedback addresses; Feedback→Help; Back closes; captions switch; film controls only while playing');
     }
 
     // 8. Motion: reduced motion stops the landscape; otherwise it draws at most ~30 frames a second.
     {
+      // A frame sets the page canvas's scale once; gradients on the page canvas mean the still backdrop was redrawn
+      // instead of copied from its offscreen canvas.
       const countDraws = () => {
         window.__draws = 0;
-        const original = CanvasRenderingContext2D.prototype.setTransform;
-        CanvasRenderingContext2D.prototype.setTransform = function (...args) {
+        window.__gradients = 0;
+        const proto = CanvasRenderingContext2D.prototype;
+        const original = proto.setTransform;
+        proto.setTransform = function (...args) {
           if (this.canvas && this.canvas.id === 'landscape') window.__draws++;
           return original.apply(this, args);
         };
+        for (const name of ['createLinearGradient', 'createRadialGradient']) {
+          const create = proto[name];
+          proto[name] = function (...args) {
+            if (this.canvas && this.canvas.id === 'landscape') window.__gradients++;
+            return create.apply(this, args);
+          };
+        }
       };
+      let gradients = 0;
       const measure = async page => {
-        const start = await page.evaluate(() => window.__draws);
+        const start = await page.evaluate(() => [window.__draws, window.__gradients]);
         await page.waitForTimeout(2000);
-        return (await page.evaluate(() => window.__draws)) - start;
+        const end = await page.evaluate(() => [window.__draws, window.__gradients]);
+        gradients = end[1] - start[1];
+        return end[0] - start[0];
       };
       const reduced = await context({viewport: {width: 1366, height: 860}, reducedMotion: 'reduce'});
       await reduced.addInitScript(countDraws);
@@ -488,14 +620,78 @@ async function main() {
       await page.goto(base + '/', {waitUntil: 'networkidle'});
       const draws = await measure(page);
       assert(draws >= 4 && draws <= 66, `about 30 fps: ${draws} draws in 2 s`);
+      assert.equal(gradients, 0, 'the still backdrop is copied, not redrawn, each frame');
       await page.click('#motion-toggle');
       assert.equal(await measure(page), 0, 'Pause motion stops it');
       await moving.close();
-      pass('motion', `reduced motion: 0 draws; running: ${draws} draws in 2 s (cap 60); Pause motion: 0`);
+      pass('motion', `reduced motion: 0 draws; running: ${draws} draws in 2 s (cap 60), backdrop copied (0 gradients); Pause motion: 0`);
+    }
+
+    // 9. Dark mode: the home page starts at night; the reading pages switch palette and keep readable contrast.
+    {
+      const dark = await context({viewport: {width: 360, height: 800}, colorScheme: 'dark'});
+      const page = await dark.newPage();
+      const errors = watch(page);
+      await page.goto(base + '/', {waitUntil: 'networkidle'});
+      assert(await page.evaluate(() => document.body.classList.contains('night')), 'home page starts at night');
+      assert.equal(await page.locator('#sky-toggle').getAttribute('aria-label'), 'Switch to day');
+      assert.equal(await page.locator('meta[name="theme-color"]').getAttribute('content'), '#102032');
+      const skyTop = await page.evaluate(() => [...document.getElementById('landscape').getContext('2d').getImageData(4, 4, 1, 1).data]);
+      assert(skyTop[0] < 60 && skyTop[1] < 70 && skyTop[2] < 90, 'night sky drawn from the start: ' + skyTop);
+      await page.click('#sky-toggle');
+      assert(!(await page.evaluate(() => document.body.classList.contains('night'))), 'the sky button still switches to day');
+      const contrast = {};
+      for (const scheme of ['dark', 'light']) {
+        await page.emulateMedia({colorScheme: scheme});
+        await page.goto(base + '/install/', {waitUntil: 'networkidle'});
+        contrast[scheme] = await page.evaluate(readingContrast);
+        for (const [name, value] of Object.entries(contrast[scheme])) assert(value >= 4.5, `${scheme} ${name} contrast ${value}`);
+        const filter = await page.locator('.signature img').evaluate(img => getComputedStyle(img).filter);
+        assert.equal(filter !== 'none', scheme === 'dark', `${scheme}: signature ${filter}`);
+      }
+      assert.deepEqual(errors, [], 'dark mode errors');
+      await dark.close();
+      pass('dark mode', `home starts at night; reading pages at least ${Math.min(...Object.values(contrast.dark))}:1 dark, ${Math.min(...Object.values(contrast.light))}:1 light`);
+    }
+
+    // Release gates: what must be true of the published texts before this site is deployed.
+    {
+      const ctx = await context({viewport: {width: 1366, height: 860}});
+      const page = await ctx.newPage();
+      const text = {};
+      for (const pathname of ['/terms/', '/privacy/']) {
+        await page.goto(base + pathname, {waitUntil: 'domcontentloaded'});
+        text[pathname] = await page.locator('main').innerText();
+        const notes = text[pathname].split('\n').filter(line => DRAFT_MARKERS.test(line));
+        gate(`${pathname} carries no drafting notes`, notes.length === 0, notes.map(line => line.slice(0, 160)).join(' | '));
+      }
+      const appPrivacy = await page.evaluate(() => {
+        const range = document.createRange();
+        range.setStartBefore(document.querySelector('main').firstChild);
+        range.setEndBefore(document.getElementById('this-website'));
+        return range.toString();
+      });
+      gate(`the app's privacy text names ${CONTACT}, the site's private contact`, appPrivacy.includes(CONTACT),
+        `PRIVACY.md in the app repository doesn't mention ${CONTACT}`);
+      if (release.versionCode >= AUTOPILOT_VERSION_CODE) {
+        for (const pathname of ['/terms/', '/privacy/']) {
+          const stale = ['compensating', '0.4.73'].filter(word => text[pathname].includes(word));
+          gate(`${pathname} describes Autopilot (release.json is ${release.versionName})`, text[pathname].includes('Autopilot'), 'no mention of Autopilot');
+          gate(`${pathname} drops retired wording`, stale.length === 0, 'still says: ' + stale.join(', '));
+        }
+      } else {
+        gate(`Autopilot wording in the terms and privacy (checked once release.json is 0.5.0 or later; it is ${release.versionName})`, true);
+      }
+      await ctx.close();
     }
 
     assert.deepEqual(escaped, [], 'requests left the local server');
-    console.log(JSON.stringify({checkedAt: new Date().toISOString(), scope: 'Local Chromium against a local GitHub Pages-like server; not a phone or live-domain test', release: `${release.versionName} (${release.versionCode})`, passed: results}, null, 2));
+    console.log(JSON.stringify({checkedAt: new Date().toISOString(), scope: 'Local Chromium against a local GitHub Pages-like server; not a phone or live-domain test', release: `${release.versionName} (${release.versionCode})`, passed: results, releaseGates: gates}, null, 2));
+    if (gates.failed.length) {
+      console.error(`\nNOT READY TO DEPLOY: every site check passed, but ${gates.failed.length} release gate(s) failed:\n` +
+        gates.failed.map(failure => '  - ' + failure).join('\n'));
+      process.exitCode = 1;
+    }
   } finally {
     await browser.close();
     await new Promise(resolve => server.close(resolve));
