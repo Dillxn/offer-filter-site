@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /tools/
+Disallow: /validation/
+Disallow: /*.md$
+
+Sitemap: https://offerfilter.org/sitemap.xml
