@@ -1,6 +1,8 @@
 # Offer Filter — Suno music brief
 
-Creative prompt for a new soundtrack candidate. The existing film's clean tonal score remains in place until a generated track is chosen and edited. This is not a Suno submission or generated audio.
+Creative prompt for a new soundtrack candidate. This is not a Suno submission or generated audio.
+
+**Status, October 6, 2026:** a supplied 20.4-second take of “Your Time Matters” is now the film soundtrack, and the picture is edited to its narration and beat grid; see the README. The brief below is kept as the prompt history.
 
 ## Copy into the music/style prompt
 

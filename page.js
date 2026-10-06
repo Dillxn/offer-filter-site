@@ -2,17 +2,19 @@
   'use strict';
   const $ = id => document.getElementById(id);
   const FEEDBACK_ENDPOINT = 'https://zlnfvqyyjsltmkmmpgzp.supabase.co/functions/v1/offer-filter-feedback';
-  const film = $('film'), play = $('film-play');
-  // Select a composed square film on phones, then keep that choice stable
-  // throughout playback. No crop, autoplay, or reset when the viewport changes.
-  if (matchMedia('(max-width: 600px)').matches) {
-    const source = film.querySelector('source');
-    source.src = 'assets/offer-filter-square.mp4?v=open-ending-20261004';
-    film.poster = 'assets/film-poster-square.jpg?v=open-ending-20261004';
-    film.width = film.height = 1080;
-    film.closest('.film-stage').classList.add('film-square');
-    film.load();
-    document.querySelector('.film-heading a[download]').href = source.src;
+  const MEDIA = '?v=20261006-live', play = $('film-play'), film = window.offerFilm || videoFallback();
+  // The live player (player.js) and the MP4 share one interface: play(), pause(), paused, ended and their events.
+  // Without a canvas or the film script, the composed MP4 for this screen plays instead, with native controls.
+  function videoFallback() {
+    const small = matchMedia('(max-width: 600px)').matches, video = document.createElement('video');
+    const src = `assets/offer-filter-${small ? 'square' : 'landscape'}.mp4${MEDIA}`;
+    Object.assign(video, {controls: true, playsInline: true, preload: 'none', src, poster: `assets/film-poster-${small ? 'square' : 'wide'}.jpg${MEDIA}`});
+    video.setAttribute('aria-label', 'Offer Filter animated film');
+    video.append(Object.assign(document.createElement('track'), {kind: 'captions', src: `assets/film-captions.vtt${MEDIA}`, srclang: 'en', label: 'English'}));
+    $('film-stage').replaceChildren(video, play);
+    $('film-stage').classList.add('film-video');
+    $('film-save').href = src;
+    return video;
   }
   let opener = null;
   let paused = matchMedia('(prefers-reduced-motion: reduce)').matches;

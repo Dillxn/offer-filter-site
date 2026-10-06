@@ -1,0 +1,230 @@
+/* The film, drawn live. OfferFilm renders each frame into a canvas, clocked by the soundtrack, so the page
+ * downloads a few hundred kilobytes of audio instead of megabytes of video and stays sharp at any size.
+ * The MP4 renders of the same frames remain the download and the no-script fallback. */
+(() => {
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const F = window.OfferFilm, stage = $('film-stage'), canvas = $('film-canvas');
+  let ctx = null;
+  try { ctx = F && canvas.getContext('2d'); } catch (e) {}
+  if (!ctx) return; // page.js falls back to the MP4.
+  const audio = $('film-audio'), controls = $('film-controls'), seek = $('film-seek'), clockText = $('film-time'), cue = $('film-cue'), save = $('film-save');
+  const button = act => controls.querySelector(`[data-act="${act}"]`);
+  const D = F.DURATION, MEDIA = '?v=20261006-live';
+  const SIZES = {landscape: [1920, 1080], square: [1080, 1080], portrait: [1080, 1920]};
+  const player = new EventTarget();
+  let format = 'landscape', comp = SIZES.landscape, scale = 1, ox = 0, oy = 0, visible = true;
+  let emblem = document.createElement('canvas'), ready = false, playing = false, ended = false, started = false;
+  let silent = false, buffering = false, dragging = false, captions = false, hideTimer = 0, raf = 0;
+  let t = F.POSTER, anchorT = 0, anchorAt = 0, lastAudio = -1, shownSecond = -1, cueText = null, lastDraw = 0, cost = 0;
+  emblem.width = emblem.height = 1;
+
+  // Film time follows the soundtrack. Between the audio clock's updates it advances with the frame clock,
+  // never more than a quarter second ahead, so a stalled stream holds the picture instead of drifting.
+  function clock(now) {
+    if (silent) return anchorT + (now - anchorAt) / 1000;
+    const a = audio.currentTime;
+    if (a !== lastAudio || buffering) { lastAudio = a; anchorT = a; anchorAt = now; return a; }
+    return anchorT + Math.min((now - anchorAt) / 1000, .25);
+  }
+  function draw() {
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    if (ox || oy) { ctx.fillStyle = '#0b1725'; ctx.fillRect(0, 0, canvas.width, canvas.height); }
+    ctx.setTransform(scale, 0, 0, scale, ox, oy);
+    ctx.save(); ctx.beginPath(); ctx.rect(0, 0, comp[0], comp[1]); ctx.clip();
+    F.frame(ctx, t, comp[0], comp[1], emblem, {audit: false});
+    ctx.restore();
+  }
+  const fmt = s => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
+  function sync() {
+    const second = Math.floor(t);
+    if (second !== shownSecond) {
+      shownSecond = second; clockText.textContent = `${fmt(t)} / ${fmt(D)}`;
+      seek.setAttribute('aria-valuetext', `${fmt(t)} of ${fmt(D)}`);
+    }
+    if (!dragging) seek.value = t;
+    seek.style.setProperty('--progress', `${t / D * 100}%`);
+    const line = captions && (F.CAPTIONS.find(([a, b]) => t >= a && t < b) || [])[2] || '';
+    if (line !== cueText) { cueText = line; cue.textContent = line; cue.hidden = !line; }
+  }
+  function loop(now) {
+    raf = 0;
+    if (!playing) return;
+    t = Math.max(t, clock(now));
+    if (t >= D) return finish();
+    // At most 60 frames a second; a device that needs more than 10 ms per frame gets 30, as in the MP4.
+    if (visible && now - lastDraw >= (cost > 10 ? 29 : 12)) {
+      const begin = performance.now();
+      draw(); lastDraw = now;
+      cost = cost * .9 + (performance.now() - begin) * .1;
+    }
+    sync();
+    raf = requestAnimationFrame(loop);
+  }
+  function setState() {
+    stage.classList.toggle('playing', playing);
+    const toggle = button('toggle');
+    toggle.setAttribute('aria-label', playing ? 'Pause film' : 'Play film');
+    toggle.classList.toggle('is-playing', playing);
+  }
+  function emit(type) { setState(); player.dispatchEvent(new Event(type)); }
+  function seekTo(value) {
+    t = Math.max(0, Math.min(D, value)); ended = false;
+    if (!silent) { try { audio.currentTime = t; } catch (e) {} lastAudio = -1; }
+    anchorT = t; anchorAt = performance.now();
+    draw(); sync();
+  }
+  function goSilent() {
+    if (silent) return;
+    silent = true; buffering = false; anchorT = t; anchorAt = performance.now();
+    const mute = button('mute');
+    mute.disabled = true; mute.setAttribute('aria-label', 'Sound unavailable');
+  }
+  function finish() {
+    playing = false; ended = true; t = D;
+    if (!silent && !audio.paused) audio.pause();
+    draw(); sync(); showControls();
+    emit('ended');
+  }
+  player.play = () => {
+    if (!started || ended) { started = true; seekTo(0); }
+    playing = true; ended = false; controls.hidden = false; showControls();
+    let result = Promise.resolve();
+    if (silent) { anchorT = t; anchorAt = performance.now(); }
+    else {
+      buffering = true; audio.preload = 'auto';
+      result = Promise.resolve(audio.play()).catch(error => {
+        if (error && error.name === 'NotAllowedError') { player.pause(); throw error; }
+        goSilent();
+      });
+    }
+    if (!raf) raf = requestAnimationFrame(loop);
+    emit('play');
+    return result;
+  };
+  player.pause = () => {
+    if (!playing) return;
+    playing = false;
+    if (!silent) audio.pause();
+    if (raf) cancelAnimationFrame(raf);
+    raf = 0; draw(); sync(); showControls();
+    emit('pause');
+  };
+  Object.defineProperties(player, {
+    paused: {get: () => !playing}, ended: {get: () => ended}, error: {get: () => null}
+  });
+  const toggle = () => playing ? player.pause() : player.play().catch(() => {});
+
+  audio.addEventListener('playing', () => { buffering = false; lastAudio = -1; });
+  audio.addEventListener('waiting', () => { buffering = true; });
+  audio.addEventListener('ended', () => { if (playing) finish(); });
+  // Media keys and the system's audio controls act on the soundtrack; keep the picture with them.
+  audio.addEventListener('pause', () => { if (playing && !audio.ended) player.pause(); });
+  audio.addEventListener('play', () => { if (!playing) player.play().catch(() => {}); });
+  const sources = audio.querySelectorAll('source');
+  sources[sources.length - 1].addEventListener('error', goSilent);
+
+  // Controls appear while paused, on pointer movement, or with keyboard focus, then step aside.
+  function showControls() {
+    stage.classList.add('controls-on');
+    clearTimeout(hideTimer);
+    if (playing) hideTimer = setTimeout(() => {
+      if (playing && !controls.contains(document.activeElement)) stage.classList.remove('controls-on');
+    }, 2600);
+  }
+  stage.addEventListener('pointermove', showControls);
+  stage.addEventListener('focusin', showControls);
+  canvas.addEventListener('click', () => { toggle(); showControls(); });
+  button('toggle').addEventListener('click', toggle);
+  seek.addEventListener('pointerdown', () => { dragging = true; });
+  seek.addEventListener('input', () => { seekTo(+seek.value); });
+  seek.addEventListener('change', () => { dragging = false; });
+  window.addEventListener('pointerup', () => { dragging = false; });
+
+  function setCaptions(on) {
+    captions = on; cueText = null;
+    button('captions').setAttribute('aria-pressed', String(on));
+    try { localStorage.setItem('offerfilter.captions', on ? '1' : '0'); } catch (e) {}
+    sync();
+  }
+  try { captions = localStorage.getItem('offerfilter.captions') === '1'; } catch (e) {}
+  button('captions').setAttribute('aria-pressed', String(captions));
+  button('captions').addEventListener('click', () => setCaptions(!captions));
+  function setMuted(on) {
+    audio.muted = on;
+    const mute = button('mute');
+    mute.setAttribute('aria-pressed', String(on)); mute.setAttribute('aria-label', on ? 'Unmute' : 'Mute');
+  }
+  button('mute').addEventListener('click', () => setMuted(!audio.muted));
+
+  const fullscreenElement = () => document.fullscreenElement || document.webkitFullscreenElement;
+  const full = button('fullscreen');
+  if (!(document.fullscreenEnabled || document.webkitFullscreenEnabled)) full.hidden = true;
+  function toggleFullscreen() {
+    if (full.hidden) return;
+    if (fullscreenElement()) (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+    else (stage.requestFullscreen || stage.webkitRequestFullscreen).call(stage);
+  }
+  full.addEventListener('click', toggleFullscreen);
+  for (const type of ['fullscreenchange', 'webkitfullscreenchange']) document.addEventListener(type, () => {
+    const on = fullscreenElement() === stage;
+    full.setAttribute('aria-label', on ? 'Exit full screen' : 'Full screen');
+    full.classList.toggle('is-full', on);
+  });
+
+  stage.addEventListener('keydown', e => {
+    if (e.altKey || e.ctrlKey || e.metaKey) return;
+    const key = e.key.toLowerCase(), tag = e.target.tagName;
+    if (key === 'k' || (key === ' ' && tag !== 'BUTTON' && tag !== 'INPUT')) toggle();
+    else if (key === 'm') setMuted(!audio.muted);
+    else if (key === 'c') setCaptions(!captions);
+    else if (key === 'f') toggleFullscreen();
+    else if ((key === 'arrowleft' || key === 'arrowright') && tag !== 'INPUT') seekTo(t + (key === 'arrowright' ? 5 : -5));
+    else return;
+    e.preventDefault(); showControls();
+  });
+
+  // Compose for the stage's shape: landscape on wide stages, square on phones, portrait in a tall full screen.
+  // The backing store follows the device pixel ratio, capped so a large screen cannot demand a huge canvas.
+  function fit() {
+    const w = stage.clientWidth, h = stage.clientHeight;
+    if (!w || !h) return;
+    const cap = fullscreenElement() ? 3840 * 2160 : 2560 * 1440;
+    let dpr = Math.min(window.devicePixelRatio || 1, 2);
+    if (w * h * dpr * dpr > cap) dpr = Math.sqrt(cap / (w * h));
+    canvas.width = Math.round(w * dpr); canvas.height = Math.round(h * dpr);
+    const aspect = w / h;
+    format = aspect > 1.25 ? 'landscape' : aspect < .8 ? 'portrait' : 'square';
+    comp = SIZES[format];
+    scale = Math.min(canvas.width / comp[0], canvas.height / comp[1]);
+    ox = (canvas.width - comp[0] * scale) / 2; oy = (canvas.height - comp[1] * scale) / 2;
+    if (!fullscreenElement()) save.href = `assets/offer-filter-${format}.mp4${MEDIA}`;
+    if (ready) draw();
+  }
+  new ResizeObserver(fit).observe(stage);
+  new IntersectionObserver(entries => {
+    visible = entries[entries.length - 1].isIntersecting;
+    if (visible && ready) draw();
+  }).observe(stage);
+  // Warm the soundtrack as soon as someone reaches for the play button.
+  const warm = () => { if (audio.preload === 'none') audio.preload = 'auto'; };
+  for (const type of ['pointerenter', 'focus', 'touchstart']) $('film-play').addEventListener(type, warm, {once: true, passive: true});
+
+  // The poster is the film's own closing frame, drawn once the fonts and the tinted emblem are ready.
+  const fonts = document.fonts ? Promise.all([document.fonts.load('700 1em "Baloo 2"'), document.fonts.load('400 1em "Atkinson Hyperlegible"')]) : Promise.resolve();
+  // The footer signature already loads the emblem; tint a copy of it rather than fetching it again.
+  const art = new Promise(resolve => {
+    const img = document.querySelector('.signature img') || Object.assign(new Image(), {src: 'assets/jesus-loves-you-emblem-560.png'});
+    const tint = () => {
+      const c = document.createElement('canvas'), x = c.getContext('2d');
+      c.width = img.naturalWidth; c.height = img.naturalHeight;
+      x.drawImage(img, 0, 0); x.globalCompositeOperation = 'source-in'; x.fillStyle = '#315B54'; x.fillRect(0, 0, c.width, c.height);
+      emblem = c; resolve();
+    };
+    if (img.complete && img.naturalWidth) tint();
+    else { img.addEventListener('load', tint, {once: true}); img.addEventListener('error', resolve, {once: true}); }
+  });
+  Promise.all([fonts, art]).catch(() => {}).then(() => { ready = true; fit(); stage.classList.add('drawn'); });
+  setState(); sync();
+  window.offerFilm = player;
+})();

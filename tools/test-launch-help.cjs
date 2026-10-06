@@ -6,7 +6,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { chromium } = require('playwright');
 const root = path.resolve(__dirname, '..');
-const mime = {'.html':'text/html','.js':'text/javascript','.css':'text/css','.png':'image/png','.jpg':'image/jpeg','.svg':'image/svg+xml','.vtt':'text/vtt','.mp4':'video/mp4','.ttf':'font/ttf'};
+const mime = {'.html':'text/html','.js':'text/javascript','.css':'text/css','.png':'image/png','.jpg':'image/jpeg','.svg':'image/svg+xml','.vtt':'text/vtt','.mp4':'video/mp4','.webm':'audio/webm','.m4a':'audio/mp4','.ttf':'font/ttf','.woff2':'font/woff2'};
 async function main() {
   const server = http.createServer((req,res) => {
     const pathname = decodeURIComponent(new URL(req.url,'http://localhost').pathname);
@@ -28,10 +28,13 @@ async function main() {
       await page.locator('#help-open').click();
       assert.equal(await page.locator('#help-dialog').evaluate(d=>d.open),true);
       const copy=await page.locator('#help-dialog').innerText();
-      for(const text of ['do not need GitHub','I understand and accept','Auto-accept is off','public','Never post diagnostic exports','private contact channel is not yet published']) assert(copy.includes(text),text);
+      for(const text of ['do not need GitHub','I understand and accept','Auto-accept is off','Send anonymous feedback','accountless feedback']) assert(copy.includes(text),text);
       const bounds=await page.evaluate(()=>({page:document.documentElement.scrollWidth,viewport:innerWidth,dialog:document.getElementById('help-dialog').scrollWidth,client:document.getElementById('help-dialog').clientWidth}));
       assert(bounds.page<=bounds.viewport+1,JSON.stringify(bounds));assert(bounds.dialog<=bounds.client+1,JSON.stringify(bounds));
-      assert(await page.locator('#help-dialog a[href*="issues/new?template=beta-help.yml"]').count());
+      await page.locator('#help-feedback-open').click();
+      assert.equal(await page.locator('#feedback-dialog').evaluate(d=>d.open),true);
+      await page.keyboard.press('Escape');
+      await page.locator('#help-open').click();
       await page.keyboard.press('Escape');assert.equal(await page.locator('#help-dialog').evaluate(d=>d.open),false);
       assert.equal(await page.evaluate(()=>document.activeElement.id),'help-open');
       await page.goto(base+'/#help',{waitUntil:'networkidle'});

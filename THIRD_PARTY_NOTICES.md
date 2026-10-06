@@ -4,7 +4,8 @@ The MIT License in `LICENSE` applies to this repository's software and associate
 
 - Atkinson Hyperlegible: see `assets/OFL-AtkinsonHyperlegible.txt`.
 - Baloo 2: see `assets/OFL-Baloo2.txt`.
-- “Your Time Matters” is the user-supplied recording used in the film. Its original MP3 is preserved unchanged; software licensing does not change the recording's applicable creator/provider terms.
+- The website's `.woff2` fonts are Latin subsets of these fonts, and `assets/baloo2-bold-latin.ttf` is a static bold instance of Baloo 2 for the film renderer (`tools/make-fonts.sh`). Neither font declares a Reserved Font Name; the derived files remain under the same SIL Open Font License.
+- “Your Time Matters” is the user-supplied recording used in the film (the 20.4-second take supplied on October 6, 2026). Its MP3 is preserved unchanged in `assets/your-time-matters.mp3`; the film soundtrack and `assets/film-soundtrack.*` trim it uniformly by 1 dB and fade its final 0.3 seconds. Software licensing does not change the recording's applicable creator/provider terms.
 - The emblem, film posters, and exported film are creative-media assets. Their applicable creator rights and any incorporated third-party rights remain separate from the MIT software notice.
 
 The public Android source is maintained on the separate `app-source` branch with its own `LICENSE`, `TERMS.md`, and `PRIVACY.md`. This website does not replace the app's consent or privacy notices.
