@@ -10,7 +10,7 @@
   if (!ctx) return; // page.js falls back to the MP4.
   const audio = $('film-audio'), controls = $('film-controls'), seek = $('film-seek'), clockText = $('film-time'), cue = $('film-cue'), save = $('film-save');
   const button = act => controls.querySelector(`[data-act="${act}"]`);
-  const D = F.DURATION, MEDIA = '?v=20261006-live';
+  const D = F.DURATION, MEDIA = '?v=20261006-app';
   const SIZES = {landscape: [1920, 1080], square: [1080, 1080], portrait: [1080, 1920]};
   const player = new EventTarget();
   let format = 'landscape', comp = SIZES.landscape, scale = 1, ox = 0, oy = 0, visible = true;

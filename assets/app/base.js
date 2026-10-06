@@ -82,4 +82,35 @@ U.javaRandom = seed => {
 };
 U.clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 U.lerp = (a, b, t) => a + (b - a) * t;
+
+/** A scratch canvas w x h px, or null where none can be made. In a page it is a canvas element; the film renderer
+ *  sets its own (OfferApp.util.makeCanvas = createCanvas) before drawing. */
+U.makeCanvas = typeof document !== 'undefined'
+  ? (w, h) => Object.assign(document.createElement('canvas'), {width: w, height: h}) : null;
+/**
+ * canvas.saveLayer: an offscreen layer over (0, 0)-(w, h) of ctx's current transform, at the device pixels it covers.
+ * Returns {ctx, done()}: draw into ctx, then done() composites the layer back at the caller's alpha and clip. Null when
+ * no canvas can be made or the transform turns or skews, so the caller draws another way. One layer at a time.
+ */
+let scratch = null;
+U.layer = (ctx, w, h) => {
+  const m = ctx.getTransform();
+  if (!U.makeCanvas || m.b || m.c || m.a <= 0 || m.d <= 0) return null;
+  const left = Math.floor(m.e), top = Math.floor(m.f);
+  const pw = Math.ceil(w * m.a + m.e - left) + 1, ph = Math.ceil(h * m.d + m.f - top) + 1;
+  if (pw > 4096 || ph > 4096) return null;
+  if (!scratch || scratch.width < pw || scratch.height < ph) {
+    scratch = U.makeCanvas(Math.max(pw, scratch ? scratch.width : 0), Math.max(ph, scratch ? scratch.height : 0));
+  }
+  const layer = scratch.getContext('2d');
+  layer.setTransform(1, 0, 0, 1, 0, 0);
+  layer.globalAlpha = 1; layer.globalCompositeOperation = 'source-over';
+  layer.clearRect(0, 0, pw, ph);
+  layer.setTransform(m.a, 0, 0, m.d, m.e - left, m.f - top);
+  return {ctx: layer, done() {
+    ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.drawImage(scratch, 0, 0, pw, ph, left, top, pw, ph);
+    ctx.restore();
+  }};
+};
 })(typeof window !== 'undefined' ? window : globalThis);

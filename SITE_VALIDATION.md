@@ -1,3 +1,15 @@
+## In-app footage — October 6, 2026
+
+Prepared locally on branch `claude/festive-bohr-kpz6zk` from live main `a6d32d249e68242979ba54e4e17e56cadaf1e9b3`. This is a local candidate; live-domain checks follow deployment.
+
+From "Set your minimums" to the close, the film now holds the Offer Filter app itself on a phone. The app's main page is redrawn from its own source, not recorded: its Java `onDraw` code (the constellation of minimums, the mascot with its counts and offer play-out, the skyline of recent offers, the area map, the scenery and header buttons, the offer ticket with its stamp in the bottom sheet) is ported to canvas in `assets/app/`, laid out as `MainActivity` lays it out on a 412 × 915 dp phone, in the app's palette and Roboto type. The port is from the MIT-licensed `app-source` branch, version 0.4.68 (`ebba04f`). The phone frame, status bar, heads-up card chrome and touch indicator are generic Android. On the beat, a finger drags the per-mile minimum from $1.50 to $1.85, three low offers are declined (badges on beats 11, 13 and 15, counts and skyline following), a good offer passes with its alert (beat 18), its building is tapped and its ticket opens, and the app turns to its day palette at dawn over the area map. All 13 offers, their times, the store and the area are invented, and the film says so on screen ("App screens drawn from its source · invented offers").
+
+The ports load only when a visitor reaches for Play: eight files, 268 KB (89 KB compressed), plus Roboto. Views the camera has cropped are skipped (frames with and without skipping agree at 77.8 dB PSNR or better across 150 frames in three formats). The constellation's veils are cut from one offscreen layer, as Android's `saveLayer` does, instead of redrawing it once per fade zone, and the phone's large shadow is blurred once into a bitmap. In Chromium with software rendering only, a frame now takes about 15 ms while the phone is on screen at the desktop stage (about 6 ms before), of which under 4 ms is script; this is not a GPU or phone measurement.
+
+All 630 frames of each format pass the text-bounds audit with no violations. Chromium canvas frames and the landscape MP4 agree at 33.4–37.2 dB PSNR. The MP4s keep 630 H.264 frames, 21.000 s of AAC and the English caption track; posters and captions are byte-identical to the previous release. `tools/test-site.cjs` now also checks that playing loads all eight app modules and that the phone's page is drawn only between its entrance and the close; it passes in day and night at 1280 and 400 px with playback within 11 ms of the soundtrack and no page errors. `tools/test-launch-help.cjs` passes.
+
+Structured local evidence: `validation/in-app-film-20261006.json`.
+
 ## Live canvas film, new narration take and site touch-ups — October 6, 2026
 
 Prepared locally on branch `claude/festive-bohr-kpz6zk` from main `4e1aa5afd3bd52a61d1a82d97f89daa5c6bcdb43`. This is a local candidate, not a live publication; live-domain checks follow deployment.

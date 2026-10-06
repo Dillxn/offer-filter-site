@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 'use strict';
 // Local Chromium checks for the homepage and its live film player: poster, playback in sync with the
-// soundtrack, keyboard pause, seeking, captions, dialogs pausing the film, the ending and replay.
+// soundtrack, the app's screens loaded and drawn on the phone, keyboard pause, seeking, captions, dialogs pausing
+// the film, the ending and replay.
 // Local browser evidence only, not a phone or live-domain receipt.
 const assert = require('node:assert/strict');
 const http = require('node:http');
@@ -64,6 +65,25 @@ async function main() {
       assert(playing.quiet && playing.playHidden, 'scenery rests and the play button steps aside');
       assert.match(await page.evaluate(() => document.getElementById('film-audio').currentSrc), /film-soundtrack\.(webm|m4a)/);
 
+      // Play fetched the app's ported views (assets/app/files.json) and Roboto; seeking into the app's shots draws its page.
+      await page.waitForFunction(() => window.OfferApp && OfferApp.page && document.fonts.check('500 12px Roboto'), null, {timeout: 10000});
+      const app = await page.evaluate(() => {
+        const files = [...document.scripts].map(s => s.src).filter(src => src.includes('/assets/app/'));
+        let drawn = 0;
+        const draw = OfferApp.page.draw;
+        OfferApp.page.draw = function () { drawn++; return draw.apply(this, arguments); };
+        for (const t of [2, 6.5, 12.5, 14.8, 17]) {
+          const before = drawn, s = document.getElementById('film-seek');
+          s.value = t; s.dispatchEvent(new Event('input'));
+          if ((drawn > before) !== (t > 3.4 && t < 15.7)) return {files, wrong: t};
+        }
+        OfferApp.page.draw = draw;
+        return {files, drawn};
+      });
+      assert.equal(app.wrong, undefined, `the phone shows the app only between its entrance and the close (wrong at ${app.wrong})`);
+      assert.equal(app.files.length, 8, 'all eight app modules load');
+      assert(app.drawn >= 3, 'the app\'s page is drawn into the phone');
+
       await page.locator('[data-act=toggle]').focus();
       await page.keyboard.press('k');
       const held = (await state(page)).film;
@@ -94,7 +114,7 @@ async function main() {
       await page.locator('#film-play').click();
       await page.waitForFunction(() => +document.getElementById('film-seek').value > .4 && +document.getElementById('film-seek').value < 5);
       assert.deepEqual(errors, []);
-      results.push({width, night, format, poster: `${poster.width}x${poster.height}`, sync: +(playing.film - playing.audio).toFixed(3), keyboardPause: true, captions: true, dialogPauses: true, endAndReplay: true, noOverflow: true, noPageErrors: true});
+      results.push({width, night, format, poster: `${poster.width}x${poster.height}`, sync: +(playing.film - playing.audio).toFixed(3), appScreens: app.files.length, keyboardPause: true, captions: true, dialogPauses: true, endAndReplay: true, noOverflow: true, noPageErrors: true});
       await page.close();
     }
     console.log(JSON.stringify({checkedAt: new Date().toISOString(), scope: 'Local Chromium, not phone or live-domain proof', results}, null, 2));

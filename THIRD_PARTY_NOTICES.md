@@ -5,6 +5,8 @@ The MIT License in `LICENSE` applies to this repository's software and associate
 - Atkinson Hyperlegible: see `assets/OFL-AtkinsonHyperlegible.txt`.
 - Baloo 2: see `assets/OFL-Baloo2.txt`.
 - The website's `.woff2` fonts are Latin subsets of these fonts, and `assets/baloo2-bold-latin.ttf` is a static bold instance of Baloo 2 for the film renderer (`tools/make-fonts.sh`). Neither font declares a Reserved Font Name; the derived files remain under the same SIL Open Font License.
+- Roboto (version 2.137, from the `@fontsource/roboto` 5.1.0 package), the app's system font in the film's phone: Apache License 2.0, see `assets/LICENSE-Roboto.txt`. `assets/roboto-latin-400.woff2`, `roboto-latin-500.woff2` and the renderer's `roboto-400-latin.ttf` and `roboto-500-latin.ttf` are its Latin subsets, unmodified otherwise.
+- The app screens in the film (`assets/app/`) are canvas ports of the Offer Filter app's own drawing code from the MIT-licensed `app-source` branch (version 0.4.68), by the same copyright holder. They show invented offers and an invented area.
 - “Your Time Matters” is the user-supplied recording used in the film (the 20.4-second take supplied on October 6, 2026). Its MP3 is preserved unchanged in `assets/your-time-matters.mp3`; the film soundtrack and `assets/film-soundtrack.*` trim it uniformly by 1 dB and fade its final 0.3 seconds. Software licensing does not change the recording's applicable creator/provider terms.
 - The emblem, film posters, and exported film are creative-media assets. Their applicable creator rights and any incorporated third-party rights remain separate from the MIT software notice.
 

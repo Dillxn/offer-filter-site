@@ -8,13 +8,41 @@ const U = App.util;
 const W = 412, H = 915, BEZEL = 11, OUTER = 54, INNER = 44, STATUS = 36, NAV = 22;
 const phone = App.phone = {W, H, BEZEL, STATUS, NAV, outer: {left: -BEZEL, top: -BEZEL, right: W + BEZEL, bottom: H + BEZEL}};
 
+/**
+ * A soft shadow under a rounded rectangle (l, t)-(r, b), blurred `blur` dp (canvas shadowBlur at 1 px = 1 dp) and
+ * dropped `dy` dp: blurred once into a small bitmap and stretched over the frame, as a shadow has no detail to lose
+ * and a large blur is the dearest thing a canvas draws. Without a scratch canvas it is drawn as a canvas shadow.
+ */
+const shadows = new Map();
+function softShadow(ctx, l, t, r, b, radius, blur, dy, color) {
+  const key = [l, t, r, b, radius, blur, dy, color].join(), pad = blur * 1.6 + Math.abs(dy), scale = 8 / blur;
+  let image = shadows.get(key);
+  if (image === undefined) {
+    image = null;
+    if (U.makeCanvas) {
+      const w = r - l + 2 * pad, h = b - t + 2 * pad, off = (w + 8) * scale;
+      image = U.makeCanvas(Math.ceil(w * scale), Math.ceil(h * scale));
+      const x = image.getContext('2d');
+      // The shape stands off the bitmap to its left; only its shadow, offset back, lands on it.
+      x.setTransform(scale, 0, 0, scale, -off, 0);
+      x.shadowColor = color; x.shadowBlur = blur * scale; x.shadowOffsetX = off; x.shadowOffsetY = dy * scale;
+      U.rrect(x, pad, pad, pad + r - l, pad + b - t, radius); x.fillStyle = '#000'; x.fill();
+    }
+    shadows.set(key, image);
+  }
+  if (image) { ctx.drawImage(image, l - pad, t - pad, r - l + 2 * pad, b - t + 2 * pad); return; }
+  const k = Math.hypot(ctx.getTransform().a, ctx.getTransform().b);
+  ctx.save(); ctx.shadowColor = color; ctx.shadowBlur = blur * k; ctx.shadowOffsetY = dy * k;
+  U.rrect(ctx, l, t, r, b, radius); ctx.fillStyle = '#000'; ctx.fill(); ctx.restore();
+}
+phone.softShadow = softShadow;
+
 /** The body, its rim and the side keys; then the caller draws the screen inside clip() and finishes with lens(). */
 phone.body = (ctx, light) => {
   ctx.save();
-  ctx.shadowColor = 'rgba(4,10,22,.45)'; ctx.shadowBlur = 60 * Math.hypot(ctx.getTransform().a, ctx.getTransform().b); ctx.shadowOffsetY = 26 * Math.hypot(ctx.getTransform().a, ctx.getTransform().b);
+  softShadow(ctx, -BEZEL, -BEZEL, W + BEZEL, H + BEZEL, OUTER, 60, 26, 'rgba(4,10,22,.45)');
   U.rrect(ctx, -BEZEL, -BEZEL, W + BEZEL, H + BEZEL, OUTER);
   ctx.fillStyle = '#121418'; ctx.fill();
-  ctx.shadowColor = 'transparent';
   // A brushed rim: lighter at the top-left, as if lit from the sky.
   const rim = ctx.createLinearGradient(-BEZEL, -BEZEL, W + BEZEL, H + BEZEL);
   rim.addColorStop(0, light ? '#9aa3b2' : '#5d6574'); rim.addColorStop(.5, '#272b33'); rim.addColorStop(1, light ? '#6c7380' : '#3a404b');
@@ -103,11 +131,9 @@ phone.notification = (ctx, dark, state) => {
   const left = 8, right = W - 8, top = STATUS + 4 - (1 - show) * 130, height = 112;
   ctx.save();
   ctx.globalAlpha *= Math.min(1, show * 1.6);
-  const k = Math.hypot(ctx.getTransform().a, ctx.getTransform().b);
-  ctx.shadowColor = 'rgba(0,0,0,.28)'; ctx.shadowBlur = 18 * k; ctx.shadowOffsetY = 6 * k;
+  softShadow(ctx, left, top, right, top + height, 26, 18, 6, 'rgba(0,0,0,.28)');
   U.rrect(ctx, left, top, right, top + height, 26);
   ctx.fillStyle = dark ? '#2C2D31' : '#F4F3F7'; ctx.fill();
-  ctx.shadowColor = 'transparent';
   const ink = dark ? '#E6E5EA' : '#1B1B1F', soft = dark ? '#B4B3BA' : '#5E5D66';
   ctx.beginPath(); ctx.arc(left + 32, top + 34, 17, 0, Math.PI * 2); ctx.fillStyle = U.css(0xFF256ABF); ctx.fill();
   phone.funnel(ctx, left + 32, top + 34.5, 20, '#FFFFFF');

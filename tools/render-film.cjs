@@ -7,6 +7,8 @@ const root=path.resolve(__dirname,'..');
 for(const[file,name]of[['baloo2-bold-latin.ttf','Baloo 2'],['AtkinsonHyperlegible-Regular.ttf','Atkinson Hyperlegible'],['roboto-400-latin.ttf','Roboto'],['roboto-500-latin.ttf','Roboto']]){if(!GlobalFonts.registerFromPath(path.join(root,'assets',file),name))throw Error('Font failed: '+file);}
 // The app's own views (assets/app/), drawn inside the film's phone, load before the film as on the page.
 require('../assets/brand.js');for(const file of require('../assets/app/files.json'))require('../assets/app/'+file);require('../assets/film.js');
+// The app's ports draw a few things offscreen (a layer, a blurred shadow), as the page does with canvas elements.
+OfferApp.util.makeCanvas=(w,h)=>createCanvas(w,h);
 const {DURATION,FPS,POSTER,CAPTIONS}=OfferFilm,FRAMES=Math.round(DURATION*FPS);
 const FORMATS={landscape:[1920,1080],portrait:[1080,1920],square:[1080,1080]};
 const OUT=path.resolve(process.argv[3]||'/tmp/offer-filter-film');fs.mkdirSync(OUT,{recursive:true});

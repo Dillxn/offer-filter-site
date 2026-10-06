@@ -199,41 +199,88 @@ function close(c,l,t,T,emblem){
  c.save();c.globalAlpha*=ease((t-at(32))/.6);c.drawImage(emblem,ex,ey,mw,mh);c.restore();
  rise(c,t-at(33),()=>body(c,'Independent app. Not affiliated with DoorDash.',wide?165:w/2,wide?992:sq?1008:1818,wide?26:sq?22:27,'#183D4E',{align,maxWidth:wide?920:sq?690:928}),8);
 }
-/* The phone: the app's own main page (assets/app.js) in one continuous layer from "Set your minimums" until the
- * close, under the shots' words, so it never flickers through a crossfade. A camera eases between framings in the
- * phone's dp: each key holds from its time and is reached over .7 s. */
-const ENTER=beat(6)-.15,EXIT=beat(27);
-const CAMERA=[[ENTER,206,457,1],[beat(7)-.1,300,300,1.7],[beat(9),190,250,1.4],[beat(16),206,210,1.15],[beat(19),206,600,1.5],[beat(24),206,730,1.45]];
+/* The phone: the app's own main page (assets/app/, ported from its Java drawing code) in one continuous layer from
+ * "Set your minimums" until the close, so it never flickers through a crossfade: in front of the first shot's falling
+ * offers, under the later shots' words. */
+const ENTER=beat(6)-.15,EXIT=beat(27)-.25;
+// The offers are invented (no real customer data): this evening's history, then four that land on the beat. Each
+// needed the most of $4.00, $1.50 a mile ($1.85 once the knob is dragged) and $0.30 a minute, as the app works it out.
+const OFFERS=[
+ [20,52,700,3.8,19,1,131,'KEEP'],[20,57,350,9.2,28,2,54,'DECLINE'],[21,3,425,12.4,35,2,49,'DECLINE'],
+ [21,8,975,5.6,24,2,142,'KEEP'],[21,12,275,7.8,26,1,47,'DECLINE'],[21,17,680,null,21,2,-1,'REVIEW'],
+ [21,21,510,10.6,33,2,63,'DECLINE'],[21,26,390,8.3,27,1,58,'DECLINE'],[21,31,450,7.4,25,2,66,'DECLINE'],
+ [21,38,325,6.8,24,1,52,'DECLINE',11],[21,39,550,9.4,31,2,61,'DECLINE',13],[21,40,475,7.2,26,1,57,'DECLINE',15],
+ [21,41,1840,4.2,22,2,248,'KEEP',18]
+].map(([h,m,pay,miles,minutes,stops,score,result,n])=>({at:Date.UTC(2026,9,6,h,m),pay,miles,minutes,stops,score,result,
+ required:Math.max(400,miles==null?0:Math.round((n?185:150)*miles),30*minutes),lands:n?beat(n):-1}));
+const HISTORY=9,GOOD=OFFERS[OFFERS.length-1],KIND={KEEP:'passed',DECLINE:'declined',REVIEW:'review'},OUTCOME={KEEP:'PASSED',DECLINE:'DECLINED',REVIEW:'REVIEW'};
+// The cues: a finger on the per-mile knob drags it from $1.50 to $1.85; the alert for the good offer; its building
+// tapped and its ticket opened, then closed before dawn.
+const PRESS=beat(7)-.2,DRAG=[beat(7),beat(8)+.05],LIFT=beat(8)+.25,ALERT=[beat(16)+.25,beat(19)+.2],TAP=beat(21)-.05,SHEET=[beat(21)+.07,beat(23)+.45];
+const perMile=T=>150+5*Math.round(7*smooth((T-DRAG[0])/(DRAG[1]-DRAG[0])));
+const known=T=>{let n=HISTORY;while(n<OFFERS.length&&T>=OFFERS[n].lands)n++;return n;};
+const star=(n,T)=>({rules:{pay:400,perMile:perMile(T),perMinute:30,maxStops:3,adaptive:true},learned:{pay:576,perMile:172,perMinute:38,perStop:310},
+ offers:OFFERS.slice(0,n).reverse().map(e=>({pay:e.pay,miles:e.miles,minutes:e.minutes,stops:e.stops,result:KIND[e.result],id:e.at})),selected:-1});
+// A finger lands in .12 s and lifts in .25 s.
+const press=(T,down,up)=>T<down?0:T<up?ease((T-down)/.12):1-ease((T-up)/.25);
+function story(T,App){
+ const n=known(T),seen=OFFERS.slice(0,n),newest=seen[n-1],fresh=newest.lands>0&&T-newest.lands<.7,count=r=>seen.filter(e=>e.result===r).length;
+ const s={t:T,split:true,mode:'AUTO',time:'9:41',watching:true,place:'Downtown',wait:'Next match: about 7 min',
+  caption:App.caption(newest,{entries:seen}),map:App.areaMap.demo,
+  star:Object.assign(star(n,T),fresh?{glide:{from:star(n-1,T),since:newest.lands}}:{}),
+  skyline:{entries:seen.map(e=>Object.assign({},e,{riseSince:e.lands>0?e.lands:null})),selected:n-1,selectedSince:newest.lands>0?newest.lands:null,
+   payoutCents:400,minimumScalePercent:100,scoreByArea:false},
+  // The mascot plays each new offer out so its badge pops on the beat: caught on the sieve .83 s in, out of the spout 1.63 s in.
+  hero:{state:'ON',dashLabel:'This dash',passed:count('KEEP'),filtered:count('DECLINE'),review:count('REVIEW'),totals:[39+count('KEEP'),111+count('DECLINE'),8+count('REVIEW')],
+   offers:OFFERS.slice(HISTORY).map(e=>({outcome:OUTCOME[e.result],since:e.lands-(e.result==='KEEP'?1.6276:.832)}))},
+  touches:[]};
+ if(T<LIFT+.3){const p=press(T,PRESS,LIFT);if(p>0)s.touches.push({knob:'perMile',press:p});if(T>=PRESS&&T<LIFT)Object.assign(s.star,T<DRAG[0]?{press:'perMile'}:{drag:{axis:'perMile',value:perMile(T)}});}
+ if(T>ALERT[0]-.1&&T<ALERT[1]+.4){const sum=`Pay ${App.caption.money(GOOD.pay)}, miles ${GOOD.miles}, minutes ${GOOD.minutes}, stops ${GOOD.stops}; KEEP: required at least ${App.caption.money(GOOD.required)} (meets enabled rules)`;
+  s.notification={show:T<ALERT[1]?ease((T-ALERT[0])/.35):1-smooth((T-ALERT[1])/.35),title:'Corner Café offer meets your rules',body:sum};}
+ const tap=press(T,TAP,TAP+.16);if(tap>0)s.touches.push({flag:OFFERS.length-1,press:tap});
+ if(T>SHEET[0]&&T<SHEET[1]+.4){s.star.open=0;s.sheet={open:T<SHEET[1]?ease((T-SHEET[0])/.22):1-smooth((T-SHEET[1])/.35),press:ease((T-SHEET[0])/.32),entry:GOOD,word:'PASSED',outcome:'PASSED',
+  time:App.caption.stubTime(GOOD,GOOD.at),score:'Score reference · '+GOOD.score+'%',reason:'Meets your rules',action:'Passing alert rang · from notification'};}
+ return s;
+}
+// The camera: where the frame looks on the screen (dp from its top) and how close, each key eased in over .7 s.
+const CAMERA=[[ENTER,305,1.42],[beat(9),262,2],[beat(16),250,1.85],[beat(19),610,1.75],[beat(21)+.1,738,1.35],[beat(23)+.45,700,1.7]];
 function stage(l){
- // Where the phone stands at zoom 1, and the part of the frame it may fill beside or below the words.
- return l.wide?{k:1,ax:1355,ay:540,left:940,top:-1e3}:l.square?{k:.86,ax:540,ay:735,left:-1e3,top:296}:{k:1.4,ax:540,ay:1222,left:-1e3,top:575};
+ // Where the phone stands at zoom 1 (the camera's point at ax, ay), the part of the frame it may fill beside or below
+ // the words, its widest zoom, and where the note about the screens goes.
+ return l.wide?{k:1,ax:1355,ay:540,left:940,top:-1e3,most:2.15,note:[l.tx,1010,21,'left']}
+  :l.square?{k:1,ax:540,ay:696,left:-1e3,top:312,most:2.4,note:[540,301,19,'center']}
+  :{k:1.4,ax:540,ay:1280,left:-1e3,top:640,most:1.7,note:[540,616,23,'center']};
 }
 function camera(T){
  let i=0;while(i+1<CAMERA.length&&T>=CAMERA[i+1][0])i++;
  const a=CAMERA[Math.max(0,i-1)],b=CAMERA[i],p=i?smooth((T-b[0])/.7):1;
- return {x:lerp(a[1],b[1],p),y:lerp(a[2],b[2],p),z:lerp(a[3],b[3],p)};
+ return {y:lerp(a[1],b[1],p),z:lerp(a[2],b[2],p)};
 }
 function phone(c,l,T){
- const App=root.OfferApp;if(!App||!App.phone||T<ENTER||T>EXIT+.5)return;
- const P=App.phone,s=stage(l),cam=camera(T),k=s.k*cam.z,inp=ease((T-ENTER)/.8),out=smooth((T-EXIT)/.45);
- let x=s.ax-cam.x*k,y=s.ay-cam.y*k;
+ const App=root.OfferApp;if(!App||!App.page||T<ENTER||T>EXIT+.5)return;
+ // It slides in, and bows out a little smaller as the close comes in.
+ const P=App.phone,s=stage(l),cam=camera(T),inp=ease((T-ENTER)/.8),out=smooth((T-EXIT)/.4),k=s.k*Math.min(cam.z,s.most)*(1-.08*out);
+ let x=s.ax-P.W/2*k,y=s.ay-cam.y*k;
  // Beside the words in landscape, the phone never crosses into their column.
  x=Math.max(x,s.left+P.BEZEL*k);
  if(l.wide)x+=(1-inp)*1000;else y+=(1-inp)*1200;
- y+=out*260;
+ y+=out*140;
  c.save();c.globalAlpha*=1-out;
  if(!l.wide){c.beginPath();c.rect(0,s.top,l.w,l.h-s.top);c.clip();}
  c.translate(x,y);c.scale(k,k);
- const day=dawn(T);P.body(c,day>.5);
+ // The part of the screen in sight, in the page's dp (under the status bar), so views out of sight are skipped.
+ const day=dawn(T),state=story(T,App);state.view={top:((l.wide?0:s.top)-y)/k-P.STATUS,bottom:(l.h-y)/k-P.STATUS};P.body(c,day>.5);
+ // The app turns to its day palette in the middle third of the film's dawn: quickly, as a theme switch does.
+ const lit=smooth((day-.35)/.3);
  c.save();P.clip(c);
- if(App.page)App.page.draw(c,App.page.at(T,day));
- else{const g=c.createLinearGradient(0,0,0,P.H);g.addColorStop(0,A.mix('#0A1530','#D4E4F4',day));g.addColorStop(1,A.mix('#1E2C4C','#F3E6D2',day));c.fillStyle=g;c.fillRect(0,0,P.W,P.H);P.statusBar(c,day>.5);}
+ if(lit<1)App.page.draw(c,Object.assign({},state,{dark:true}));
+ if(lit>0){c.globalAlpha*=lit;App.page.draw(c,Object.assign({},state,{dark:false}));}
  c.restore();P.lens(c);c.restore();
- // Stacked, the phone slips under the sky beneath the words: the sky itself, redrawn in fading strips.
- if(!l.wide)for(let i=0;i<14;i++){const y0=s.top+i*5;c.save();c.globalAlpha*=1-smooth(i/14);sky(c,l,T,0,y0,l.w,5.5);c.restore();}
+ // Stacked, the phone slips under the sky beneath the words: the sky itself, redrawn in fading strips once it is up.
+ if(!l.wide&&y-P.BEZEL*k<s.top+70)for(let i=0;i<14;i++){const y0=s.top+i*5;c.save();c.globalAlpha*=1-smooth(i/14);sky(c,l,T,0,y0,l.w,5.5);c.restore();}
  // The screens are drawn from the app's own source with invented offers, and the film says so, quietly.
  c.save();c.globalAlpha*=(1-out)*ease((T-ENTER-.6)/.5);
- body(c,'App screens drawn from its source · invented offers',l.wide?l.tx:l.w/2,l.wide?1010:s.top+22,l.wide?21:l.square?19:23,A.mix('#8FA6C9','#5B7383',dawn(T)),{align:l.wide?'left':'center',maxWidth:l.wide?760:l.w-120});
+ body(c,'App screens drawn from its source · invented offers',s.note[0],s.note[1],s.note[2],A.mix('#8FA6C9','#5B7383',dawn(T)),{align:s.note[3],maxWidth:l.wide?760:l.w-120});
  c.restore();
 }
 const DRAW=[time,minimums,decline,choose,perspective,direction,close];
@@ -245,9 +292,11 @@ function frame(c,t,w,h,emblem,opt){
  const shot=SHOTS[i],prev=SHOTS[i-1],x=prev?smooth((t-shot.from)/XF):1;
  c.save();c.lineJoin='round';c.lineCap='round';
  backdrop(c,l,t,prev?lerp(prev.city,shot.city,x):shot.city);
- phone(c,l,t);
+ // The phone passes in front of the first shot's falling offers and under the later shots' words.
  if(x<1){scene=prev.name;c.save();c.globalAlpha=1-x;DRAW[i-1](c,l,t-prev.from,t,emblem);c.restore();}
+ if(i)phone(c,l,t);
  scene=shot.name;c.save();c.globalAlpha=x;DRAW[i](c,l,t-shot.from,t,emblem);c.restore();
+ if(!i)phone(c,l,t);
  c.restore();
  return bounds;
 }
