@@ -1,41 +1,73 @@
 # Offer Filter website
 
-The illustrated Offer Filter landing page and 21-second animated ad, published as finished static assets on the existing GitHub Pages site at https://offerfilter.org.
+The static site for https://offerfilter.org, served by GitHub Pages from this repository (custom domain in `CNAME`).
+It has no build step, no cookies, no analytics and no third-party embeds. The app itself lives in
+[Dillxn/dasher-offer-filter](https://github.com/Dillxn/dasher-offer-filter); its signed APK and update feed are served
+from https://dash-offer-filter-build.onrender.com.
 
-The Android download still uses the existing signed distribution and automatic-update channel. This change does not build, sign, or replace the Android app.
+## Pages
+
+| Path | What it is |
+|---|---|
+| `/` (`index.html`, `style.css`, `page.js`, `scene.js`, `assets/brand.js`) | Hero, the 21-second film, the animated landscape, and the Help, Feedback, About and Tip dialogs. Dialogs have addresses: `/#help`, `/#feedback`, `/#about`, `/#tip`. |
+| `/install/` (`install/index.html`, `install/install.js`) | The download button and the step-by-step setup guide. The button is labelled from `assets/release.json`. |
+| `/privacy/`, `/terms/`, `/license/` | Generated from the app's `PRIVACY.md`, `TERMS.md` and `LICENSE`; Privacy adds a "This website" section. |
+| `404.html`, `robots.txt`, `sitemap.xml` | Not-found page, crawler rules and sitemap. |
+
+`doc.css` styles the reading pages (install, legal, 404).
+
+## At every release
+
+Run from this repository, with the app repository checked out beside it (`../dasher-offer-filter`, or pass
+`--app-repo PATH`, or set `OFFER_FILTER_APP_REPO`):
+
+```sh
+python3 tools/sync-release.py      # assets/release.json from the app's release/latest.json (or --live: what Render serves)
+python3 tools/build-legal.py       # terms/, privacy/, license/ from the app's TERMS.md, PRIVACY.md, LICENSE
+node tools/test-launch-help.cjs    # local Chromium checks; nothing is sent anywhere
+```
+
+Run `sync-release.py` after the new APK is live on Render (its static site does not deploy itself), so the button
+never names a version Render does not serve. Both Python scripts use only the standard library and take `--check` to
+report, without writing, whether the committed files are current.
+
+## Feedback
+
+The feedback form posts the chosen type and the typed message, marked `web`, to the Offer Filter feedback endpoint
+(a Supabase Edge Function, `backend/anonymous-feedback` in the app repository). It needs no account and sends no
+diagnostics. It times out after 15 seconds and explains rate limits (429), rejected messages (400/413), being offline
+and other failures, keeping the message on any failure. The endpoint accepts only the `https://` origins of this site,
+so HTTPS must stay enforced. The test answers every request with fakes; never test against the real endpoint.
+
+## Derived assets
+
+Rebuild only when a master changes (needs Pillow, fonttools and brotli):
+
+```sh
+python3 tools/build-web-assets.py   # WOFF2 font subsets, the signature images, WebP posters
+npx svgo --precision 1 --multipass assets/favicon.svg   # after tools/render-favicon.cjs rewrites the favicon
+```
+
+The masters stay in `assets/`: the TTF fonts and `jesus-loves-you-emblem.png` are used by the film tools, and
+`film-poster-wide.jpg` is the social share image.
 
 ## The film
 
-The complete film is rendered from deterministic Canvas animation with the bundled Baloo 2 and Atkinson Hyperlegible fonts. Each format is composed separately: landscape 1920 × 1080, portrait 1080 × 1920, and square 1080 × 1080, all 630 frames at 30 fps. The website selects the square composition on phones and keeps that choice stable during playback. Native controls, opt-in playback, replay, downloads, and English captions are preserved.
-
-Shots follow the supplied narration: time (0s), minimums (1.78s), declining (3.72s), choice (7.08s), history (9s), area guidance (11.5s), and the illustrated closing scene (13.8s). The ending pairs the mascot with a left-aligned text column in landscape and follows one centered column in portrait and square. The colorful landscape continues through the final frame. The URL is plain blue type; the Jesus Loves You emblem is a smaller unbacked signature below, with the complete passage. Only its foreground ink is tinted forest green while the original alpha silhouette and source asset remain unchanged. Radar labels also sit directly on the scene, without filled circles or pills. There is no visible music-credit card or fade to black.
-
-Text is measured from actual font bounds and fitted within safe widths. No rectangular text-reveal mask can crop ascenders or descenders. Every visible text draw is checked against the frame during all 630 frames of each format. Background offer tickets deliberately enter and leave the scene; their decorative edge bleed is not essential text.
-
-The original user-supplied recording in `assets/your-time-matters.mp3` is unchanged. Its decoded samples remain unchanged through 17.45 seconds, including the complete spoken “Free and open source.” Only the speech-free instrumental tail repeats to support the ending, fading from 19.49 to 20.29 seconds. Voice speed and level are unchanged. Creative-media rights remain described in THIRD_PARTY_NOTICES.md.
-
-## Reproduce locally
-
-Requires Node.js, @napi-rs/canvas, Python 3, and FFmpeg with H.264/AAC and VP9/Opus. The renderer can use the installed primary runtime via CODEX_PRIMARY_RUNTIME_NODE_MODULES. No external CI or build service is used.
+The film is rendered from deterministic Canvas animation (`tools/film/film.js`, `tools/render-film.cjs`) with the
+bundled fonts, in landscape 1920 × 1080, square 1080 × 1080 and portrait 1080 × 1920. Phones get the square edit; the
+page never fetches video before Play. It uses invented offers: it illustrates the idea and is not a device test, an
+earnings promise or a claim about DoorDash's offer algorithm. To reproduce (Node.js with `@napi-rs/canvas`, Python 3
+and FFmpeg):
 
 ```sh
 python3 tools/film/make-audio.py /tmp/offer-film
 node tools/render-film.cjs stills /tmp/offer-film
-node tools/render-film.cjs landscape /tmp/offer-film
-node tools/render-film.cjs portrait /tmp/offer-film
-node tools/render-film.cjs square /tmp/offer-film
-ffmpeg -i /tmp/offer-film/offer-filter-portrait.mp4 -c:v libvpx-vp9 -crf 27 -b:v 0 -row-mt 1 -cpu-used 4 -c:a libopus -b:a 160k /tmp/offer-film/offer-filter-portrait.webm
+node tools/render-film.cjs landscape /tmp/offer-film   # and: portrait, square
 ```
 
-`tools/film/film.js` owns the complete animation; `tools/render-film.cjs` renders and audits it; `tools/film/make-audio.py` verifies the original recording and prepares the soundtrack. Earlier ending recipes and receipts remain as historical production evidence and are superseded by this full-film renderer.
+Production receipts for the film, soundtrack and emblem are in `validation/` (see `SITE_VALIDATION.md`).
 
-The film uses invented offers and map locations. It is an illustration of the idea, not a device-validation run, an earnings promise, or evidence about DoorDash's offer algorithm. Default behavior is shown; passing an offer leaves the choice to the user.
+## Licenses
 
-The site is static HTML, CSS and JavaScript with local fonts and media. It does not embed tracking, account connections, payment processing, or an app build. Public Android source is on the separate app-source branch. The MIT License covers the website software; font and creative-media rights are separate in THIRD_PARTY_NOTICES.md.
-
-
-## Accountless feedback
-
-The public site includes a small feedback form that posts directly to the dedicated Offer Filter feedback endpoint at `https://zlnfvqyyjsltmkmmpgzp.supabase.co/functions/v1/offer-filter-feedback`. It asks for no name, email, GitHub account, or Offer Filter account and sends no diagnostics from the website. The form submits only the selected category, typed message, and a `web` source/version marker.
-
-The feedback database is write-only from the public path, uses server-side rate limiting without storing the raw IP address in the feedback record, and expires feedback after 90 days. Supabase and network providers still handle ordinary connection metadata, so the UI describes this as accountless feedback rather than guaranteeing mathematical anonymity. The site still has no analytics or tracking.
+The website's code is MIT (`LICENSE`). Fonts are SIL OFL 1.1 and the film, recording, emblem and posters keep their own
+rights; see `THIRD_PARTY_NOTICES.md`. Offer Filter is independent and not affiliated with DoorDash.
