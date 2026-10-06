@@ -77,11 +77,14 @@ function heading(c,lines,l,t,times,day=0){
 function supporting(c,str,l,lt,day=0){rise(c,lt,()=>body(c,str,l.tx,l.ty+l.head*2.25,l.square?30:36,A.mix(C.sky,'#426275',day),{maxWidth:l.headW}),10);}
 
 /* The shared backdrop: sky, stars and hills keep moving through every cut; only the city fades in and out. */
+function sky(c,l,T,x,y,w,h){
+ const day=dawn(T),g=c.createLinearGradient(0,0,l.w*.3,l.h);g.addColorStop(0,A.mix('#0C1732','#CFE7ED',day));g.addColorStop(.57,A.mix('#263753','#F0DFBB',day));g.addColorStop(1,A.mix('#354260','#F8B27E',day));c.fillStyle=g;c.fillRect(x,y,w,h);
+ if(day<1){const halo=c.createRadialGradient(l.w*.75,l.h*.4,0,l.w*.75,l.h*.4,l.w*.65);halo.addColorStop(0,`rgba(121,166,235,${.19*(1-day)})`);halo.addColorStop(1,'rgba(121,166,235,0)');c.fillStyle=halo;c.fillRect(x,y,w,h);}
+}
 function backdrop(c,l,T,city){
  const {w,h}=l,day=dawn(T);
- const g=c.createLinearGradient(0,0,w*.3,h);g.addColorStop(0,A.mix('#0C1732','#CFE7ED',day));g.addColorStop(.57,A.mix('#263753','#F0DFBB',day));g.addColorStop(1,A.mix('#354260','#F8B27E',day));c.fillStyle=g;c.fillRect(0,0,w,h);
+ sky(c,l,T,0,0,w,h);
  if(day<1){
-  const halo=c.createRadialGradient(w*.75,h*.4,0,w*.75,h*.4,w*.65);halo.addColorStop(0,`rgba(121,166,235,${.19*(1-day)})`);halo.addColorStop(1,'rgba(121,166,235,0)');c.fillStyle=halo;c.fillRect(0,0,w,h);
   for(let i=0;i<75;i++){const x=((i*367)%997)/997*w,y=((i*151)%787)/787*h*.75;dot(c,x,y,.8+(i%3)*.6,`rgba(255,245,218,${(1-day)*(.15+.14*Math.sin(i+T))})`);}
  }
  if(city>.01){c.save();c.globalAlpha*=city;skyline(c,l,day);c.restore();}
@@ -151,77 +154,29 @@ function time(c,l,t,T){
  drive(c,l,t,T,lerp(w*.5,w*.58,smooth(t/3.6)));
  heading(c,['Your time','matters.'],l,t,[1.1,1.92]);
 }
-/* 2 · Set your minimums: the four-spoke constellation opens, then the per-mile knob moves with the word. */
+/* 2–6 · The app itself: the phone layer (below) carries the picture; these shots set the words beside it. Square
+ * frames give the phone the room under the heading, so their supporting lines rest. */
+function aside(c,str,l,lt,day){if(!l.square)supporting(c,str,l,lt,day);}
 function minimums(c,l,t){
  heading(c,['Set your','minimums.'],l,t,[0,beat(7)-beat(6)]);
- const r=l.r*.9,cx=l.cx,cy=l.cy,angs=[-2.35,-.79,.79,2.35],grow=ease(t/.5),knob=smooth((t-.62)/.75);
- const vals=[.63,lerp(.43,.82,knob),.68,.53].map(v=>v*grow);
- for(let k=1;k<=4;k++){c.save();c.globalAlpha*=ease((t-k*.05)/.3);c.beginPath();c.arc(cx,cy,r*k/4,0,TAU);c.strokeStyle=k===4?'#769DCF':'#3E587B';c.lineWidth=k===4?2.6:1.6;c.stroke();c.restore();}
- const points=vals.map((v,i)=>[cx+Math.cos(angs[i])*r*v,cy+Math.sin(angs[i])*r*v]),size=l.square?27:32;
- angs.forEach((a,i)=>{stroke(c,[[cx,cy],[cx+Math.cos(a)*r,cy+Math.sin(a)*r]],'#557399',2);
-  rise(c,t-.15-i*.05,()=>body(c,['$','/mi','/min','/stop'][i],cx+Math.cos(a)*r*1.21,cy+Math.sin(a)*r*1.21+10,size,C.cream,{align:'center'}),6);});
- c.beginPath();points.forEach((p,i)=>i?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1]));c.closePath();c.fillStyle='rgba(91,154,249,.3)';c.fill();c.strokeStyle=C.sky;c.lineWidth=5;c.stroke();points.forEach(p=>dot(c,p[0],p[1],10,C.sky));
- const p=points[1];dot(c,p[0],p[1],(24+Math.sin(t*3)*4)*grow,'rgba(161,205,255,.23)');
- rise(c,t-.3,()=>text(c,`$${lerp(2,3,knob).toFixed(2)}/mi`,cx,cy+r+76,l.square?36:42,C.sky,{align:'center'}),8);
- supporting(c,'You set the pace.',l,t-.75);
+ aside(c,'You set the pace.',l,t-.75);
 }
-/* 3 · Low offers? Declined: three offers arrive, take a stamp on the beat and are flicked away. */
 function decline(c,l,t){
- const hits=[11,13,15].map(n=>beat(n)-beat(9));
- heading(c,['Low offers?','Declined.'],l,t,[0,hits[0]]);
- const shake=hits.reduce((a,h)=>{const d=t-h;return d>0&&d<.4?a+Math.sin(d*42)*.045*(1-d/.4):a;},0);
- mascot(c,l.cx,l.cy,l.r/97,t+3,ease(t/.6),{tilt:shake});
- const offers=[['$3.50','9.2 mi · 34 min'],['$4.25','12.4 mi · 38 min'],['$2.75','7.8 mi · 31 min']],s=l.square?.75:.94,hy=l.cy-l.r*.98;
- hits.forEach((hit,i)=>{
-  const p=ease((t-hit+.8)/.7),q=clamp((t-hit)/.75);if(p<=0||q>=1)return;
-  const x=lerp(l.cx+l.r*1.6,l.cx,p)+q*l.r*.85*(1+q),y=lerp(hy-l.r*1.25,hy,p)-Math.sin(q*Math.PI)*l.r*.3+q*q*l.r*.6;
-  ticket(c,x,y,s,lerp(.35,-.04,p)+q*(1.1+i*.2),{pay:offers[i][0],info:offers[i][1],kind:'decline',alpha:1-q*q,stamp:(t-hit)/.3,track:p>.95&&q<=0});
- });
- supporting(c,'Below your rules.',l,t-hits[0]-.45);
+ heading(c,['Low offers?','Declined.'],l,t,[0,beat(11)-beat(9)]);
+ aside(c,'Below your rules.',l,t-beat(11)+beat(9)-.45);
 }
-/* 4 · The good ones? Your call: a fair offer passes through the filter and waits for the driver. */
 function choose(c,l,t){
- const call=beat(18)-beat(16);
- heading(c,['The good ones?','Your call.'],l,t,[0,call]);
- const s=l.r/97*(l.square?.83:.91),my=l.cy-(l.square?20:45);
- mascot(c,l.cx,my,s,t+6,1,{mood:t>call&&t<call+.8?'cheer':undefined});
- const p=ease((t-.12)/.7),ty=l.cy+(l.square?218:350),ts=l.square?1.12:1.36;
- ticket(c,l.cx,lerp(my+60*s,ty,p),ts*lerp(.45,1,p),0,{pay:'$18.40',info:'4.1 mi · 22 min',kind:'pass',alpha:clamp(p*2),stamp:(t-call)/.3,track:p>.95});
- supporting(c,'Ready for your decision.',l,t-.55);
+ heading(c,['The good ones?','Your call.'],l,t,[0,beat(18)-beat(16)]);
+ aside(c,'Ready for your decision.',l,t-.55);
 }
-/* 5 · Every offer, in perspective: the history rises like a little skyline of its own. */
 function perspective(c,l,t){
- const turn=beat(21)-beat(19);
- heading(c,['Every offer.','In perspective.'],l,t,[0,turn]);
- const width=l.wide?660:l.square?830:870,x0=l.cx-width/2,base=l.wide?842:l.square?883:1540,scale=l.wide?1:l.square?.83:1.27;
- const heights=[86,122,294,138,198,243,105,165,314,144];
- heights.forEach((hh,i)=>{const p=pop((t-.15-i*.07)/.55),bw=width/10-12,x=x0+i*width/10,pass=[2,5,8].includes(i),bh=hh*scale*p,col=pass?C.mint:C.pink;
-  if(p<=0)return;box(c,x,base-bh,bw,bh,6,col);for(let row=0;row<Math.floor((bh-20)/28);row++)for(let k=0;k<2;k++){c.fillStyle='rgba(23,44,59,.24)';c.fillRect(x+12+k*(bw-31),base-bh+14+row*28,7,10);}
-  const b=(t-.55-i*.07)/.3;if(b>0)icon(c,x+bw/2,base-bh-29,17*pop(b),pass?'check':'cross',col);
- });
- stroke(c,[[x0-10,base+2],[x0+width,base+2]],'#6D94BA',2);
- const ky=base-314*scale-95,ks=l.square?31:37;
- rise(c,t-turn,()=>{body(c,'ILLUSTRATIVE OFFERS',x0,ky-56,l.square?20:22,C.sky);
-  dot(c,x0+9,ky-11,9,C.mint);body(c,'3 passed',x0+30,ky,ks,C.mint);
-  dot(c,x0+width*.45+9,ky-11,9,C.pink);body(c,'7 declined',x0+width*.45+30,ky,ks,C.pink);},10);
-}
-/* 6 · Find your next move: dawn breaks on the downbeat and the route draws itself on the map. */
-function map(c,l,t){
- const cx=l.cx,cy=l.cy+15,r=l.r*(l.square?1.04:1.08)*lerp(.9,1,ease(t/.45));
- c.save();c.globalAlpha*=ease(t/.3);c.beginPath();c.arc(cx,cy,r,0,TAU);c.save();c.clip();dot(c,cx,cy,r,'#C8D6BD');
- for(let k=-3;k<=3;k++){stroke(c,[[cx-r,cy+k*98-r*.12],[cx+r,cy+k*98+r*.1]],'#E6E3BF',l.square?15:23);stroke(c,[[cx+k*113,cy-r],[cx+k*113+70,cy+r]],'#E6E3BF',l.square?15:23);}
- const pts=[[cx-r*.59,cy+r*.38],[cx-r*.16,cy+r*.4],[cx-r*.11,cy-r*.07],[cx+r*.38,cy-r*.11],[cx+r*.43,cy-r*.49]],end=pts[pts.length-1];
- for(const [x,y,s] of [[-.65,-.4,18],[.63,.44,22],[.2,.67,15],[-.62,.64,12]]){dot(c,cx+x*r,cy+y*r,s,'#739B80');dot(c,cx+x*r+9,cy+y*r-10,s*.8,'#8BAE87');}
- stroke(c,pts,'#FFF5DB',18);c.save();c.setLineDash([2000]);c.lineDashOffset=2000*(1-smooth((t-.35)/.8));stroke(c,pts,'#317BCA',10);c.restore();
- dot(c,pts[0][0],pts[0][1],18,C.blue);dot(c,pts[0][0],pts[0][1],7,C.cream);
- const k=pop((t-1.1)/.35);if(k>0){dot(c,end[0],end[1],29*k,C.gold);dot(c,end[0],end[1],12*k,'#B98236');}
- c.restore();c.beginPath();c.arc(cx,cy,r,0,TAU);c.strokeStyle='#FBF1D4';c.lineWidth=8;c.stroke();c.restore();
+ heading(c,['Every offer.','In perspective.'],l,t,[0,beat(21)-beat(19)]);
+ aside(c,'Every decision, kept for you.',l,t-1.4);
 }
 function direction(c,l,t,T){
  const day=dawn(T);
  heading(c,['Find your','next move.'],l,t,[0,beat(25)-beat(24)],day);
- map(c,l,t);drive(c,l,t,T,lerp(l.w*.3,l.w*.6,ease(t/1.9)));
- supporting(c,'Guided by your offer history.',l,t-.75,day);
+ aside(c,'Guided by your offer history.',l,t-.75,day);
 }
 /* 7 · Offer Filter: the name, then "Free" and "& open source" land with the voice; sparkles take the last hits. */
 function android(c,x,y,s,col){c.save();c.translate(x,y);c.scale(s,s);c.lineCap='round';stroke(c,[[-11,-14],[-17,-24]],col,3);stroke(c,[[11,-14],[17,-24]],col,3);c.beginPath();c.arc(0,0,24,Math.PI,TAU);c.lineTo(24,5);c.lineTo(-24,5);c.closePath();c.fillStyle=col;c.fill();dot(c,-10,-6,2.6,C.cream);dot(c,10,-6,2.6,C.cream);c.restore();}
@@ -244,6 +199,43 @@ function close(c,l,t,T,emblem){
  c.save();c.globalAlpha*=ease((t-at(32))/.6);c.drawImage(emblem,ex,ey,mw,mh);c.restore();
  rise(c,t-at(33),()=>body(c,'Independent app. Not affiliated with DoorDash.',wide?165:w/2,wide?992:sq?1008:1818,wide?26:sq?22:27,'#183D4E',{align,maxWidth:wide?920:sq?690:928}),8);
 }
+/* The phone: the app's own main page (assets/app.js) in one continuous layer from "Set your minimums" until the
+ * close, under the shots' words, so it never flickers through a crossfade. A camera eases between framings in the
+ * phone's dp: each key holds from its time and is reached over .7 s. */
+const ENTER=beat(6)-.15,EXIT=beat(27);
+const CAMERA=[[ENTER,206,457,1],[beat(7)-.1,300,300,1.7],[beat(9),190,250,1.4],[beat(16),206,210,1.15],[beat(19),206,600,1.5],[beat(24),206,730,1.45]];
+function stage(l){
+ // Where the phone stands at zoom 1, and the part of the frame it may fill beside or below the words.
+ return l.wide?{k:1,ax:1355,ay:540,left:940,top:-1e3}:l.square?{k:.86,ax:540,ay:735,left:-1e3,top:296}:{k:1.4,ax:540,ay:1222,left:-1e3,top:575};
+}
+function camera(T){
+ let i=0;while(i+1<CAMERA.length&&T>=CAMERA[i+1][0])i++;
+ const a=CAMERA[Math.max(0,i-1)],b=CAMERA[i],p=i?smooth((T-b[0])/.7):1;
+ return {x:lerp(a[1],b[1],p),y:lerp(a[2],b[2],p),z:lerp(a[3],b[3],p)};
+}
+function phone(c,l,T){
+ const App=root.OfferApp;if(!App||!App.phone||T<ENTER||T>EXIT+.5)return;
+ const P=App.phone,s=stage(l),cam=camera(T),k=s.k*cam.z,inp=ease((T-ENTER)/.8),out=smooth((T-EXIT)/.45);
+ let x=s.ax-cam.x*k,y=s.ay-cam.y*k;
+ // Beside the words in landscape, the phone never crosses into their column.
+ x=Math.max(x,s.left+P.BEZEL*k);
+ if(l.wide)x+=(1-inp)*1000;else y+=(1-inp)*1200;
+ y+=out*260;
+ c.save();c.globalAlpha*=1-out;
+ if(!l.wide){c.beginPath();c.rect(0,s.top,l.w,l.h-s.top);c.clip();}
+ c.translate(x,y);c.scale(k,k);
+ const day=dawn(T);P.body(c,day>.5);
+ c.save();P.clip(c);
+ if(App.page)App.page.draw(c,App.page.at(T,day));
+ else{const g=c.createLinearGradient(0,0,0,P.H);g.addColorStop(0,A.mix('#0A1530','#D4E4F4',day));g.addColorStop(1,A.mix('#1E2C4C','#F3E6D2',day));c.fillStyle=g;c.fillRect(0,0,P.W,P.H);P.statusBar(c,day>.5);}
+ c.restore();P.lens(c);c.restore();
+ // Stacked, the phone slips under the sky beneath the words: the sky itself, redrawn in fading strips.
+ if(!l.wide)for(let i=0;i<14;i++){const y0=s.top+i*5;c.save();c.globalAlpha*=1-smooth(i/14);sky(c,l,T,0,y0,l.w,5.5);c.restore();}
+ // The screens are drawn from the app's own source with invented offers, and the film says so, quietly.
+ c.save();c.globalAlpha*=(1-out)*ease((T-ENTER-.6)/.5);
+ body(c,'App screens drawn from its source · invented offers',l.wide?l.tx:l.w/2,l.wide?1010:s.top+22,l.wide?21:l.square?19:23,A.mix('#8FA6C9','#5B7383',dawn(T)),{align:l.wide?'left':'center',maxWidth:l.wide?760:l.w-120});
+ c.restore();
+}
 const DRAW=[time,minimums,decline,choose,perspective,direction,close];
 // t is film time in seconds. Draws into (0,0)-(w,h) of the current transform, so callers may scale it.
 function frame(c,t,w,h,emblem,opt){
@@ -253,6 +245,7 @@ function frame(c,t,w,h,emblem,opt){
  const shot=SHOTS[i],prev=SHOTS[i-1],x=prev?smooth((t-shot.from)/XF):1;
  c.save();c.lineJoin='round';c.lineCap='round';
  backdrop(c,l,t,prev?lerp(prev.city,shot.city,x):shot.city);
+ phone(c,l,t);
  if(x<1){scene=prev.name;c.save();c.globalAlpha=1-x;DRAW[i-1](c,l,t-prev.from,t,emblem);c.restore();}
  scene=shot.name;c.save();c.globalAlpha=x;DRAW[i](c,l,t-shot.from,t,emblem);c.restore();
  c.restore();

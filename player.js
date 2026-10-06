@@ -87,6 +87,7 @@
     emit('ended');
   }
   player.play = () => {
+    loadApp();
     if (!started || ended) { started = true; seekTo(0); }
     playing = true; ended = false; controls.hidden = false; showControls();
     let result = Promise.resolve();
@@ -206,8 +207,24 @@
     visible = entries[entries.length - 1].isIntersecting;
     if (visible && ready) draw();
   }).observe(stage);
-  // Warm the soundtrack as soon as someone reaches for the play button.
-  const warm = () => { if (audio.preload === 'none') audio.preload = 'auto'; };
+  // The app's own views (assets/app/) draw the phone in the film's middle; they load only when the film is wanted,
+  // in order, with the Roboto the app's words are drawn in.
+  let app = null;
+  function loadApp() {
+    if (app) return app;
+    app = fetch(`assets/app/files.json${MEDIA}`).then(r => r.json()).then(files => new Promise(resolve => {
+      let left = files.length;
+      for (const file of files) {
+        const script = Object.assign(document.createElement('script'), {src: `assets/app/${file}${MEDIA}`, async: false});
+        script.onload = script.onerror = () => { if (--left === 0) resolve(); };
+        document.head.append(script);
+      }
+    })).then(() => document.fonts && Promise.all([document.fonts.load('400 1em Roboto'), document.fonts.load('500 1em Roboto')]))
+      .catch(() => {}).then(() => { if (ready && !playing) draw(); });
+    return app;
+  }
+  // Warm the soundtrack and the app's views as soon as someone reaches for the play button.
+  const warm = () => { if (audio.preload === 'none') audio.preload = 'auto'; loadApp(); };
   for (const type of ['pointerenter', 'focus', 'touchstart']) $('film-play').addEventListener(type, warm, {once: true, passive: true});
 
   // The poster is the film's own closing frame, drawn once the fonts and the tinted emblem are ready.

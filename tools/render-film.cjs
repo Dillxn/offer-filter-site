@@ -4,8 +4,9 @@ let canvas;try{canvas=require('@napi-rs/canvas')}catch(e){if(!process.env.CODEX_
 const {createCanvas,GlobalFonts,loadImage,Path2D}=canvas;global.Path2D=Path2D;
 const root=path.resolve(__dirname,'..');
 // Skia ignores weight on variable fonts, so the film's bold Baloo 2 is a static 700 instance (tools/make-fonts.sh).
-for(const[file,name]of[['baloo2-bold-latin.ttf','Baloo 2'],['AtkinsonHyperlegible-Regular.ttf','Atkinson Hyperlegible']]){if(!GlobalFonts.registerFromPath(path.join(root,'assets',file),name))throw Error('Font failed: '+file);}
-require('../assets/brand.js');require('../assets/film.js');
+for(const[file,name]of[['baloo2-bold-latin.ttf','Baloo 2'],['AtkinsonHyperlegible-Regular.ttf','Atkinson Hyperlegible'],['roboto-400-latin.ttf','Roboto'],['roboto-500-latin.ttf','Roboto']]){if(!GlobalFonts.registerFromPath(path.join(root,'assets',file),name))throw Error('Font failed: '+file);}
+// The app's own views (assets/app/), drawn inside the film's phone, load before the film as on the page.
+require('../assets/brand.js');for(const file of require('../assets/app/files.json'))require('../assets/app/'+file);require('../assets/film.js');
 const {DURATION,FPS,POSTER,CAPTIONS}=OfferFilm,FRAMES=Math.round(DURATION*FPS);
 const FORMATS={landscape:[1920,1080],portrait:[1080,1920],square:[1080,1080]};
 const OUT=path.resolve(process.argv[3]||'/tmp/offer-filter-film');fs.mkdirSync(OUT,{recursive:true});
