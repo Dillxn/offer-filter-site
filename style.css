@@ -43,3 +43,16 @@ footer{position:relative;inset:auto;display:block;flex:none}.footer-links{displa
 
 /* The phone edit is composed in a square, with no cropped video or type. */
 .film-stage.film-square,.film-stage.film-square video{aspect-ratio:1}
+
+/* Accountless beta feedback; plain form controls, no decorative card or pill treatment. */
+#feedback-dialog{width:min(560px,calc(100% - 32px))}
+.feedback-form{display:grid;gap:10px;margin:22px 0 10px}
+.feedback-form label{font-size:12px;font-weight:700;letter-spacing:.4px}
+.feedback-form select,.feedback-form textarea{width:100%;border:1px solid #233f4840;border-radius:5px;background:#fffdf7;color:#233f48;font:inherit;font-size:15px;padding:12px;line-height:1.45}
+.feedback-form textarea{resize:vertical;min-height:132px}
+.feedback-form select:focus-visible,.feedback-form textarea:focus-visible{outline:3px solid #ed9a3d;outline-offset:2px}
+.feedback-submit{justify-content:center;width:max-content;margin-top:4px}
+.feedback-status{min-height:24px;margin:2px 0 0;font-size:13px}
+.feedback-button{background:transparent;color:inherit;cursor:pointer}
+.night #feedback-dialog{background:#172737;color:#e9e5d5}
+.night .feedback-form select,.night .feedback-form textarea{background:#21344a;color:#f7f0df;border-color:#d7dec54a}

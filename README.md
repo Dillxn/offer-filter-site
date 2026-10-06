@@ -32,3 +32,10 @@ ffmpeg -i /tmp/offer-film/offer-filter-portrait.mp4 -c:v libvpx-vp9 -crf 27 -b:v
 The film uses invented offers and map locations. It is an illustration of the idea, not a device-validation run, an earnings promise, or evidence about DoorDash's offer algorithm. Default behavior is shown; passing an offer leaves the choice to the user.
 
 The site is static HTML, CSS and JavaScript with local fonts and media. It does not embed tracking, account connections, payment processing, or an app build. Public Android source is on the separate app-source branch. The MIT License covers the website software; font and creative-media rights are separate in THIRD_PARTY_NOTICES.md.
+
+
+## Accountless feedback
+
+The public site includes a small feedback form that posts directly to the dedicated Offer Filter feedback endpoint at `https://zlnfvqyyjsltmkmmpgzp.supabase.co/functions/v1/offer-filter-feedback`. It asks for no name, email, GitHub account, or Offer Filter account and sends no diagnostics from the website. The form submits only the selected category, typed message, and a `web` source/version marker.
+
+The feedback database is write-only from the public path, uses server-side rate limiting without storing the raw IP address in the feedback record, and expires feedback after 90 days. Supabase and network providers still handle ordinary connection metadata, so the UI describes this as accountless feedback rather than guaranteeing mathematical anonymity. The site still has no analytics or tracking.
