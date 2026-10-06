@@ -61,7 +61,7 @@ a.primary{width:max-content;max-width:100%;text-decoration:none}
 .legal-links a{display:inline-flex;align-items:center;min-height:44px;font-size:13px;text-underline-offset:4px}
 
 /* A visible captions switch beside Save film; the film itself is unchanged. */
-.captions-toggle{display:inline-flex;align-items:center;min-height:44px;padding:0;border:0;background:transparent;font-size:14px;text-decoration:underline;text-underline-offset:4px}
+.captions-toggle{display:inline-block;min-height:44px;line-height:44px;padding:0;border:0;background:transparent;font-size:14px;text-decoration:underline;text-underline-offset:4px;white-space:nowrap}
 .captions-toggle[hidden]{display:none}
 .film-heading{gap:24px}
 .film-stage video:focus-visible{outline-offset:-4px}

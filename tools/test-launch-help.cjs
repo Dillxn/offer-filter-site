@@ -447,6 +447,7 @@ async function main() {
       // The film's captions switch is visible and works.
       assert(await page.locator('#captions-toggle').isVisible(), 'captions switch visible');
       assert.equal(await page.getByRole('button', {name: 'Captions', exact: true}).count(), 1, 'captions switch keeps its name');
+      assert.match((await page.locator('#captions-toggle').innerText()).replace(/\s+/g, ' ').trim(), /^Captions (on|off)$/, 'captions switch reads "Captions on/off"');
       const pressed = await page.locator('#captions-toggle').getAttribute('aria-pressed');
       await page.click('#captions-toggle');
       assert.notEqual(await page.locator('#captions-toggle').getAttribute('aria-pressed'), pressed, 'captions toggle');
