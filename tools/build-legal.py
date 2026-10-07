@@ -53,7 +53,9 @@ or tracking. Its pages, fonts, images and film come from offerfilter.org itself.
 typed, marked as coming from the website, to the Offer Filter feedback service: a Supabase Edge Function, reached \
 through Supabase's network (which includes Cloudflare). The service turns your connection's IP address into a \
 rotating, one-way rate-limit value and does not store the IP address with your feedback. Supabase and Cloudflare \
-handle ordinary connection data under their own policies. Feedback is deleted after 90 days.
+handle ordinary connection data under their own policies, and the developer can see the request logs Supabase keeps \
+for the project, which can record each request's IP address and browser details, for as long as Supabase keeps them. \
+Feedback is deleted after 90 days.
 - **Who reads feedback.** Feedback may be reviewed by the developer, with the help of AI assistants such as \
 Anthropic's Claude or OpenAI's ChatGPT/Codex, to investigate problems. There is no reply address, so we can't answer \
 you directly. Please leave out customer names, addresses, payment, account or password details.
