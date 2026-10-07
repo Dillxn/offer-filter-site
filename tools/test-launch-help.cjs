@@ -340,6 +340,7 @@ async function main() {
       for (const phrase of ['File might be harmful', 'Download anyway', 'Allow from this source', 'Play Protect', 'Scan app',
         'Never turn Play Protect off', 'stop there', 'Auto Blocker', 'Settings → Security and privacy → Auto Blocker',
         'I understand and accept', 'Restricted setting', 'Allow restricted settings', 'App info',
+        'App was denied access', 'Controlled by Restricted Setting', 'Settings → Accessibility → Installed apps',
         'Allow Offer Filter to send you notifications?', 'Updates can’t install', 'Autopilot', '70%', 'Earn per Offer',
         'Earn by Time', 'Dasher full screen', 'Google Maps or Waze full screen', 'Peek', 'split screen',
         'for planning', 'Tap the mascot', 'Send anonymous feedback', 'feedback form', 'Android 8',
