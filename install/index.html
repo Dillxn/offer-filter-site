@@ -49,9 +49,9 @@
 <h2 id="before-title">Before you install</h2>
 <ul>
 <li><strong>It’s a beta.</strong> It can misread an offer, decline one you wanted, or, if you turn on Auto-accept, accept one you didn’t want. Check your Dasher history.</li>
-<li><strong>Declines can lower your acceptance rate.</strong> Autopilot’s acceptance-rate goal (new in 0.5.0) helps, but nothing here guarantees a rate or any earnings.</li>
+<li><strong>Declines can lower your acceptance rate.</strong> Autopilot’s acceptance-rate goal (new in 0.5.0) is a best effort, not a promise: Autopilot can only stop declining, and your rate rises only when you accept offers. Nothing here guarantees a rate or any earnings.</li>
 <li><strong>It’s independent.</strong> Offer Filter isn’t made, endorsed or supported by DoorDash. Using it may conflict with DoorDash’s terms, and DoorDash could limit or deactivate your account.</li>
-<li><strong>It needs two Android permissions.</strong> Accessibility, to read Dasher’s screen and tap Decline, and notification access, to see Dasher’s offer alerts. Peek, on by default, briefly opens Dasher when an offer arrives while another app is in front; you can turn it off.</li>
+<li><strong>It needs two Android permissions.</strong> Accessibility, to read Dasher’s screen and tap Decline, and notification access, to see Dasher’s offer alerts. Peek, on by default, briefly opens Dasher when an offer arrives while another app is in front; you can turn it off. During a dash it keeps your screen from timing out, which uses more battery; it never wakes or unlocks your phone.</li>
 <li><strong>Set it up while parked.</strong> Don’t handle your phone while driving.</li>
 </ul>
 <p>The app shows its <a href="../terms/">terms</a> and asks you to accept them before it does anything. <a href="../privacy/">Privacy</a> explains what it reads and keeps.</p>
@@ -79,14 +79,18 @@
 <li><h3>Read the notice</h3>
 <p>Open Offer Filter. Its first screen explains what it reads, the acceptance-rate risk and the terms. Tap <strong>I understand and accept</strong> only if you agree. <strong>Not now</strong> closes the app without it doing anything.</p></li>
 <li><h3>Turn on what it needs</h3>
-<p>Offer Filter’s home screen lists anything that’s still off, each with a <strong>Fix</strong> button that opens the right Android screen:</p>
-<ul>
-<li><strong>Screen reading is off</strong>: Accessibility. Choose Offer Filter and turn it on. Android warns that the app can see and control your screen; that’s how it reads offers and taps Decline in Dasher.</li>
-<li><strong>Background offers are off</strong>: Notification access. Choose Offer Filter and allow it. It reads only Dasher’s notifications and ignores every other app.</li>
-<li><strong>Alerts are blocked</strong>: Offer Filter’s own notifications (step 9).</li>
-</ul></li>
+<p>Offer Filter’s home screen lists the Android steps still to do, each with a <strong>Fix</strong> button that opens the right Android screen. Do them in order.</p>
+<p><span class="since">New in 0.5.0</span> The steps are numbered, one line each and only while needed. With three or more to do, the first shows and <strong>N more to set up · Show</strong> lists the rest:</p>
+<ol>
+<li><strong>Allow restricted settings</strong> (Android 13 and later, when the app came from your browser): see step 8.</li>
+<li><strong>Turn on Offer Filter in Accessibility</strong>: in Accessibility, open <strong>Downloaded apps</strong> (<strong>Installed apps</strong> on Samsung), choose Offer Filter and turn it on. Android warns that the app can see and control your screen; that’s how it reads offers and taps Decline in Dasher.</li>
+<li><strong>Allow notification access</strong>: choose <strong>Offer Filter background offers</strong> and allow it. It reads only Dasher’s notifications and ignores every other app.</li>
+<li><strong>Allow alerts</strong>: Offer Filter’s own notifications (step 9).</li>
+<li><strong>Allow updates</strong>: shows once the rest is done, or right away when an update is waiting (step 10).</li>
+</ol>
+<p class="note">If something you turned on stops working, its line says <strong>Turn Offer Filter off and on in Accessibility</strong> or <strong>Reconnect notification access</strong> instead.</p></li>
 <li><h3>Android 13 and later: “Restricted setting” or “App was denied access”</h3>
-<p>Because the app came from your browser, Android 13 and later keep Accessibility and notification access locked for it at first, every time it’s installed. You’ll see one of these:</p>
+<p>Because the app came from your browser, Android 13 and later keep Accessibility and notification access locked for it at first, every time it’s installed. Offer Filter’s first step, <strong>Allow restricted settings</strong>, leads you through this before you hit the lock: tap <strong>Fix</strong>, then <strong>Try the switch</strong>. You’ll see one of these:</p>
 <ul>
 <li>The switch is greyed out, or Offer Filter is listed as <strong>Controlled by Restricted Setting</strong>.</li>
 <li><strong>Restricted setting</strong> (“For your security, this setting is currently unavailable”).</li>
@@ -94,40 +98,55 @@
 </ul>
 <p>Close the message (<strong>OK</strong> or <strong>Close</strong>), then:</p>
 <ol>
-<li>Touch and hold the Offer Filter icon and tap <strong>App info</strong> (or go to <span class="path">Settings → Apps → Offer Filter</span>).</li>
+<li>Open <strong>App info</strong>: tap <strong>Open App info</strong> in Offer Filter’s step, or touch and hold the Offer Filter icon and tap <strong>App info</strong> (or go to <span class="path">Settings → Apps → Offer Filter</span>).</li>
 <li>Tap <strong>⋮</strong> at the top right, then <strong>Allow restricted settings</strong>, and confirm with your PIN or fingerprint.</li>
-<li>Go back to Offer Filter, tap <strong>Fix</strong> again, and turn the switch on (or go to <span class="path">Settings → Accessibility → Installed apps → Offer Filter</span>).</li>
+<li>Go back to Offer Filter. The setting you were turning on opens by itself if you come back within ten minutes: turn the switch on (in Accessibility it’s at <span class="path">Settings → Accessibility → Installed apps → Offer Filter</span>, or Downloaded apps). Otherwise tap <strong>Fix</strong> again, and if you already allowed it, choose <strong>Try the switch</strong>.</li>
 </ol>
-<p class="note"><strong>Allow restricted settings</strong> only appears after you’ve tried the switch once, so the message above is expected: it’s what unlocks the menu item. Not in the <strong>⋮</strong> menu yet? Try the switch once more, then open App info again. Allowing it once covers notification access too. Android 8 to 12 skip this step.</p></li>
-<li><h3>Allow notifications</h3>
-<p>On Android 13 and later, Android asks <strong>Allow Offer Filter to send you notifications?</strong> Tap <strong>Allow</strong>. Offer Filter uses them for offers it lets through or can’t read, and for update notices. On Android 8 to 12 they’re on unless you turned them off.</p></li>
+<p class="note"><strong>Allow restricted settings</strong> only appears after you’ve tried the switch once, so the message above is expected: it’s what unlocks the menu item. Not in the <strong>⋮</strong> menu yet? Try the switch once more, then open App info again. Allowing it once covers notification access too. The step goes away once it worked. Android 8 to 12 skip this step.</p></li>
+<li><h3>Allow alerts</h3>
+<p>Tap <strong>Fix</strong> beside <strong>Allow alerts</strong>. On Android 13 and later, Android asks <strong>Allow Offer Filter to send you notifications?</strong> Tap <strong>Allow</strong>. Offer Filter uses them for offers it lets through or can’t read, and for update notices. On Android 8 to 12 they’re on unless you turned them off.</p></li>
 <li><h3>Let Offer Filter install its own updates</h3>
-<p>In Offer Filter’s <strong>Settings</strong>, tap <strong>Fix</strong> beside <strong>Updates can’t install</strong> and turn on <strong>Allow from this source</strong>. This is separate from your browser’s permission in step 3. Updates are signed and checked before they install, and automatic installs wait until a dash ends. Keep the app installed; there’s no need to uninstall to update.</p></li>
+<p>On Offer Filter’s home screen, tap <strong>Fix</strong> beside <strong>Allow updates</strong> and turn on <strong>Allow from this source</strong>. This is separate from your browser’s permission in step 3. Updates are signed and checked before they install. Keep the app installed; there’s no need to uninstall to update.</p>
+<p class="note">When an update is ready and you’re not dashing, the home screen shows <strong>Update ready · Install now</strong>, and <span class="path">Settings → Updates</span> shows where updates stand. Automatic installs wait until a dash ends, or until nothing of a dash has been seen for 8 hours with the screen off. If Auto Blocker stops an update, Settings → Updates says so: “Android blocked the update (on Samsung, check Auto Blocker).”</p></li>
 </ol>
 
 <h2 id="first-dash">Before your first dash</h2>
 <ol class="steps" start="11">
 <li><h3>Set your minimums</h3>
-<p>Choose your minimum pay, pay per mile, pay per minute, and pay per item on shopping orders, plus the most stops you’ll take. Offers below a minimum are declined; the rest are left to you. Auto-accept stays off unless you turn it on separately and confirm.</p></li>
+<p><span class="since">New in 0.5.0</span> There are three, set by dragging the knobs on the home screen’s constellation: <strong>minimum pay</strong>, <strong>pay per mile</strong> and <strong>pay per hour</strong> of Dasher’s own time estimate. An offer has to meet each one you set. You can also set <strong>max stops</strong>, the most stops you’ll take. There’s no per-item or per-stop minimum: shopping time is already in Dasher’s minutes, and max stops limits stacked orders. Offers below your minimums are declined; the rest are left to you.</p>
+<p>With no rule yet, the home screen says <strong>Tap to start with typical minimums</strong>. Its <strong>Use these</strong> sets $4.00 per offer, $1.00 per mile and $15 per hour, typical of Cincinnati offers seen in October 2026; drag any knob to change them. Auto-decline starts only when you tap the mascot. Auto-accept stays off unless you turn it on separately in Settings and confirm.</p>
+<p class="note">Updating from an older version? Your numbers stay, with per stop and your old percentage built in, rounded up so nothing gets looser. Autopilot starts off, and Auto-accept is turned off once if your rules changed meaning. A one-time note, <strong>Your rules are simpler now</strong>, lists what changed.</p></li>
 <li><h3>Turn on Autopilot <span class="since">New in 0.5.0</span></h3>
-<p>Autopilot asks what matters more; an acceptance rate of 70% is suggested. It then adjusts how strict the filter is from how often offers arrive, what they pay for your time, and your goal, reading your current acceptance rate from Dasher’s own decline confirmation. Long-press Autopilot to change the goal later. It’s new: watch how it does on your first dashes.</p></li>
+<p>Tap the round <strong>Auto</strong> button on the constellation. Autopilot asks <strong>What matters more?</strong></p>
+<ul>
+<li><strong>Keep a top tier</strong>: acceptance rate 70% or more. Suggested and preselected.</li>
+<li><strong>Keep a tier</strong>: acceptance rate 50% or more.</li>
+<li><strong>Pay first</strong>: no acceptance-rate goal.</li>
+</ul>
+<p>One tap applies. Long-press the Auto button to change the goal any time; a tap turns Autopilot off, and offers are then judged at exactly your minimums. The question also comes by itself after <strong>Use these</strong>, or the first time you turn auto-decline on with a minimum set.</p>
+<p>Autopilot moves one bar: how much of your minimums an offer must pay, from 50% to 150%. It goes by how often offers come, what your recent offers paid for Dasher’s time, and the acceptance rate Dasher shows on its decline question, keeping enough offers passing to reach your goal and stay a little above it. Above 100% it declines some offers that meet your minimums. Below 100%, offers it lets through under your minimums are yours to decide: never declined and never auto-accepted. DoorDash computes acceptance rate over your recent offers (it reports the last 100), and its rewards tiers use acceptance-rate minimums; check the Dasher app for your current requirements.</p>
+<p class="note">Its goal is a best effort, not a promise: Autopilot can only stop declining, and your acceptance rate rises only when you accept offers. It’s new: watch how it does on your first dashes.</p></li>
 <li><h3>Dash in Earn per Offer</h3>
 <p>Offer Filter works with <strong>Earn per Offer</strong>. <strong>Earn by Time</strong> isn’t supported in this beta, so pause Offer Filter if you dash by time.</p></li>
 <li><h3>Pick a driving layout</h3>
 <p>Set it up before you drive:</p>
 <ul>
 <li><strong>Dasher full screen</strong>, with Offer Filter’s tab on the edge.</li>
-<li><strong>Google Maps or Waze full screen</strong>, with <strong>Peek</strong> on. For a new offer, Offer Filter briefly opens Dasher, then brings you back to your map.</li>
-<li><strong>Maps and Dasher in split screen</strong>, with the tab on Dasher’s side.</li>
+<li><strong>Google Maps or Waze full screen</strong>, with <strong>Peek</strong> on. For a new offer, Offer Filter briefly opens Dasher, then brings you back to your map. <span class="since">New in 0.5.0</span> If an offer pulled you out of your map and ended without you accepting it, <strong>Back to map</strong> under the tab takes you back with one tap.</li>
+<li><strong>Maps and Dasher in split screen</strong>, with the tab on Dasher’s side. <span class="since">New in 0.5.0</span></li>
 </ul>
-<p class="note">Offer Filter’s own split view is for planning while parked, not for driving.</p></li>
+<p class="note">Offer Filter’s own split screen is for planning while parked, not for driving: beside a map, background offers need a tap there. <span class="since">New in 0.5.0</span> Split beside Dasher, drag the divider toward Offer Filter to give Dasher’s map about two thirds of the screen; Offer Filter becomes a strip with the mascot, the latest verdict and Autopilot’s chip.</p></li>
 </ol>
 
 <h2 id="while-dashing">While you dash</h2>
 <ol class="steps" start="15">
 <li><h3>Pause any time</h3>
-<p>Tap the mascot on Offer Filter’s home screen to pause or resume. If anything seems off, pause it and use Dasher directly. To stop completely, turn off Offer Filter’s Accessibility and notification access, or uninstall it.</p>
-<p class="note"><span class="since">New in 0.5.0</span> During a dash Offer Filter keeps your screen from timing out. The power button still locks it, and it lets the screen sleep when battery saver is on or the battery is low. Peek waits while the phone is locked; unlock while an offer is still up and it picks it back up.</p></li>
+<p>Tap the mascot on Offer Filter’s home screen to pause or resume; your rules stay. If anything seems off, pause it and use Dasher directly. To stop completely, turn off Offer Filter’s Accessibility and notification access, or uninstall it.</p>
+<p class="note"><span class="since">New in 0.5.0</span> Paused means Offer Filter isn’t reading Dasher at all: nothing is declined, and offers on Dasher’s screen aren’t judged or added to your history until you resume. Offer Filter’s status then says <strong>Paused: Offer Filter is not reading Dasher</strong>.</p></li>
+<li><h3>Let Peek check background offers</h3>
+<p>With Peek on (Settings → <strong>Peek at background offers</strong>, on by default), an offer that arrives while another app is in front briefly opens Dasher, so Offer Filter can read it and apply your rules, then takes you back. It needs an unlocked phone and a quiet moment: it waits until your finger is off the screen, and skips during a call or while you type.</p>
+<p><span class="since">New in 0.5.0</span> Peek waits for Dasher’s offer while DoorDash’s notification is still up. If Dasher opens without it, Peek taps Dasher’s own notification once; if the offer still doesn’t show, a card says so. If an offer dings while your phone is locked, unlock within 40 seconds and Peek checks it for you, unless you open Dasher yourself first. If Peek pauses itself after repeated failures, the home screen says <strong>Peek paused</strong> with <strong>Resume</strong>; it never turns its own switch off.</p>
+<p class="note"><span class="since">New in 0.5.0</span> During a dash, with auto-decline on, Offer Filter keeps your screen from timing out, whatever app is in front, so Peek can work. It never wakes or unlocks the phone, and the power button still turns the screen off. It lets the screen sleep with battery saver on, at 20% battery or less while not charging, after 15 minutes with no sign of your dash, and once you end your dash in Dasher. This uses more battery. Peek pauses while your phone is locked.</p></li>
 <li><h3>Tell us what happened</h3>
 <p>Use <strong>Send anonymous feedback</strong> in Offer Filter’s Settings (new in 0.5.0), or the <a href="../#feedback">feedback form</a> on this site. No account needed. Your phone model and Android version help; leave out customer names, addresses and payment details. We can’t reply to anonymous messages.</p></li>
 </ol>
@@ -135,9 +154,12 @@
 <section id="whats-new" data-version-code="80" data-version-name="0.5.0" aria-labelledby="whats-new-title">
 <h2 id="whats-new-title">What’s in the 0.5.0 beta</h2>
 <ul>
-<li><strong>Autopilot.</strong> Adjusts how strict the filter is from how often offers arrive, what they pay for your time, and an acceptance-rate goal you choose at setup (70% suggested), using your real acceptance rate from Dasher’s decline confirmation.</li>
-<li><strong>Simpler rules.</strong> Strict minimums for pay, pay per mile, pay per minute and pay per item on shopping orders, plus a maximum number of stops.</li>
-<li><strong>Better Peek.</strong> It picks an offer back up after you unlock, and your phone doesn’t time out mid-dash.</li>
+<li><strong>Three minimums.</strong> Minimum pay, pay per mile and pay per hour, plus max stops. Score by area, per stop, per item and the learned minimums are gone. An update keeps your numbers, with per stop and your old percentage built in.</li>
+<li><strong>Autopilot.</strong> Optional. It asks what matters more (an acceptance rate of 70% or more, suggested; 50% or more; or pay first) and moves how much of your minimums an offer must pay, from 50% to 150%, using your real acceptance rate from Dasher’s decline question. Offers below your minimums stay yours.</li>
+<li><strong>Setup on the home screen.</strong> Numbered steps, from Allow restricted settings to Allow updates, each with a Fix button.</li>
+<li><strong>Dasher stays responsive.</strong> Lighter screen reading, and paused means Offer Filter isn’t reading Dasher at all.</li>
+<li><strong>Better Peek.</strong> It waits for Dasher’s offer, checks one that dinged while your phone was locked when you unlock in time, and your screen doesn’t time out mid-dash.</li>
+<li><strong>Driving layouts.</strong> The tab over Dasher’s half beside a map, Back to map, and a driving strip when Offer Filter has a third of a split screen.</li>
 <li><strong>Fewer notifications.</strong> No duplicate cards when Dasher’s own notification already has the offer.</li>
 <li><strong>Feedback without an account.</strong> Send it from the app or this site. Optional diagnostics: turn on <strong>Attach masked diagnostics</strong> for one message, or <strong>Share anonymous diagnostics after each dash</strong> in Settings. Both start off.</li>
 </ul>

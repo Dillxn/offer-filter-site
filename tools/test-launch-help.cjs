@@ -5,7 +5,8 @@
  *
  * Serves the site the way GitHub Pages does (directory index files, 404.html for missing paths) and checks:
  * no horizontal overflow at 360 and 1366 px, no console errors, every internal link and asset resolves, the
- * download button is labelled from assets/release.json, the install steps and legal pages are present, the
+ * download button is labelled from assets/release.json, the install steps (every risk statement, and the 0.5.0
+ * guide's words with none of the retired ones) and legal pages are present, the
  * feedback form's messages for 201/429/400/413/offline/network/timeout, the dialogs and their addresses
  * (#help, #feedback, ...), reduced motion and the 30 fps cap, and that a phone fetches one poster and one small
  * signature image.
@@ -337,20 +338,46 @@ async function main() {
       const page = await ctx.newPage();
       await page.goto(base + '/install/', {waitUntil: 'networkidle'});
       const text = await page.locator('main').innerText();
-      for (const phrase of ['File might be harmful', 'Download anyway', 'Allow from this source', 'Play Protect', 'Scan app',
-        'Never turn Play Protect off', 'stop there', 'Auto Blocker', 'Settings → Security and privacy → Auto Blocker',
-        'I understand and accept', 'Restricted setting', 'Allow restricted settings', 'App info',
-        'App was denied access', 'Controlled by Restricted Setting', 'Settings → Accessibility → Installed apps',
-        'Allow Offer Filter to send you notifications?', 'Updates can’t install', 'Autopilot', '70%', 'Earn per Offer',
-        'Earn by Time', 'Dasher full screen', 'Google Maps or Waze full screen', 'Peek', 'split screen',
-        'for planning', 'Tap the mascot', 'Send anonymous feedback', 'feedback form', 'Android 8',
-        'acceptance rate', 'DoorDash', 'driving', 'pay per item on shopping orders', 'It needs two Android permissions',
+      // Risk statements first: none of these may ever be dropped.
+      for (const phrase of ['It’s a beta.', 'It can misread an offer, decline one you wanted', 'Check your Dasher history',
+        'Declines can lower your acceptance rate.', 'best effort, not a promise', 'your rate rises only when you accept offers',
+        'Nothing here guarantees a rate or any earnings', 'It’s independent.', 'may conflict with DoorDash’s terms',
+        'DoorDash could limit or deactivate your account', 'It needs two Android permissions',
         'Accessibility, to read Dasher’s screen and tap Decline', 'notification access, to see Dasher’s offer alerts',
-        'Peek, on by default', 'New in 0.5.0', 'Attach masked diagnostics', 'Share anonymous diagnostics after each dash',
-        'Both start off', 'The screens you’re most likely to see']) {
+        'Peek, on by default', 'uses more battery', 'never wakes or unlocks', 'Set it up while parked.',
+        'Don’t handle your phone while driving', 'File might be harmful', 'Download anyway', 'Play Protect', 'Scan app',
+        'If Play Protect says the app is harmful', 'stop there', 'Never turn Play Protect off', 'Auto Blocker',
+        'Settings → Security and privacy → Auto Blocker', 'Turning it off lowers that protection for every app',
+        'I understand and accept', 'Auto-accept stays off unless you turn it on separately', 'acceptance rate', 'DoorDash',
+        'driving', 'Autopilot can only stop declining', 'never auto-accepted']) {
+        assert(text.includes(phrase), 'install page lacks the risk statement: ' + phrase);
+      }
+      // The 0.5.0 guide: install, the homepage's setup steps (restricted settings first), three minimums, Autopilot's
+      // question, driving layouts, Peek, the screen held during a dash, paused, feedback.
+      for (const phrase of ['Allow from this source', 'Restricted setting', 'Allow restricted settings', 'App info',
+        'App was denied access', 'Controlled by Restricted Setting', 'Settings → Accessibility → Installed apps',
+        'Try the switch', 'within ten minutes', 'N more to set up', 'Turn on Offer Filter in Accessibility',
+        'Allow notification access', 'Offer Filter background offers', 'Allow alerts',
+        'Allow Offer Filter to send you notifications?', 'Allow updates', 'Update ready · Install now',
+        'Turn Offer Filter off and on in Accessibility', 'Reconnect notification access', 'minimum pay', 'pay per mile',
+        'pay per hour', 'max stops', 'no per-item or per-stop minimum', 'Tap to start with typical minimums',
+        'Your rules are simpler now', 'Autopilot', 'What matters more?', 'Keep a top tier', 'acceptance rate 70% or more',
+        'Suggested and preselected', 'Keep a tier', 'acceptance rate 50% or more', 'Pay first',
+        'no acceptance-rate goal', 'Long-press the Auto button', 'from 50% to 150%',
+        'check the Dasher app for your current requirements', 'Earn per Offer', 'Earn by Time', 'Dasher full screen',
+        'Google Maps or Waze full screen', 'Peek', 'Maps and Dasher in split screen', 'split screen', 'for planning',
+        'Back to map', 'Tap the mascot', 'Paused means Offer Filter isn’t reading Dasher at all',
+        'Paused: Offer Filter is not reading Dasher', 'Peek waits for Dasher’s offer', 'unlock within 40 seconds',
+        'keeps your screen from timing out', 'the power button still turns the screen off', 'Peek pauses while your phone is locked',
+        'Send anonymous feedback', 'feedback form', 'Android 8', 'New in 0.5.0', 'Attach masked diagnostics',
+        'Share anonymous diagnostics after each dash', 'Both start off', 'The screens you’re most likely to see']) {
         assert(text.includes(phrase), 'install page lacks: ' + phrase);
       }
-      for (const stale of ['items on shopping orders', 'items for shopping orders', 'Every screen your phone may show', 'anonymous diagnostics is optional']) {
+      // Retired in 0.5.0: per-minute and per-item rules, and the setup labels the homepage checklist replaced (Settings'
+      // "Updates can't install" became the homepage's Allow updates step).
+      for (const stale of ['items on shopping orders', 'items for shopping orders', 'Every screen your phone may show',
+        'anonymous diagnostics is optional', 'pay per minute', 'pay per item', 'Updates can’t install', 'Screen reading is off',
+        'Background offers are off', 'Alerts are blocked', 'combined area score', 'Keep the learning you choose']) {
         assert(!text.includes(stale), 'install page still says: ' + stale);
       }
       assert(!/exact setup steps/.test(await page.locator('meta[property="og:description"]').getAttribute('content')), 'og:description overclaims');
@@ -358,7 +385,7 @@ async function main() {
       const before = await page.locator('#before-title + ul').innerText();
       assert(/Accessibility/.test(before) && /notification access/.test(before) && /Peek, on by default/.test(before), 'Before you install: permissions and Peek');
       const steps = await page.locator('ol.steps > li').count();
-      assert(steps >= 16, 'install steps: ' + steps);
+      assert(steps >= 17, 'install steps: ' + steps);
       // Numbering continues across the guide's sections (each list's start follows the previous list).
       const starts = await page.evaluate(() => [...document.querySelectorAll('ol.steps')].map(ol => [ol.start, ol.children.length]));
       starts.reduce((next, [start, length]) => { assert.equal(start, next, 'step numbering'); return start + length; }, 1);
@@ -386,13 +413,28 @@ async function main() {
       const copy = await page.evaluate(() => document.body.textContent);
       assert(!/GitHub account/i.test(copy), 'no GitHub-account copy');
       assert(copy.includes('No account needed'), 'No account needed');
-      // The home page doesn't read release.json, so what only 0.5.0 has says so; the rule is pay per item.
+      // The home page doesn't read release.json, so it says which version it describes: the 0.5.0 beta's three
+      // minimums, Autopilot's question, the homepage setup steps, the driving layouts, Peek and paused.
       const about = await page.locator('#about-dialog').textContent();
-      assert(about.includes('pay per item on shopping orders') && about.includes('From 0.5.0: Autopilot'), 'About wording');
+      for (const phrase of ['Set three minimums', 'pay per mile', 'pay per hour', 'the most stops you’ll take',
+        'New in 0.5.0', 'Autopilot', 'acceptance-rate goal', 'always yours to decide']) {
+        assert(about.includes(phrase), 'About lacks: ' + phrase);
+      }
       const help = await page.locator('#help-dialog').textContent();
-      assert(help.includes('From 0.5.0: turn on Autopilot'), 'Help step 4 says Autopilot is 0.5.0');
-      assert(help.includes('In Offer Filter, tap the mascot on its home screen'), 'Help names which mascot');
-      assert(!/items on shopping orders|items for shopping orders/.test(copy), 'home page item wording');
+      for (const phrase of ['0.5.0 public beta', 'acceptance-rate and account risks', 'I understand and accept',
+        'Restricted setting', 'App was denied access', 'Allow restricted settings', 'Turn on Offer Filter in Accessibility',
+        'Allow notification access', 'Allow alerts', 'Allow updates', 'Set three minimums', 'minimum pay', 'pay per mile',
+        'pay per hour', 'max stops', 'What matters more?', 'keep a top tier', 'acceptance rate 70% or more, suggested',
+        'keep a tier', '50% or more', 'pay first', 'Long-press', 'Earn per Offer', 'Earn by Time',
+        'Dasher full screen and Offer Filter’s tab', 'Google Maps or Waze full screen with Peek',
+        'Maps and Dasher in split screen with the tab', 'for planning while parked', 'Peek waits for Dasher',
+        'unlock within 40 seconds', 'never woken or unlocked', 'the power button still turns it off',
+        'In Offer Filter, tap the mascot on its home screen', 'doesn’t read Dasher at all', 'turn off Auto-accept',
+        'A beta, not a guarantee of reliability', 'best effort, not a promise', 'Never handle your phone while driving']) {
+        assert(help.toLowerCase().includes(phrase.toLowerCase()), 'Help lacks: ' + phrase);
+      }
+      assert(!/items on shopping orders|items for shopping orders|pay per item|pay per minute|Updates can’t install|From 0\.5\.0:/.test(copy),
+        'home page still has retired wording');
       // The home page says it's independent, in the footer, readable size.
       const independent = page.locator('footer .independent');
       assert.equal((await independent.textContent()).trim(), 'Offer Filter is independent and isn’t affiliated with DoorDash.');
@@ -406,7 +448,7 @@ async function main() {
         assert(mail.every(href => href === 'mailto:' + CONTACT), pathname + ' mail links: ' + mail);
       }
       await ctx.close();
-      pass('content', `${steps} install steps, risk text at ${risk.size}px, terms/privacy/license present and linked; 0.5.0 marked; pay per item; independence line and private contact on every page`);
+      pass('content', `${steps} install steps, risk text at ${risk.size}px, terms/privacy/license present and linked; the 0.5.0 guide (three minimums, Autopilot's question, the homepage setup steps, driving layouts, Peek, paused) marked; independence line and private contact on every page`);
     }
 
     // 6. Feedback: each response maps to an honest message; text is kept on failure; nothing real is sent.
