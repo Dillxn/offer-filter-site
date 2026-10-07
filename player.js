@@ -1,26 +1,43 @@
 /* The film, drawn live. OfferFilm renders each frame, clocked by the soundtrack, so the page downloads a few hundred
  * kilobytes of audio instead of megabytes of video and stays sharp at any size: its art in 3D (WebGL, on a canvas off
  * the page), copied into the film's canvas under its words and the app's screen, so the page composites one layer.
- * The MP4 renders of the same frames remain the download and the fallback without script or WebGL. */
+ * Until someone reaches for it, the stage shows its closing frame as a picture and no renderer exists. The MP4 renders
+ * of the same frames remain the fallback without script or WebGL. */
 (() => {
   'use strict';
   const $ = id => document.getElementById(id);
-  const F = window.OfferFilm, GL = window.OfferGL, stage = $('film-stage'), canvas = $('film-canvas');
-  const art3d = document.createElement('canvas');
-  let r = null, ctx = null;
-  try { r = F && GL && GL.create(art3d); ctx = r && canvas.getContext('2d'); } catch (e) {}
-  if (!r || !ctx) return; // page.js falls back to the MP4.
-  // Where WebGL is drawn by the CPU, the art is drawn at half the frame's pixels and smoothed up to it.
-  const quality = GL.software() ? .5 : 1;
-  const audio = $('film-audio'), controls = $('film-controls'), seek = $('film-seek'), clockText = $('film-time'), cue = $('film-cue'), save = $('film-save');
+  const GL = window.OfferGL, stage = $('film-stage'), canvas = $('film-canvas');
+  // The film's own script (assets/film.js, OfferFilm) loads with the app's views when the film is first wanted.
+  let F = null;
+  // Without the film's script or WebGL, page.js plays the MP4 instead: at once without the script; when WebGL turns out
+  // to be missing as the film is first wanted, through the 'unavailable' event.
+  let ctx = null;
+  try { ctx = GL && canvas.getContext('2d'); } catch (e) {}
+  if (!ctx) return;
+  // The renderer, made on the film's first live frame. Where WebGL is drawn by the CPU, the moving art is drawn at half
+  // the frame's pixels and smoothed up to it; a still frame (a pause) always at all of them.
+  let r = null, quality = 1, live = false;
+  let missing = false;
+  function renderer() {
+    if (!r && !missing) {
+      r = GL.create(document.createElement('canvas'));
+      if (!r) { missing = true; setTimeout(() => player.dispatchEvent(new Event('unavailable')), 0); return null; }
+      quality = r.software ? .5 : 1;
+      // A lost WebGL context (a GPU reset, a long while in the background) comes back empty: build the renderer again.
+      r.canvas.addEventListener('webglcontextlost', e => e.preventDefault());
+      r.canvas.addEventListener('webglcontextrestored', () => { r = null; if (ready && live) fit(); });
+    }
+    return r;
+  }
+  const audio = $('film-audio'), controls = $('film-controls'), seek = $('film-seek'), clockText = $('film-time'), cue = $('film-cue');
   const button = act => controls.querySelector(`[data-act="${act}"]`);
-  const D = F.DURATION, MEDIA = '?v=20261006-app';
+  const MEDIA = '?v=20261006-app', D = +seek.max;
   const SIZES = {landscape: [1920, 1080], square: [1080, 1080], portrait: [1080, 1920]};
   const player = new EventTarget();
   let format = 'landscape', comp = SIZES.landscape, scale = 1, ox = 0, oy = 0, visible = true;
   let emblem = document.createElement('canvas'), ready = false, playing = false, ended = false, started = false;
   let silent = false, buffering = false, dragging = false, captions = false, hideTimer = 0, raf = 0;
-  let t = F.POSTER, anchorT = 0, anchorAt = 0, lastAudio = -1, shownSecond = -1, cueText = null, lastDraw = 0, cost = 0;
+  let t = 0, anchorT = 0, anchorAt = 0, lastAudio = -1, shownSecond = -1, cueText = null, lastDraw = 0, cost = 0;
   emblem.width = emblem.height = 1;
 
   // Film time follows the soundtrack. Between the audio clock's updates it advances with the frame clock,
@@ -34,8 +51,9 @@
   // The frame is the composition (comp units) scaled by `scale` device pixels and letterboxed at (ox, oy); the 3D art
   // fills a canvas of its own the frame's size.
   function draw() {
+    if (!F || !renderer()) return;
     const w = comp[0] * scale, h = comp[1] * scale;
-    r.size(w, h, quality); r.view(0, 0, w, h, comp);
+    r.size(w, h, playing ? quality : 1); r.view(0, 0, w, h, comp);
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     if (ox || oy) { ctx.fillStyle = '#0b1725'; ctx.fillRect(0, 0, canvas.width, canvas.height); }
     ctx.setTransform(scale, 0, 0, scale, ox, oy);
@@ -52,7 +70,7 @@
     }
     if (!dragging) seek.value = t;
     seek.style.setProperty('--progress', `${t / D * 100}%`);
-    const line = captions && (F.CAPTIONS.find(([a, b]) => t >= a && t < b) || [])[2] || '';
+    const line = captions && F && (F.CAPTIONS.find(([a, b]) => t >= a && t < b) || [])[2] || '';
     if (line !== cueText) { cueText = line; cue.textContent = line; cue.hidden = !line; }
   }
   function loop(now) {
@@ -95,7 +113,8 @@
     emit('ended');
   }
   player.play = () => {
-    loadApp();
+    if (!renderer()) { player.wanted = true; return Promise.resolve(); }
+    loadApp(); live = true;
     if (!started || ended) { started = true; seekTo(0); }
     playing = true; ended = false; controls.hidden = false; showControls();
     let result = Promise.resolve();
@@ -207,38 +226,48 @@
     comp = SIZES[format];
     scale = Math.min(canvas.width / comp[0], canvas.height / comp[1]);
     ox = (canvas.width - comp[0] * scale) / 2; oy = (canvas.height - comp[1] * scale) / 2;
-    if (!fullscreenElement()) save.href = `assets/offer-filter-${format}.mp4${MEDIA}`;
-    if (ready) draw();
+    if (ready && live) draw();
   }
   new ResizeObserver(fit).observe(stage);
-  // A lost WebGL context (a GPU reset, a long while in the background) comes back empty: build the renderer again.
-  art3d.addEventListener('webglcontextlost', e => e.preventDefault());
-  art3d.addEventListener('webglcontextrestored', () => { r = GL.create(art3d) || r; if (ready) fit(); });
   new IntersectionObserver(entries => {
     visible = entries[entries.length - 1].isIntersecting;
-    if (visible && ready) draw();
+    if (visible && ready && live) draw();
   }).observe(stage);
-  // The app's own views (assets/app/) draw the phone in the film's middle; they load only when the film is wanted,
-  // in order, with the Roboto the app's words are drawn in.
+  // The film's script and the app's own views (assets/app/, which draw the phone in the film's middle) load only when
+  // the film is wanted, in order, with the Roboto the app's words are drawn in.
   let app = null;
   function loadApp() {
     if (app) return app;
     app = fetch(`assets/app/files.json${MEDIA}`).then(r => r.json()).then(files => new Promise(resolve => {
-      let left = files.length;
-      for (const file of files) {
-        const script = Object.assign(document.createElement('script'), {src: `assets/app/${file}${MEDIA}`, async: false});
+      const list = files.map(file => `assets/app/${file}`).concat('assets/film.js');
+      let left = list.length;
+      for (const src of list) {
+        const script = Object.assign(document.createElement('script'), {src: src + MEDIA, async: false});
         script.onload = script.onerror = () => { if (--left === 0) resolve(); };
         document.head.append(script);
       }
-    })).then(() => document.fonts && Promise.all([document.fonts.load('400 1em Roboto'), document.fonts.load('500 1em Roboto')]))
-      .catch(() => {}).then(() => { if (ready && !playing) draw(); });
+    })).then(() => { F = window.OfferFilm || null; })
+      .then(() => document.fonts && Promise.all([document.fonts.load('400 1em Roboto'), document.fonts.load('500 1em Roboto')]))
+      .catch(() => {}).then(() => { if (ready && live) draw(); });
     return app;
   }
-  // Warm the soundtrack and the app's views as soon as someone reaches for the play button.
-  const warm = () => { if (audio.preload === 'none') audio.preload = 'auto'; loadApp(); };
+  // As soon as someone reaches for the play button: the soundtrack, the app's views, and the film's 3D art, built a
+  // piece at a time between frames, so playing starts without a stall; the picture stays until it does.
+  let warmed = false;
+  function wake() {
+    if (warmed) return;
+    warmed = true;
+    loadApp().then(() => {
+      if (!F || !renderer()) return;
+      const steps = F.prepare(r, comp[0], comp[1]);
+      const step = () => { if (steps.length) { steps.shift()(); setTimeout(step, 0); } };
+      step();
+    });
+  }
+  const warm = () => { if (audio.preload === 'none') audio.preload = 'auto'; wake(); };
   for (const type of ['pointerenter', 'focus', 'touchstart']) $('film-play').addEventListener(type, warm, {once: true, passive: true});
 
-  // The poster is the film's own closing frame, drawn once the fonts and the tinted emblem are ready.
+  // Live frames wait for the fonts and the tinted emblem.
   const fonts = document.fonts ? Promise.all([document.fonts.load('700 1em "Baloo 2"'), document.fonts.load('400 1em "Atkinson Hyperlegible"')]) : Promise.resolve();
   // The footer signature already loads the emblem; tint a copy of it rather than fetching it again.
   const art = new Promise(resolve => {

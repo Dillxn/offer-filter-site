@@ -384,6 +384,13 @@ function stage3d(r,c,l,t,i,x){
  r.done();
 }
 const WORDS=[time,minimums,decline,choose,perspective,direction,close];
+// The 3D meshes and textures for a format, built ahead of the film's first frames: a list of steps, each a few
+// milliseconds, for the caller to run between frames.
+function prepare(r,w,h){
+ const set=world(r,layout(w,h)),all=WORLDS.get(r),art=set.art;
+ return [()=>{set.hills();set.stars();},()=>set.city(),()=>{set.road();all.faces();all.beam();},()=>{all.shadow();art.warm('phone');art.warm('car');},
+  ()=>art.warm('mascot'),()=>{art.warm('sparkle',C.gold);art.warm('sparkle','#7AADE3');art.warm('android','#315B54');}];
+}
 // t is film time in seconds. c is a 2D context whose transform maps (0,0)-(w,h) onto the frame; r, an OfferGL renderer
 // whose canvas is the frame's size and its view w x h units. Returns the visible text's bounds.
 function frame(r,c,t,w,h,emblem,opt){
@@ -402,5 +409,5 @@ function frame(r,c,t,w,h,emblem,opt){
  c.restore();
  return bounds;
 }
-root.OfferFilm={DURATION,FPS,POSTER,BEAT,SHOTS,CAPTIONS,frame};
+root.OfferFilm={DURATION,FPS,POSTER,BEAT,SHOTS,CAPTIONS,frame,prepare};
 })(typeof window!=='undefined'?window:globalThis);

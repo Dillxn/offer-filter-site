@@ -81,33 +81,53 @@ function rgb(c, glow) {
 }
 const mixc = (a, b, t) => { a = rgb(a); b = rgb(b); return [0, 1, 2, 3].map(i => a[i] + (b[i] - a[i]) * t); };
 
-/* ---- Geometry, built on the CPU: 12 floats a vertex (position, normal, color + glow, uv) ---- */
-const STRIDE = 12;
+/* ---- Geometry, built on the CPU: 12 floats a vertex (position, normal, color + glow, uv), in typed arrays that grow
+ * as it is built, so a scene of tens of thousands of vertices is put together in a few milliseconds ---- */
+const STRIDE = 12, scratch9 = new Float32Array(9);
 class Geo {
-  constructor() { this.v = []; this.i = []; }
-  get count() { return this.v.length / STRIDE; }
-  vert(p, n, c, uv) {
-    c = rgb(c);
-    this.v.push(p[0], p[1], p[2], n[0], n[1], n[2], c[0], c[1], c[2], c[3] || 0, uv ? uv[0] : 0, uv ? uv[1] : 0);
-    return this.count - 1;
+  constructor() { this.f = new Float32Array(STRIDE * 64); this.n = 0; this.ix = new Uint32Array(96); this.ni = 0; }
+  get count() { return this.n; }
+  /** The vertices and indices so far (views: writing to v changes the geometry). */
+  get v() { return this.f.subarray(0, this.n * STRIDE); }
+  get i() { return this.ix.subarray(0, this.ni); }
+  room(verts, idx) {
+    if ((this.n + verts) * STRIDE > this.f.length) { const f = new Float32Array(Math.max(this.f.length * 2, (this.n + verts) * STRIDE)); f.set(this.f); this.f = f; }
+    if (this.ni + idx > this.ix.length) { const x = new Uint32Array(Math.max(this.ix.length * 2, this.ni + idx)); x.set(this.ix); this.ix = x; }
   }
-  tri(a, b, c) { this.i.push(a, b, c); return this; }
-  quad(a, b, c, d) { this.i.push(a, b, c, a, c, d); return this; }
+  vert(p, n, c, uv) {
+    c = rgb(c); this.room(1, 0);
+    const f = this.f, o = this.n * STRIDE;
+    f[o] = p[0]; f[o + 1] = p[1]; f[o + 2] = p[2]; f[o + 3] = n[0]; f[o + 4] = n[1]; f[o + 5] = n[2];
+    f[o + 6] = c[0]; f[o + 7] = c[1]; f[o + 8] = c[2]; f[o + 9] = c[3] || 0; f[o + 10] = uv ? uv[0] : 0; f[o + 11] = uv ? uv[1] : 0;
+    return this.n++;
+  }
+  tri(a, b, c) { this.room(0, 3); const x = this.ix; x[this.ni++] = a; x[this.ni++] = b; x[this.ni++] = c; return this; }
+  quad(a, b, c, d) { this.room(0, 6); const x = this.ix; x[this.ni++] = a; x[this.ni++] = b; x[this.ni++] = c; x[this.ni++] = a; x[this.ni++] = c; x[this.ni++] = d; return this; }
   /** Appends another geometry, moved by matrix m (and recolored by fn(color) when given). */
   add(g, m, recolor) {
-    const base = this.count, nm = m ? M.normal(m) : null;
-    for (let k = 0; k < g.v.length; k += STRIDE) {
-      let p = [g.v[k], g.v[k + 1], g.v[k + 2]], n = [g.v[k + 3], g.v[k + 4], g.v[k + 5]];
+    const base = this.n, count = g.n;
+    this.room(count, g.ni);
+    const src = g.f, dst = this.f, nm = m ? M.normal(m, scratch9) : null;
+    for (let k = 0; k < count; k++) {
+      const s = k * STRIDE, o = (base + k) * STRIDE;
+      let x = src[s], y = src[s + 1], z = src[s + 2], nx = src[s + 3], ny = src[s + 4], nz = src[s + 5];
       if (m) {
-        p = M.apply(m, p);
-        const x = nm[0] * n[0] + nm[3] * n[1] + nm[6] * n[2], y = nm[1] * n[0] + nm[4] * n[1] + nm[7] * n[2], z = nm[2] * n[0] + nm[5] * n[1] + nm[8] * n[2];
-        const l = Math.hypot(x, y, z) || 1; n = [x / l, y / l, z / l];
+        const w = m[3] * x + m[7] * y + m[11] * z + m[15] || 1;
+        const px = (m[0] * x + m[4] * y + m[8] * z + m[12]) / w, py = (m[1] * x + m[5] * y + m[9] * z + m[13]) / w;
+        z = (m[2] * x + m[6] * y + m[10] * z + m[14]) / w; x = px; y = py;
+        const tx = nm[0] * nx + nm[3] * ny + nm[6] * nz, ty = nm[1] * nx + nm[4] * ny + nm[7] * nz, tz = nm[2] * nx + nm[5] * ny + nm[8] * nz;
+        const l = Math.sqrt(tx * tx + ty * ty + tz * tz) || 1;
+        nx = tx / l; ny = ty / l; nz = tz / l;
       }
-      let c = [g.v[k + 6], g.v[k + 7], g.v[k + 8], g.v[k + 9]];
-      if (recolor) c = rgb(recolor(c));
-      this.v.push(p[0], p[1], p[2], n[0], n[1], n[2], c[0], c[1], c[2], c[3], g.v[k + 10], g.v[k + 11]);
+      dst[o] = x; dst[o + 1] = y; dst[o + 2] = z; dst[o + 3] = nx; dst[o + 4] = ny; dst[o + 5] = nz;
+      if (recolor) { const c = rgb(recolor([src[s + 6], src[s + 7], src[s + 8], src[s + 9]])); dst[o + 6] = c[0]; dst[o + 7] = c[1]; dst[o + 8] = c[2]; dst[o + 9] = c[3] || 0; }
+      else { dst[o + 6] = src[s + 6]; dst[o + 7] = src[s + 7]; dst[o + 8] = src[s + 8]; dst[o + 9] = src[s + 9]; }
+      dst[o + 10] = src[s + 10]; dst[o + 11] = src[s + 11];
     }
-    for (const x of g.i) this.i.push(base + x);
+    this.n += count;
+    const xi = this.ix, si = g.ix;
+    for (let k = 0; k < g.ni; k++) xi[this.ni + k] = si[k] + base;
+    this.ni += g.ni;
     return this;
   }
 }
@@ -239,12 +259,17 @@ const G = {
     }
     return pts;
   },
-  /** Ground from x0..x1, z0..z1 in nx x nz cells, its height y = height(x, z), colored col(x, z, y, normal). */
+  /** Ground from x0..x1, z0..z1 in nx x nz cells, its height y = height(x, z), colored col(x, z, y, normal). Heights
+   *  are sampled once a point; normals come from the neighbouring points. */
   terrain(x0, x1, z0, z1, nx, nz, height, col) {
-    const g = new Geo(), e = Math.min((x1 - x0) / nx, (z1 - z0) / nz) * .5;
+    const g = new Geo(), dx = (x1 - x0) / nx, dz = (z1 - z0) / nz, Y = new Float64Array((nx + 1) * (nz + 1));
+    for (let j = 0; j <= nz; j++) for (let k = 0; k <= nx; k++) Y[j * (nx + 1) + k] = height(x0 + dx * k, z0 + dz * j);
+    const at = (k, j) => Y[Math.min(nz, Math.max(0, j)) * (nx + 1) + Math.min(nx, Math.max(0, k))];
+    g.room((nx + 1) * (nz + 1), nx * nz * 6);
     for (let j = 0; j <= nz; j++) for (let k = 0; k <= nx; k++) {
-      const x = x0 + (x1 - x0) * k / nx, z = z0 + (z1 - z0) * j / nz, y = height(x, z);
-      const n = norm([height(x - e, z) - height(x + e, z), 2 * e, height(x, z - e) - height(x, z + e)]);
+      const x = x0 + dx * k, z = z0 + dz * j, y = at(k, j);
+      const sx = (at(k + 1, j) - at(k - 1, j)) / (dx * ((k > 0) + (k < nx))), sz = (at(k, j + 1) - at(k, j - 1)) / (dz * ((j > 0) + (j < nz)));
+      const n = norm([-sx, 1, -sz]);
       g.vert([x, y, z], n, color(col, x, z, y, n), [k / nx, j / nz]);
     }
     for (let j = 0; j < nz; j++) for (let k = 0; k < nx; k++) {
@@ -364,44 +389,59 @@ void main() { float d = length(gl_PointCoord * 2.0 - 1.0); gl_FragColor = vec4(u
  *   r.faded(alpha, () => { ...draws }) fades a many-part model as one
  *   r.shadow(model, {color, alpha}) a soft blob on the ground, r.stars(points, {color, alpha, time, twinkle, size})
  */
-/** Whether WebGL here is drawn by the CPU (SwiftShader, llvmpipe and the like), where multisampling is dear. Probed
- *  once on a scratch canvas. */
+/** Whether a context is drawn by the CPU (SwiftShader, llvmpipe and the like), where multisampling costs as much as
+ *  the picture. */
+const cpuDrawn = gl => {
+  const info = gl.getExtension('WEBGL_debug_renderer_info');
+  return /swiftshader|llvmpipe|softpipe|software|basic render/i.test(info ? String(gl.getParameter(info.UNMASKED_RENDERER_WEBGL)) : '');
+};
+// What the last context found, remembered, so a later visit to a CPU-drawn browser asks for the right context at once.
+const KNOWN = 'offergl.software';
 let softwareGL = null;
-function software() {
-  if (softwareGL !== null) return softwareGL;
-  softwareGL = false;
-  try {
-    const gl = document.createElement('canvas').getContext('webgl', {antialias: false});
-    const info = gl && gl.getExtension('WEBGL_debug_renderer_info');
-    const name = info ? String(gl.getParameter(info.UNMASKED_RENDERER_WEBGL)) : '';
-    softwareGL = /swiftshader|llvmpipe|softpipe|software|basic render/i.test(name);
-    const lose = gl && gl.getExtension('WEBGL_lose_context');
-    if (lose) lose.loseContext();
-  } catch (e) {}
-  return softwareGL;
-}
+try { const known = localStorage.getItem(KNOWN); if (known === '0' || known === '1') softwareGL = known === '1'; } catch (e) {}
+/** Whether WebGL here is drawn by the CPU, as far as a context has shown (false until one has). */
+const software = () => !!softwareGL;
 
 function create(canvas, opts) {
   opts = opts || {};
-  // Smooth edges by multisampling where a GPU does it for free; on a CPU renderer it costs as much as the picture.
-  const aa = opts.antialias == null ? !software() : !!opts.antialias;
-  const attrs = {antialias: aa, alpha: !!opts.alpha, depth: true, stencil: false, premultipliedAlpha: true,
-    preserveDrawingBuffer: !!opts.preserve, powerPreference: 'default'};
-  const gl = canvas.getContext('webgl', attrs) || canvas.getContext('experimental-webgl', attrs);
+  const attrs = aa => ({antialias: aa, alpha: !!opts.alpha, depth: true, stencil: false, premultipliedAlpha: true,
+    preserveDrawingBuffer: !!opts.preserve, powerPreference: 'default'});
+  const context = (c, aa) => c.getContext('webgl', attrs(aa)) || c.getContext('experimental-webgl', attrs(aa));
+  // Smooth edges by multisampling where a GPU does it for free. A context found to be drawn by the CPU gives way to one
+  // without, on a fresh canvas in the old one's place (a context keeps the settings it was made with): r.canvas.
+  let gl = context(canvas, opts.antialias == null ? softwareGL !== true : !!opts.antialias);
   if (!gl) return null;
-  const compile = (type, src) => {
-    const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s);
-    if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw Error(gl.getShaderInfoLog(s));
-    return s;
-  };
+  const cpu = cpuDrawn(gl);
+  if (softwareGL !== cpu) { softwareGL = cpu; try { localStorage.setItem(KNOWN, cpu ? '1' : '0'); } catch (e) {} }
+  if (cpu && opts.antialias == null && gl.getContextAttributes().antialias) {
+    const lose = gl.getExtension('WEBGL_lose_context');
+    if (lose) lose.loseContext();
+    const fresh = canvas.cloneNode(false);
+    if (canvas.parentNode) canvas.replaceWith(fresh);
+    canvas = fresh;
+    gl = context(canvas, false);
+    if (!gl) return null;
+  }
+  // Shaders are compiled and linked without waiting: asking whether that worked makes the page's thread wait for the
+  // GPU's, so it is asked on a program's first use (by then usually long done), and r.ready() says, where the browser
+  // can tell without waiting, whether that use would wait.
+  const parallel = gl.getExtension('KHR_parallel_shader_compile');
+  const compile = (type, src) => { const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); return s; };
   const program = (vs, fs) => {
-    const p = gl.createProgram();
-    gl.attachShader(p, compile(gl.VERTEX_SHADER, vs)); gl.attachShader(p, compile(gl.FRAGMENT_SHADER, fs)); gl.linkProgram(p);
-    if (!gl.getProgramParameter(p, gl.LINK_STATUS)) throw Error(gl.getProgramInfoLog(p));
+    const p = gl.createProgram(), shaders = [compile(gl.VERTEX_SHADER, vs), compile(gl.FRAGMENT_SHADER, fs)];
+    for (const sh of shaders) gl.attachShader(p, sh);
+    gl.linkProgram(p);
+    return {p, shaders, u: null, a: null};
+  };
+  const resolve = prog => {
+    if (prog.u) return prog;
+    const p = prog.p;
+    if (!gl.getProgramParameter(p, gl.LINK_STATUS)) throw Error(prog.shaders.map(sh => gl.getShaderInfoLog(sh)).join(' ') + gl.getProgramInfoLog(p));
     const u = {}, a = {};
     for (let k = gl.getProgramParameter(p, gl.ACTIVE_UNIFORMS) - 1; k >= 0; k--) { const n = gl.getActiveUniform(p, k).name; u[n] = gl.getUniformLocation(p, n); }
     for (let k = gl.getProgramParameter(p, gl.ACTIVE_ATTRIBUTES) - 1; k >= 0; k--) { const n = gl.getActiveAttrib(p, k).name; a[n] = gl.getAttribLocation(p, n); }
-    return {p, u, a};
+    prog.u = u; prog.a = a;
+    return prog;
   };
   const lit = program(VS, FS), sky = program(SKY_VS, SKY_FS), pts = program(PTS_VS, PTS_FS);
   const tri = gl.createBuffer();
@@ -413,7 +453,7 @@ function create(canvas, opts) {
   let view = M.ident(), proj = M.ident(), viewProj = M.ident(), eye = [0, 0, 1], current = null, ver = 0;
   const scene = {dir: norm([-.4, .8, .45]), color: [1, 1, 1], sky: [.5, .5, .55], ground: [.35, .33, .3], rim: [.5, .55, .6], fog: [.8, .85, .9], fogNear: 1e4, fogFar: 2e4, gloss: [0, 0, 0]};
   const normalMat = new Float32Array(9), blobGeo = G.plane(1, 1, '#000000', true);
-  const use = prog => { if (current !== prog) { gl.useProgram(prog.p); current = prog; } };
+  const use = prog => { if (current !== prog) { gl.useProgram(resolve(prog).p); current = prog; } };
   // A frame is a few dozen draws that mostly share their neighbours' settings, so every uniform and switch below is
   // sent only when it changes: each GL call costs the page's thread, whatever the GPU.
   const cache = new Map();
@@ -449,7 +489,7 @@ function create(canvas, opts) {
   const layout = (mesh) => {
     gl.bindBuffer(gl.ARRAY_BUFFER, mesh.vbo); gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, mesh.ibo);
     for (const [name, n, off] of [['aPos', 3, 0], ['aNormal', 3, 3], ['aColor', 4, 6], ['aUV', 2, 10]]) {
-      const at = lit.a[name];
+      const at = resolve(lit).a[name];
       if (at >= 0) { gl.enableVertexAttribArray(at); gl.vertexAttribPointer(at, n, gl.FLOAT, false, STRIDE * 4, off * 4); }
     }
   };
@@ -463,6 +503,9 @@ function create(canvas, opts) {
   gl.activeTexture(gl.TEXTURE0);
   const r = {
     gl, canvas, width: 0, height: 0, dpr: 1, unit: 1, M, G,
+    /** Whether the shaders are ready, so a first draw would not wait for them (always, where the browser cannot say). */
+    software: cpu, parallel: !!parallel,
+    ready: () => !parallel || [lit, sky, pts].every(prog => prog.u || gl.getProgramParameter(prog.p, parallel.COMPLETION_STATUS_KHR)),
     size(w, h, dpr) {
       r.width = w; r.height = h; r.dpr = r.unit = dpr = dpr || 1;
       const pw = Math.max(1, Math.round(w * dpr)), ph = Math.max(1, Math.round(h * dpr));
@@ -503,8 +546,8 @@ function create(canvas, opts) {
       const mesh = {vbo, ibo, count: geo.i.length, type: wide ? gl.UNSIGNED_INT : gl.UNSIGNED_SHORT, vao: null};
       if (vao) { mesh.vao = vao.createVertexArrayOES(); vao.bindVertexArrayOES(mesh.vao); bound = mesh; }
       else bindMesh(null);
-      gl.bindBuffer(gl.ARRAY_BUFFER, vbo); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(geo.v), gl.STATIC_DRAW);
-      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo); gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, wide ? new Uint32Array(geo.i) : new Uint16Array(geo.i), gl.STATIC_DRAW);
+      gl.bindBuffer(gl.ARRAY_BUFFER, vbo); gl.bufferData(gl.ARRAY_BUFFER, geo.v, gl.STATIC_DRAW);
+      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo); gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, wide ? geo.i : new Uint16Array(geo.i), gl.STATIC_DRAW);
       if (vao) layout(mesh);
       bindMesh(null);
       return mesh;

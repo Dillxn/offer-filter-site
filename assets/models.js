@@ -243,7 +243,7 @@ function buildingParts(w, h, d, o) {
     k = (Math.imul(k, 1103515245) + 12345) >>> 0;
     const x = -w / 2 + cw * (c + .5), y = h - rh * (row + .7);
     if (y < wh) continue;
-    (((k >> 16) % 9) < 4 ? lit : dark).add(G.box(ww, wh, d * .02, 0, '#ffffff', 1), M.trs([x, y, d / 2 + d * .01]));
+    (((k >> 16) % 9) < 4 ? lit : dark).add(G.plane(ww, wh, '#ffffff'), M.trs([x, y, d / 2 + d * .01]));
   }
   return {walls, lit, dark};
 }
@@ -292,10 +292,10 @@ function build(r) {
       if (!tickets.meshes[index]) {
         const g = ticketGeo();
         // The front shows its row of the atlas; the back and the edges, plain paper (a cream corner of the row).
-        for (let k = 0; k < g.v.length; k += 12) {
-          const front = g.v[k + 5] > .5;
-          if (!front) { g.v[k + 10] = .985; g.v[k + 11] = .015; }
-          g.v[k + 11] = (index + g.v[k + 11]) * tickets.rowV;
+        const v = g.v;
+        for (let k = 0; k < v.length; k += 12) {
+          if (v[k + 5] <= .5) { v[k + 10] = .985; v[k + 11] = .015; }
+          v[k + 11] = (index + v[k + 11]) * tickets.rowV;
         }
         tickets.meshes[index] = r.mesh(g);
       }
@@ -322,6 +322,14 @@ function build(r) {
     android(model, colour, alpha) {
       if (!android[colour]) android[colour] = mesh(androidGeo(colour));
       r.draw(android[colour], model, {spec: .3, rim: .3, alpha});
+    },
+    /** Builds a model's meshes ahead of its first draw: 'mascot', 'car', 'phone', or 'sparkle' / 'android' in a colour. */
+    warm(kind, colour) {
+      if (kind === 'mascot') mascotM();
+      else if (kind === 'car') carM();
+      else if (kind === 'phone') phoneM();
+      else if (kind === 'sparkle' && !sparkles[colour]) sparkles[colour] = mesh(sparkleGeo(colour));
+      else if (kind === 'android' && !android[colour]) android[colour] = mesh(androidGeo(colour));
     }
   };
   return art;

@@ -14,8 +14,9 @@ button:disabled{cursor:wait}
 .visually-hidden{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
 
 /* One illustrated world: the scenery canvas behind a header, a single hero and the footer. */
-.world{position:relative;isolation:isolate;overflow:hidden;display:flex;flex-direction:column;min-height:max(760px,100svh);padding:30px 4.8% 18px;background:#e7e7dd}
-#landscape{position:absolute;inset:0;width:100%;height:100%;z-index:-2}
+.world{position:relative;isolation:isolate;overflow:hidden;display:flex;flex-direction:column;min-height:100vh;min-height:100svh;padding:30px 4.8% 18px;background:#e7e7dd}
+#landscape{position:absolute;inset:0;width:100%;height:100%;z-index:-2;opacity:0;transition:opacity .9s ease}
+#landscape.drawn{opacity:1}
 /* The scenery's paper grain: faint lines every 4 px, a still layer over the moving picture. */
 .world::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:repeating-linear-gradient(to bottom,transparent 0 3px,rgba(116,105,81,.06) 3px 4px)}
 .atmosphere{position:absolute;inset:0;z-index:-1;pointer-events:none;overflow:hidden;mix-blend-mode:soft-light}
@@ -29,26 +30,44 @@ button:disabled{cursor:wait}
 header{position:relative;z-index:2;flex:none;display:flex;align-items:center;justify-content:space-between}
 .wordmark{display:flex;align-items:center;gap:12px;text-decoration:none;font-family:"Baloo 2",Arial,sans-serif;font-size:29px;font-weight:700;letter-spacing:-.8px}
 .wordmark img{width:58px;height:58px;flex:none}
-.top-right{display:flex;align-items:center;gap:26px}
-.sky-toggle{width:42px;height:42px;display:grid;place-items:center;background:rgba(250,246,235,.42);border:1px solid var(--line);border-radius:50%;transition:transform .35s,background .35s}
+.top-right{position:relative;display:flex;align-items:center;gap:26px}
+/* The sky button, as the app's: the sky's own sun or moon shows through it (its own icons stand in without the 3D sky),
+   and a small badge marks Auto (A) and System (S). */
+.sky-toggle{position:relative;width:42px;height:42px;display:grid;place-items:center;padding:0;background:rgba(250,246,235,.42);border:1px solid var(--line);border-radius:50%;transition:transform .35s,background .35s,box-shadow .35s}
 .sky-toggle:hover{transform:rotate(12deg) scale(1.06)}
-.sky-toggle svg{width:22px;height:22px}
+.sky-toggle svg{grid-area:1/1;width:22px;height:22px}
+.sky-moon,.night .sky-sun{display:none}
+.night .sky-moon{display:block}
+.sky-3d .sky-toggle{background:transparent}
+.sky-3d .sky-toggle svg{display:none}
+.sky-3d .sky-toggle:hover{transform:none;box-shadow:0 0 0 6px rgba(255,236,190,.28)}
+.night.sky-3d .sky-toggle{background:transparent}
+.night.sky-3d .sky-toggle:hover{box-shadow:0 0 0 6px rgba(233,221,184,.16)}
+.sky-badge{position:absolute;right:-4px;bottom:-4px;display:none;min-width:18px;height:18px;padding:0 4px;border:1px solid var(--line);border-radius:9px;background:#efe9db;color:var(--ink);font:700 10px/16px "Atkinson Hyperlegible",Arial,sans-serif;text-align:center}
+.sky-toggle[data-mode=AUTO] .sky-badge,.sky-toggle[data-mode=SYSTEM] .sky-badge{display:block}
+.sky-toggle[data-mode=AUTO] .sky-badge::before{content:"A"}
+.sky-toggle[data-mode=SYSTEM] .sky-badge::before{content:"S"}
+.sky-toast{position:absolute;right:0;top:calc(100% + 10px);z-index:3;margin:0;padding:6px 12px;border-radius:14px;background:rgba(22,40,52,.9);color:#fff8e5;font-size:13px;white-space:nowrap;opacity:0;transform:translateY(-4px);transition:opacity .3s,transform .3s;pointer-events:none}
+.sky-toast.shown{opacity:1;transform:none}
 
-.hero-content{position:relative;display:grid;grid-template-columns:minmax(0,.93fr) minmax(0,1.1fr);gap:6%;align-items:center;flex:1;width:94%;max-width:1540px;margin:70px auto 105px}
+/* The gaps round the hero shrink with the window's height, so a laptop's screen holds the whole page. */
+.hero-content{position:relative;display:grid;grid-template-columns:minmax(0,.93fr) minmax(0,1.1fr);gap:6%;align-items:center;flex:1;width:94%;max-width:1540px;margin:70px auto 105px;margin:clamp(16px,6svh - 8px,70px) auto clamp(56px,14svh - 12px,105px)}
 .intro h1{font-family:"Baloo 2",'Trebuchet MS',sans-serif;font-size:clamp(52px,5.3vw,84px);line-height:.99;font-weight:600;letter-spacing:-3.2px;margin:0 0 25px;text-wrap:balance}
 .intro h1 em{font-style:normal;color:#5a777a}
 .lede{font-size:17px;line-height:1.6;max-width:455px;letter-spacing:-.2px;margin:0 0 28px}
-.app-actions{display:flex;flex-direction:column;align-items:flex-start}
-.primary{position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;gap:27px;background:var(--ink);color:#fff8e5;border:0;padding:17px 21px;border-radius:5px;font-size:14px;box-shadow:0 3px 0 rgba(11,44,55,.09);transition:transform .25s,background .25s,box-shadow .25s}
+.app-actions{display:flex;flex-wrap:wrap;align-items:center;gap:12px}
+.icon{flex:none;width:20px;height:20px}
+.primary{position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;gap:10px;min-height:44px;background:var(--ink);color:#fff8e5;border:1px solid transparent;padding:15px 19px;border-radius:5px;font-size:14px;line-height:1.4;box-shadow:0 3px 0 rgba(11,44,55,.09);transition:transform .25s,background .25s,box-shadow .25s}
 .primary:before{content:"";position:absolute;inset:-50%;background:linear-gradient(110deg,transparent 35%,rgba(255,255,255,.18) 50%,transparent 65%);transform:translateX(-70%);transition:transform .65s}
 .primary:hover{transform:translateY(-3px);background:#305665;box-shadow:0 12px 26px rgba(11,44,55,.14)}
 .primary:hover:before{transform:translateX(70%)}
-.source-button{display:inline-flex;align-items:center;min-height:44px;max-width:100%;margin-top:4px;font-size:14px;line-height:1.4;text-underline-offset:4px}
-.source-button:hover{text-decoration-thickness:2px}
+/* The second action: the same size as the first, quieter, on the sky's glass. */
+.source-button{display:inline-flex;align-items:center;gap:10px;min-height:44px;max-width:100%;padding:15px 19px;border:1px solid var(--line);border-radius:5px;background:rgba(250,246,235,.5);color:inherit;font-size:14px;line-height:1.4;text-decoration:none;transition:transform .25s,background .25s,box-shadow .25s}
+.source-button:hover{transform:translateY(-3px);background:rgba(250,246,235,.82);box-shadow:0 12px 26px rgba(11,44,55,.1)}
 
-/* The film plays live in a canvas; the stage's gradient stands in until the first frame is drawn. */
+/* The film plays live in a canvas; until someone reaches for it, its closing frame stands in as a picture. */
 .film-section{position:relative;min-width:0;scroll-margin-top:24px}
-.film-stage{position:relative;container-type:inline-size;aspect-ratio:16/9;width:100%;overflow:hidden;border-radius:12px;background:linear-gradient(160deg,#d6e5e6,#efdfbd 55%,#f6b585);box-shadow:0 22px 65px #16364426}
+.film-stage{position:relative;container-type:inline-size;aspect-ratio:16/9;width:100%;overflow:hidden;border-radius:12px;background:url(assets/film-poster-wide.webp?v=3d-20261007) center/cover no-repeat,linear-gradient(160deg,#d6e5e6,#efdfbd 55%,#f6b585);box-shadow:0 22px 65px #16364426}
 .film-stage canvas{display:block;width:100%;height:100%}
 .film-stage video{position:absolute;inset:0;z-index:3;display:block;width:100%;height:100%;object-fit:contain;background:#0b1725}
 .film-video video{z-index:auto}
@@ -83,17 +102,17 @@ header{position:relative;z-index:2;flex:none;display:flex;align-items:center;jus
 .film-cue{position:absolute;left:50%;bottom:56px;bottom:clamp(54px,12cqi,96px);z-index:1;transform:translateX(-50%);width:max-content;max-width:88%;margin:0;padding:.28em .65em .34em;border-radius:6px;background:rgba(6,16,28,.82);color:#fff;font-size:16px;font-size:clamp(14px,3cqi,32px);line-height:1.3;text-align:center}
 .film-cue[hidden]{display:none}
 @container (max-width:420px){.film-time{display:none}}
-.film-heading{display:flex;justify-content:flex-end;margin:8px 0 0}
-.film-heading>a{display:inline-flex;align-items:center;min-height:44px;font-size:14px;text-underline-offset:4px}
 /* Links over the scenery keep a soft halo of ground color, so the road, trees and car never cross the type. */
-.film-heading>a,.source-button,.footer-links{text-shadow:0 0 4px var(--halo),0 0 10px var(--halo),0 0 18px var(--halo)}
+.footer-links{text-shadow:0 0 4px var(--halo),0 0 10px var(--halo),0 0 18px var(--halo)}
 
-footer{position:relative;z-index:1;flex:none}
-.footer-links{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px 24px}
+/* The links at the left; the signature in the row's right corner, as a painter signs a picture (centred under the
+   links on phones). */
+footer{position:relative;z-index:1;flex:none;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.footer-links{display:flex;align-items:center;justify-content:flex-start;flex-wrap:wrap;gap:8px 24px}
 .tip-link,.quiet-link{display:inline-flex;align-items:center;min-height:44px;padding:8px 0;border:0;background:transparent;font-size:14px}
 .tip-link span{font-size:17px;margin-left:5px}
 .quiet-link{opacity:.72;text-decoration:underline;text-underline-offset:4px}
-.signature{position:relative;display:flex;justify-content:center;width:min(144px,100%);margin:24px auto 12px;--signature-ink:#36594b}
+.signature{position:relative;flex:none;display:flex;justify-content:center;width:min(96px,100%);margin:0;--signature-ink:#36594b}
 .signature img{display:block;width:100%;height:auto;filter:brightness(.58)}
 /* Tint the original alpha; keep the image and full alt text as the no-mask fallback. */
 @supports (mask-image:url("")) or (-webkit-mask-image:url("")){.signature::before{content:"";position:absolute;inset:0;background:var(--signature-ink);-webkit-mask:url(assets/jesus-loves-you-emblem-560.png) center/contain no-repeat;mask:url(assets/jesus-loves-you-emblem-560.png) center/contain no-repeat}.signature img{opacity:0}}
@@ -139,6 +158,10 @@ body.night{--ink:#d9dfd0;--halo:#1d3036;color:#e9e5d5}
 .night .primary{background:#dbe5cf;color:#17374a}
 .night .primary:hover{background:#eef4e6}
 .night .sky-toggle{background:#21344a88;border-color:#d7dec54a}
+.night .sky-badge{background:#172737}
+.night .world{background:#1b2c3b}
+.night .source-button{background:#21344a99;border-color:#d7dec54a}
+.night .source-button:hover{background:#2a425acc}
 .night .signature{--signature-ink:#fff}
 .night .signature img{filter:brightness(0) invert(1)}
 .night dialog{--card:#172737;--card-ink:#e9e5d5;--card-line:#d7dec54a;--note:#22384a}
@@ -148,9 +171,18 @@ body.night{--ink:#d9dfd0;--halo:#1d3036;color:#e9e5d5}
 .night .heart{color:#e2a08e}
 .night .feedback-form select,.night .feedback-form textarea{background:#21344a;color:#f7f0df}
 
-@media(min-width:1700px){.hero-content{gap:8%;width:88%;margin-top:90px;margin-bottom:130px}}
-@media(max-width:1050px){.hero-content{gap:4%;width:100%}.intro h1{font-size:clamp(48px,5.5vw,65px)}.lede{font-size:15px}.primary{font-size:12px;padding:15px;gap:14px}}
-@media(max-width:850px){.world{padding:22px 6% 20px;min-height:100svh}.wordmark{font-size:26px;gap:9px}.wordmark img{width:51px;height:51px}.hero-content{grid-template-columns:minmax(0,1fr);gap:36px;max-width:590px;margin:40px auto 90px}.intro h1{font-size:clamp(51px,9vw,72px);letter-spacing:-2.6px;margin-bottom:18px}.lede{font-size:16px;max-width:440px;line-height:1.55;margin-bottom:22px}.primary{font-size:14px;padding:16px 19px;gap:22px}.footer-links{gap:8px 20px}.atmosphere i:nth-child(1){width:90vw;height:90vw}.atmosphere i:nth-child(2){width:70vw;height:70vw}}
-@media(max-width:600px){.film-stage{aspect-ratio:1}}
-@media(max-width:480px){.world{padding-left:7%;padding-right:7%}.wordmark{font-size:24px}.wordmark img{width:46px;height:46px}.sky-toggle{width:44px;height:44px}.hero-content{margin-top:34px;margin-bottom:70px;gap:32px}.intro h1{font-size:clamp(46px,12vw,58px);letter-spacing:-2px;line-height:1.04}.lede{font-size:15px}.primary{font-size:14px;padding:15px 18px;gap:16px}.tip-options a{padding:15px 11px}}
+@media(min-width:1700px){.hero-content{gap:8%;width:88%;margin-top:90px;margin-bottom:130px;margin-top:clamp(16px,9svh - 8px,90px);margin-bottom:clamp(56px,15svh - 12px,130px)}}
+@media(max-width:1050px){.hero-content{gap:4%;width:100%}.intro h1{font-size:clamp(48px,5.5vw,65px)}.lede{font-size:15px}.primary,.source-button{font-size:13px;padding:14px 16px}}
+@media(max-width:850px){.world{padding:22px 6% 20px}footer{display:block}.footer-links{justify-content:center}.signature{width:min(144px,100%);margin:24px auto 12px}.wordmark{font-size:26px;gap:9px}.wordmark img{width:51px;height:51px}.hero-content{grid-template-columns:minmax(0,1fr);gap:36px;max-width:590px;margin:40px auto 90px}.intro h1{font-size:clamp(51px,9vw,72px);letter-spacing:-2.6px;margin-bottom:18px}.lede{font-size:16px;max-width:440px;line-height:1.55;margin-bottom:22px}.primary,.source-button{font-size:14px;padding:15px 18px}.footer-links{gap:8px 20px}.atmosphere i:nth-child(1){width:90vw;height:90vw}.atmosphere i:nth-child(2){width:70vw;height:70vw}}
+@media(max-width:600px){.film-stage{aspect-ratio:1;background-image:url(assets/film-poster-square.webp?v=3d-20261007),linear-gradient(160deg,#d6e5e6,#efdfbd 55%,#f6b585)}.app-actions>*{flex:1 1 auto}}
+@media(max-width:480px){.world{padding-left:7%;padding-right:7%}.wordmark{font-size:24px}.wordmark img{width:46px;height:46px}.sky-toggle{width:44px;height:44px}.hero-content{margin-top:34px;margin-bottom:70px;gap:32px}.intro h1{font-size:clamp(46px,12vw,58px);letter-spacing:-2px;line-height:1.04}.lede{font-size:15px}.primary,.source-button{font-size:14px;padding:14px 16px}.tip-options a{padding:15px 11px}}
+/* The page arrives gently, and turns with the sky: while page.js marks a change of sky, colors ease over the sky's own
+   sunset or sunrise. */
+@media(prefers-reduced-motion:no-preference){
+header,.intro>*,.film-section,footer{animation:arrive .9s cubic-bezier(.2,.7,.2,1) backwards}
+header{animation-delay:.05s}.intro h1{animation-delay:.15s}.lede{animation-delay:.25s}.app-actions{animation-delay:.33s}.film-section{animation-delay:.4s}footer{animation-delay:.5s}
+.turning body,.turning body *{transition:color .45s ease-in-out .5s,background-color 1s ease-in-out .2s,border-color 1s ease-in-out .2s,text-shadow 1s ease-in-out .2s,box-shadow 1s ease-in-out .2s!important}
+.turning .signature::before{transition:background-color .45s ease-in-out .5s}
+}
+@keyframes arrive{from{opacity:0;transform:translateY(16px)}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}.atmosphere i{animation:none!important}}
