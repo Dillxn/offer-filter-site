@@ -35,11 +35,11 @@ header{position:relative;z-index:2;flex:none;display:flex;align-items:center;jus
    and a small badge marks Auto (A) and System (S). */
 .sky-toggle{position:relative;width:42px;height:42px;display:grid;place-items:center;padding:0;background:rgba(250,246,235,.42);border:1px solid var(--line);border-radius:50%;transition:transform .35s,background .35s,box-shadow .35s}
 .sky-toggle:hover{transform:rotate(12deg) scale(1.06)}
-.sky-toggle svg{grid-area:1/1;width:22px;height:22px}
+.sky-toggle svg{grid-area:1/1;width:22px;height:22px;transition:opacity .9s ease}
 .sky-moon,.night .sky-sun{display:none}
 .night .sky-moon{display:block}
 .sky-3d .sky-toggle{background:transparent}
-.sky-3d .sky-toggle svg{display:none}
+.sky-3d .sky-toggle svg{opacity:0}
 .sky-3d .sky-toggle:hover{transform:none;box-shadow:0 0 0 6px rgba(255,236,190,.28)}
 .night.sky-3d .sky-toggle{background:transparent}
 .night.sky-3d .sky-toggle:hover{box-shadow:0 0 0 6px rgba(233,221,184,.16)}

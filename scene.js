@@ -203,7 +203,9 @@ function build() {
   if (L) { for (const m of L.meshes) r.free(m.mesh); r.free(L.stars); r.free(L.dustCloud); }
   L = layout();
   draw();
+  // The sky fades in, and the sky button's own sun and moon give way to the sky's.
   canvas.classList.add('drawn');
+  document.body.classList.add('sky-3d');
 }
 
 /** The car's place on the road at s (0-1 along it) and its heading. */
@@ -326,7 +328,6 @@ function start() {
   if (!r) return;
   canvas = r.canvas; born = performance.now();
   canvas.addEventListener('webglcontextlost', e => { e.preventDefault(); paused = true; });
-  document.body.classList.add('sky-3d');
   art = OfferModels.build(r);
   setTimeout(settle, 0);
 }
