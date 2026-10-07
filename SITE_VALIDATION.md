@@ -14,24 +14,63 @@ python3 tools/sync-release.py --check       # assets/release.json matches the ap
 python3 tools/build-legal.py --check        # terms/, privacy/, license/ match the app's texts, and none is a draft
 ```
 
-The test serves the site like GitHub Pages and checks, at 360 and 1366 px: no horizontal overflow, no text under
-11 px, no console errors, every local link and asset (including CSS `url()`s, `og:image` and the sitemap), one
-cache-buster, one poster and one small signature image per load with no video before Play, the download button
-labelled from `release.json` (and working without JavaScript), the install steps and visible risk text (every risk
-statement pinned; the 0.5.0 guide's words present and the retired ones absent, also in Help and About), the legal
-pages and links to them, the feedback form's messages (201, 429, 400, 413, 502, network failure, 15 s timeout,
-offline, whitespace-only, the 4,000-character counter, the message kept on failure), dialog labels, keyboard use,
-`#help`/`#feedback` addresses, Feedback returning to Help, Back closing a dialog, the captions switch, the film's
-controls (only while it plays), reduced motion, the landscape's 30 fps cap and its cached backdrop, dark mode (the home
-page starts at night; the reading pages' text at 4.5:1 or more in both palettes), the iPhone path (no APK button, a
-link to share), the 0.5.0 marks and pending note, and the private contact on every page.
+`test-launch-help.cjs` serves the site like GitHub Pages and checks, at 360 and 1366 px (the dialogs by day and night,
+Help also at 320, 400 and 520 px): no horizontal overflow, no text under 11 px, no console errors, every local link
+and asset (including CSS `url()`s, `og:image` and the sitemap), one cache-buster in the pages, stylesheets and the
+scripts that load the film and the scenery, one AVIF poster and one emblem request per load with no video or
+soundtrack before Play, the download button labelled from `release.json` (and working without JavaScript), the
+install steps and visible risk text (every risk statement pinned; the 0.5.0 guide's words present and the retired ones
+absent, also in Help and About), the legal pages and links to them, the feedback form's messages (201, 429, 400, 413,
+502, network failure, 15 s timeout, offline, whitespace-only, the 4,000-character counter, the message kept on
+failure), dialog labels, keyboard use, `#help`/`#feedback` addresses, Feedback returning to Help, Back closing a
+dialog, the film player's controls (off the poster and the muted loop, up while it plays with sound, a Captions
+button, Replay at the end), reduced motion (no scenery or film frames, nothing of the film loaded), the muted loop's
+30 fps cap and Pause motion, dark mode (with the sky on System, a dark device gets the night sky and the theme colour
+follows; the reading pages' text at 4.5:1 or more in both palettes), the iPhone path (no APK button, a link to share),
+the 0.5.0 marks and pending note, and the private contact on every page. Chromium draws WebGL with SwiftShader, as
+in `test-site.cjs`, which covers the live film, its player and the 3D scenery in depth.
 
 It ends with release gates, which must pass before the site is deployed: no drafting notes in /terms/ or /privacy/,
 the app's privacy text naming the site's contact (privacy@offerfilter.org), and, once `release.json` is 0.5.0 or
 later, terms and privacy that describe Autopilot without the retired area-mode and 0.4.73 wording. A failed gate ends
 the run with "NOT READY TO DEPLOY" and exit code 1, after every other check.
 
-## Latest local results (7 October 2026: the 0.5.0 guide and the final legal texts)
+## Merged with main's 3D site and film (7 October 2026)
+
+`main` at `320b5ad` (what offerfilter.org serves: the page and film in 3D, the live player, the worker-drawn sky, the
+3D posters, fonts and icons) is merged into this branch. Main's design is kept whole and the beta's content sits in it:
+the beta title and share tags, the "Free public beta · Cincinnati area" eyebrow, Download for Android as a link to
+/install/, the Help dialog's 0.5.0 setup steps and Samsung's "App was denied access" wording, the About and anonymous
+Feedback dialogs, the Privacy, Terms and License links to this site's own pages (View on GitHub and "Source code (MIT)"
+open the app's repository), the independence line and the private contact. The merge commit lists each conflict and
+its resolution. After it:
+
+- The reading pages use the 3D mascot, the PNG favicons and main's WOFF2 fonts; this branch's font copies and
+  `favicon.svg` are gone. One cache-buster, `20261007-beta`, in the pages, stylesheets and scripts.
+- Privacy's "This website" section said the site stores nothing in the browser. Main's page keeps the sky and captions
+  choices and a note on software WebGL in local storage; the section now says so (`build-legal.py`).
+- The footer emblem was requested twice, as the image (no-cors) and as the CSS mask (cors), on main too;
+  `crossorigin="anonymous"` on the image makes one request serve both.
+- `test-launch-help.cjs` holds the same checks against the 3D page (see "How to check"); main's version of it, which
+  this branch had rewritten, checked Help copy and an issue form that no longer exist.
+
+Local results (Chromium with SwiftShader WebGL, `release.json` at 0.4.72, version code 78):
+
+- `test-launch-help.cjs`, run twice: all nine sections pass. Release gates: /terms/ and /privacy/ carry no drafting
+  notes, and the app's privacy text names privacy@offerfilter.org; the Autopilot-wording gate waits for `release.json`
+  at 0.5.0. No "NOT READY TO DEPLOY". Reduced motion: 0 scenery and 0 film frames in 2 s, nothing of the film loaded;
+  running: 6–13 scenery and 9–18 muted-loop frames in 2 s; Pause motion: 0. Reading pages at least 4.94:1 by day and
+  6.86:1 by night.
+- `test-site.cjs` (main's), unchanged: passes at 1280 and 400 px by day and night (the sky in a worker, once on the
+  page's thread), the film within 5–7 ms of its soundtrack, all eight app modules, and the reduced-motion run.
+- `build-legal.py --check`: the three pages are current with `../dasher-offer-filter`; `sync-release.py --check`:
+  `assets/release.json` is current.
+- Screenshots of /, /install/ and /terms/ at 390 × 844 and 1280 × 800 (served by `python3 -m http.server`): the 3D
+  scenery and the film's muted loop draw, the beta's words and links show, nothing overlaps or clips, and no page
+  scrolls sideways. The home page fits 1280 × 800 exactly, its links and the emblem sharing the footer's row; at 390 px
+  the footer's rows stack, centred, above the emblem. By night the footer's links and line stay legible on the halo.
+
+## Before the merge: the 0.5.0 guide and the final legal texts (7 October 2026)
 
 - Legal pages: built with `python3 tools/build-legal.py --app-repo <app worktree wip/wp8-legal>` from the app's
   final TERMS.md and PRIVACY.md ("Beta terms, effective 7 October 2026 · for Offer Filter 0.5.0"; no drafting
@@ -54,6 +93,8 @@ the run with "NOT READY TO DEPLOY" and exit code 1, after every other check.
 - `sync-release.py --check`: `assets/release.json` is current (0.4.72, the app's published feed).
 
 ## Earlier local results (6 October 2026, after the QA fixes)
+
+The 2D landscape, the `<video>` film and the first-load sizes below are from before the merge with main's 3D page.
 
 - Test: all nine sections pass (0.4.72, version code 78, in `release.json`). Three release gates fail, as they
   should: the app's TERMS.md and PRIVACY.md still open with "Draft of 6 October 2026. Not legal advice; have a lawyer
@@ -87,10 +128,15 @@ the run with "NOT READY TO DEPLOY" and exit code 1, after every other check.
 - privacy@offerfilter.org: offerfilter.org still had no MX record on 7 October 2026 (public DNS answered with the
   zone's SOA only), so mail to it would bounce. The forward must exist (and get a test message) before the site goes
   live; the test's gates only check that the texts name it.
-- The legal pages carry the texts on the app's `wip/wp8-legal` branch. If TERMS.md or PRIVACY.md change again before
-  0.5.0 ships, rebuild them (`build-legal.py --check --app-repo <that checkout>` reports drift).
-- `assets/brand.js` still holds the retired four-spoke constellation drawing (with a "learned" shape). No page and no
-  film tool draws it; the rendered film is unchanged.
+- The legal pages carry the texts of the app checkout beside this repository (branch `claude/nifty-fermi-su0qus` at
+  `c499f4e`, "Beta terms, effective 7 October 2026 · for Offer Filter 0.5.0"). If TERMS.md or PRIVACY.md change again
+  before 0.5.0 ships, rebuild them (`build-legal.py --check` reports drift).
+- `assets/brand.js` (the 2D art, with the retired four-spoke constellation) is no longer loaded by any page; only the
+  retired `tools/render-closing-scene.cjs` requires it.
+- The merged 3D page and live film on real phones and on a GPU: every check here ran in local Chromium with SwiftShader.
+- Main's player: pressed Play with the film already at its very end (21.0 s), the film can finish before its
+  soundtrack's own "play" event arrives, and that late event starts it over, paused at 0:00 with its controls up
+  (seen in local Chromium; main's code, unchanged here). Both tests play from 20.3 s instead.
 - The Render page at https://dash-offer-filter-build.onrender.com/ (built by the app repository) still shows the
   GitHub-era setup text; it needs its own update and a manual Render deploy, after this site is live.
 - A real install on Samsung and Pixel phones (Chrome's warning, Play Protect, Auto Blocker, restricted settings). The
