@@ -359,6 +359,7 @@ async function main() {
         'Try the switch', 'within ten minutes', 'N more to set up', 'Turn on Offer Filter in Accessibility',
         'Allow notification access', 'Offer Filter background offers', 'Allow alerts',
         'Allow Offer Filter to send you notifications?', 'Allow updates', 'Update ready · Install now',
+        'Already on 0.4.72?', 'Update ready: installs after your dash', 'install it over the old app',
         'Turn Offer Filter off and on in Accessibility', 'Reconnect notification access', 'minimum pay', 'pay per mile',
         'pay per hour', 'max stops', 'no per-item or per-stop minimum', 'Tap to start with typical minimums',
         'Your rules are simpler now', 'Autopilot', 'What matters more?', 'Keep a top tier', 'acceptance rate 70% or more',
