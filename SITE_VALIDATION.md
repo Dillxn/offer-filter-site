@@ -47,9 +47,10 @@ the run with "NOT READY TO DEPLOY" and exit code 1, after every other check.
 - `tools/sync-release.py --live` then wrote that release to `assets/release.json` (`7d5cd4e`), and
   `test-launch-help.cjs` passed with all seven release gates, including the Autopilot checks that start at 0.5.0.
   GitHub started no Pages build for that commit, so the live install page still named 0.4.72 and its SHA-256 beside a
-  download that was already 0.5.0; this entry's commit builds the site again. After any `release.json` change, check
-  that the Pages run for that exact commit appears and that `https://offerfilter.org/assets/release.json` names the new
-  version.
+  download that was already 0.5.0. The next commit (`8092cc5`, 19:20 UTC) started no build either. Both had been
+  pushed to the beta branch and `main` in one `git push`; the one that did build (`8ac9efc`) had been pushed to `main`
+  alone. Push `main` on its own (and the branch afterwards), then check that a Pages run for that exact commit appears
+  and that `https://offerfilter.org/assets/release.json` names the new version.
 
 ## Merged with main's 3D site and film (7 October 2026)
 
