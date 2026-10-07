@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Offer Filter icons</title>
+<!-- The 3D mascot as a still, for tools/render-icons.cjs: ?size=192&bg=transparent|#rrggbb&pad=0.04. Served from the
+     repository's root. -->
+<style>html,body{margin:0;background:transparent}canvas{display:block}</style></head><body>
+<canvas id="icon"></canvas>
+<script src="../../assets/gl.js"></script><script src="../../assets/models.js"></script>
+<script>
+(() => {
+  const q = new URLSearchParams(location.search), size = +(q.get('size') || 192), bg = q.get('bg') || 'transparent', pad = +(q.get('pad') || .04);
+  const canvas = document.getElementById('icon'), r = OfferGL.create(canvas, {preserve: true, alpha: true, antialias: true}), M = OfferGL.M, art = OfferModels.build(r);
+  r.size(size, size, 1);
+  r.clear(bg === 'transparent' ? '#000000' : bg, bg === 'transparent' ? 0 : 1);
+  // The mascot (rim radius 1, its spout to -0.97, rim top 0.57, arms to about 0.98) framed with `pad` round it, seen
+  // from its design view, 12 degrees above.
+  const half = 1.12 + pad, cy = -.2;
+  r.camera({eye: [0, cy + 9 * Math.tan(12 * Math.PI / 180), 9], at: [0, cy, 0], fov: 2 * Math.atan(half / 9)});
+  r.light({dir: [-.45, .5, .75], color: [.42, .41, .39], sky: [.86, .88, .92], ground: [.8, .76, .74], rim: [.45, .5, .58], gloss: [-.8, -.05, .55], fog: '#ffffff', fogNear: 50, fogFar: 90});
+  art.mascot(M.trs([0, 0, 0]), {mood: 'happy', wave: 7, ring: 0});
+  art.mascotShadow(M.trs([0, 0, 0]), .1);
+  r.done(); r.gl.finish();
+  window.png = r.canvas.toDataURL('image/png');
+})();
+</script>
+</body></html>

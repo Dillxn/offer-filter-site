@@ -9,7 +9,7 @@
  *   node tools/render-film.cjs <format> [out]     landscape | portrait | square: the MP4 (audited), and its posters
  * The soundtrack is <out>/soundtrack.wav (tools/film/make-audio.py). Needs Playwright's Chromium and ffmpeg; frames are
  * drawn by SwiftShader, so a render does not depend on the machine's GPU. */
-const fs = require('fs'), path = require('path'), http = require('http'), {spawn, execFileSync} = require('child_process');
+const fs = require('fs'), path = require('path'), http = require('http'), {execFileSync} = require('child_process');
 const {chromium} = require('playwright');
 const root = path.resolve(__dirname, '..');
 const FORMATS = {landscape: [1920, 1080], portrait: [1080, 1920], square: [1080, 1080]};
@@ -74,35 +74,37 @@ async function main() {
       }
       if (mode === 'posters') { await posters(name, w, h); continue; }
       const violations = [], minima = {left: Infinity, top: Infinity, right: Infinity, bottom: Infinity}, byScene = {};
-      let ff = null, done = null;
-      if (mode !== 'audit') {
-        const wav = path.join(OUT, 'soundtrack.wav');
-        if (!fs.existsSync(wav)) throw Error(`${wav} is missing: run python3 tools/film/make-audio.py ${OUT}`);
-        // Captions ride along as a soft subtitle track, so a saved film keeps them.
-        const file = path.join(OUT, `offer-filter-${name}.mp4`);
-        ff = spawn('ffmpeg', ['-nostdin', '-y', '-v', 'error', '-f', 'image2pipe', '-c:v', 'png', '-framerate', String(FPS), '-i', 'pipe:0', '-i', wav, '-i', captions,
-          '-map', '0:v', '-map', '1:a', '-map', '2:s', '-c:v', 'libx264', '-crf', '18', '-preset', 'medium', '-tune', 'animation', '-threads', '4', '-pix_fmt', 'yuv420p',
-          '-c:a', 'aac', '-b:a', '192k', '-c:s', 'mov_text', '-metadata:s:s:0', 'language=eng', '-movflags', '+faststart', '-frames:v', String(FRAMES),
-          '-t', String(DURATION), '-map_metadata', '-1', file], {stdio: ['pipe', 'inherit', 'inherit']});
-        done = new Promise((res, rej) => { ff.on('error', rej); ff.on('exit', code => code ? rej(Error('encoder ' + code)) : res()); });
-      }
+      // Each frame (and its text bounds) is kept on disk as it is drawn, so an interrupted render resumes where it
+      // stopped; the frames are encoded once all are there, and then removed.
+      const frames = path.join(OUT, `frames-${name}`);
+      if (mode !== 'audit') fs.mkdirSync(frames, {recursive: true});
       for (let f = 0; f < FRAMES; f++) {
-        const t = f / FPS, bounds = mode === 'audit' ? await page.evaluate(([t, w, h]) => window.renderFrame(t, w, h), [t, w, h]) : null;
-        const frame = bounds ? {bounds} : await shot(t, w, h);
-        for (const b of frame.bounds) {
+        const t = f / FPS, png = path.join(frames, `${String(f).padStart(4, '0')}.png`), json = png.replace(/png$/, 'json');
+        let bounds;
+        if (mode !== 'audit' && fs.existsSync(png) && fs.existsSync(json)) bounds = JSON.parse(fs.readFileSync(json, 'utf8'));
+        else if (mode === 'audit') bounds = await page.evaluate(([t, w, h]) => window.renderFrame(t, w, h), [t, w, h]);
+        else { const frame = await shot(t, w, h); fs.writeFileSync(png, frame.png); fs.writeFileSync(json, JSON.stringify(frame.bounds)); bounds = frame.bounds; }
+        for (const b of bounds) {
           minima.left = Math.min(minima.left, b.left); minima.top = Math.min(minima.top, b.top);
           minima.right = Math.min(minima.right, w - b.right); minima.bottom = Math.min(minima.bottom, h - b.bottom);
           byScene[b.scene] = (byScene[b.scene] || 0) + 1;
           if (b.left < 24 || b.top < 24 || b.right > w - 24 || b.bottom > h - 24) violations.push({frame: f, ...b});
         }
-        if (ff && !ff.stdin.write(frame.png)) await new Promise(r => ff.stdin.once('drain', r));
         if (f % 150 === 0) console.log(`${name}: ${f}/${FRAMES}`);
       }
-      if (ff) { ff.stdin.end(); await done; }
+      if (mode !== 'audit') {
+        const wav = path.join(OUT, 'soundtrack.wav');
+        if (!fs.existsSync(wav)) throw Error(`${wav} is missing: run python3 tools/film/make-audio.py ${OUT}`);
+        // Captions ride along as a soft subtitle track, so a saved film keeps them.
+        execFileSync('ffmpeg', ['-nostdin', '-y', '-v', 'error', '-framerate', String(FPS), '-i', path.join(frames, '%04d.png'), '-i', wav, '-i', captions,
+          '-map', '0:v', '-map', '1:a', '-map', '2:s', '-c:v', 'libx264', '-crf', '18', '-preset', 'medium', '-tune', 'animation', '-threads', '4', '-pix_fmt', 'yuv420p',
+          '-c:a', 'aac', '-b:a', '192k', '-c:s', 'mov_text', '-metadata:s:s:0', 'language=eng', '-movflags', '+faststart', '-frames:v', String(FRAMES),
+          '-t', String(DURATION), '-map_metadata', '-1', path.join(OUT, `offer-filter-${name}.mp4`)], {stdio: 'inherit'});
+      }
       const report = {format: name, width: w, height: h, frames: FRAMES, fps: FPS, duration: DURATION, renderer: film.renderer, minimumTextMargins: minima, checkedTextDraws: byScene, violations};
       fs.writeFileSync(path.join(OUT, `${name}-text-validation.json`), JSON.stringify(report, null, 2) + '\n');
       if (violations.length) throw Error(`${name}: ${violations.length} text boundary violations; see report`);
-      if (mode !== 'audit') await posters(name, w, h);
+      if (mode !== 'audit') { await posters(name, w, h); fs.rmSync(frames, {recursive: true, force: true}); }
       console.log(`${name}: finished; all visible text inside safe frame`);
     }
     if (errors.length) throw Error('page errors: ' + errors.join(' | '));
