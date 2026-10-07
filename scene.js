@@ -1,29 +1,110 @@
-(()=>{'use strict';
-// The page's landscape. The canvas is the page's own background, so it is on screen whenever the page is. The still
-// backdrop (sky, glow, light ribbon and stars) is drawn once per size and sky into an offscreen canvas, and each frame
-// copies it, then draws the rest in the same order as before: dust, hills, buildings (which follow the pointer), road,
-// trees, car and scanlines. The frames look the same; only the work per frame is smaller. It runs at up to 30 frames
-// a second, only while the tab is visible and motion is not paused (by the visitor, reduced motion, a dialog or the
-// film). While the sky changes between day and night, the backdrop is drawn directly until the change settles.
-const c=document.getElementById('landscape'),ctx=c.getContext('2d'),A=window.OfferArt,FRAME_MS=1000/30;
-const back=document.createElement('canvas'),bctx=back.getContext('2d');
-let w=0,h=0,signatureTop=Infinity,dpr=1,night=document.body.classList.contains('night')?1:0,targetNight=night,paused=matchMedia('(prefers-reduced-motion: reduce)').matches,t=2,prev=0,raf=0,px=0,py=0,backKey='';
-function drawBrand(){const logo=document.getElementById('brand-mascot'),lc=logo.getContext('2d');lc.clearRect(0,0,128,128);A.mascot(lc,64,55,.86,{mood:'happy',wave:7,dark:false});}
-function size(){w=c.clientWidth;h=c.clientHeight;const signature=document.querySelector('.signature');signatureTop=signature?signature.getBoundingClientRect().top-c.getBoundingClientRect().top:Infinity;dpr=Math.min(devicePixelRatio||1,2);c.width=Math.round(w*dpr);c.height=Math.round(h*dpr);draw();}
-function running(){return !paused&&!document.hidden;}
-function start(){if(!raf&&running()){prev=0;raf=requestAnimationFrame(tick);}}
-function stop(){if(raf)cancelAnimationFrame(raf);raf=0;prev=0;}
-window.setSceneNight=v=>{targetNight=v?1:0;if(!running()){night=targetNight;draw();}};
-window.setScenePaused=v=>{paused=v;if(paused){stop();draw();}else start();};
-addEventListener('resize',size);
-document.addEventListener('visibilitychange',()=>{document.hidden?stop():start();});
-document.addEventListener('pointermove',e=>{if(!paused){px+=(e.clientX/w-.5)*1.4-px*.16;py+=(e.clientY/h-.5)*.9-py*.16;}});
-function hill(base,amp,color,phase){ctx.fillStyle=color;ctx.beginPath();ctx.moveTo(-20,h);ctx.lineTo(-20,base);for(let x=-20;x<=w+20;x+=12)ctx.lineTo(x,base+Math.sin(x/w*4+phase)*amp+Math.sin(x/w*8+phase)*amp*.3);ctx.lineTo(w+20,h);ctx.fill();}
-function tree(x,y,s,col){ctx.save();ctx.translate(x,y);ctx.scale(s,s);ctx.fillStyle=col;ctx.fillRect(-1,-46,2,50);ctx.beginPath();ctx.ellipse(0,-57,12,29,-.15,0,Math.PI*2);ctx.fill();ctx.restore();}
-function dust(seed,top,bottom,color){const rnd=A.rnd(seed);for(let i=0;i<34;i++){const x=(rnd()*w+t*(3+rnd()*7))%(w+30)-15,y=top+rnd()*(bottom-top)+Math.sin(t*.4+i)*5;ctx.globalAlpha=.08+rnd()*.2;ctx.fillStyle=color;ctx.beginPath();ctx.arc(x,y,.5+rnd()*1.4,0,Math.PI*2);ctx.fill();}ctx.globalAlpha=1;}
-// Sky, glow, ribbon and stars: everything that stays still for a given size and sky. g is the page canvas's context
-// or the offscreen one's, already scaled to the device pixel ratio.
-function backdrop(g){const mobile=w<850;const sky=g.createLinearGradient(0,0,0,h);sky.addColorStop(0,A.mix('#e5e9df','#102032',night));sky.addColorStop(.48,A.mix('#f1e8d6','#203649',night));sky.addColorStop(1,A.mix('#f3d9bd','#394950',night));g.fillStyle=sky;g.fillRect(0,0,w,h);const mx=mobile?w*.49:w*.744,my=mobile?h*.612:h*.428,r=mobile?Math.min(w*.33,155):Math.min(w*.138,210);g.save();g.globalAlpha=.48;const glow=g.createRadialGradient(mx,my,0,mx,my,r*2.05);glow.addColorStop(0,A.mix('#ffe6ad','#5b84a0',night));glow.addColorStop(.46,A.mix('#e9d8bc44','#31516e44',night));glow.addColorStop(1,'transparent');g.fillStyle=glow;g.fillRect(mx-r*2.2,my-r*2.2,r*4.4,r*4.4);g.restore();g.save();g.globalCompositeOperation='screen';g.globalAlpha=.11;const ribbon=g.createLinearGradient(0,0,w,h);ribbon.addColorStop(0,'transparent');ribbon.addColorStop(.45,A.mix('#cf9c67','#4a7294',night));ribbon.addColorStop(.66,A.mix('#83a994','#78a6a7',night));ribbon.addColorStop(1,'transparent');g.strokeStyle=ribbon;g.lineWidth=mobile?55:90;g.beginPath();g.moveTo(w*.38,-40);g.bezierCurveTo(w*.72,h*.18,w*.45,h*.54,w*1.06,h*.63);g.stroke();g.restore();if(night>.05){const rnd=A.rnd(28);for(let i=0;i<90;i++){const x=rnd()*w,y=rnd()*h*.7;g.fillStyle=`rgba(246,237,205,${night*(.2+.4*rnd())})`;g.beginPath();g.arc(x,y,.6+rnd(),0,Math.PI*2);g.fill();}}}
-function draw(){if(!w)return;if(night===targetNight){const key=[c.width,c.height,w,h,dpr,night].join();if(backKey!==key){back.width=c.width;back.height=c.height;bctx.setTransform(dpr,0,0,dpr,0,0);backdrop(bctx);backKey=key;}if(ctx.resetTransform)ctx.resetTransform();else ctx.setTransform(1,0,0,1,0,0);ctx.drawImage(back,0,0);ctx.setTransform(dpr,0,0,dpr,0,0);}else{ctx.setTransform(dpr,0,0,dpr,0,0);backdrop(ctx);}const mobile=w<850;dust(72,0,h*.72,A.mix('#546c68','#e8dfba',night));/* Keep the road and car above the final signature, with no backing panel. */const horizon=Math.min(mobile?h*.806:h*.756,signatureTop-112);hill(horizon-60,35,A.mix('#c2d0c1','#294354',night),1.2);hill(horizon-23,22,A.mix('#b6c6b4','#223b46',night),3.1);ctx.save();ctx.globalAlpha=.7;for(let i=0;i<18;i++){const x=i*(w/16)-25+px*.5,height=24+((i*17)%53);ctx.fillStyle=A.mix(i%3?'#91a9a0':'#78948f',i%3?'#20343f':'#182d36',night);ctx.fillRect(x,horizon-height,w/33,height+12);if(i%3===0){ctx.beginPath();ctx.moveTo(x-3,horizon-height);ctx.lineTo(x+w/66,horizon-height-15);ctx.lineTo(x+w/33+3,horizon-height);ctx.fill();}if(night>.2){ctx.fillStyle=`rgba(236,194,123,${night*.65})`;for(let j=0;j<3;j++)ctx.fillRect(x+6,horizon-height+9+j*11,3,4);}}ctx.restore();hill(horizon+24,23,A.mix('#cad0b7','#223638',night),2);const roadY=horizon+37;ctx.strokeStyle=A.mix('#e9e1c9','#425051',night);ctx.lineWidth=22;ctx.beginPath();ctx.moveTo(-20,roadY+43);ctx.bezierCurveTo(w*.22,roadY+73,w*.58,roadY-19,w+20,roadY+11);ctx.stroke();ctx.strokeStyle=A.mix('#f7f2dd','#78857b',night);ctx.lineWidth=1;ctx.setLineDash([11,18]);ctx.lineDashOffset=-t*5;ctx.stroke();ctx.setLineDash([]);[.05,.12,.4,.61,.86,.94].forEach((f,i)=>tree(w*f,horizon+12+Math.sin(i)*15,.75+(i%3)*.15,A.mix('#5b7d71','#182f33',night)));const carX=w*.3+Math.sin(t*.06)*w*.025;A.car(ctx,carX,roadY+53,.45,0);/* Scanlines: one path, one stroke (the lines never overlap, so this matches stroking each). Stroking them is cheaper than copying a cached layer. */ctx.save();ctx.globalAlpha=.06;ctx.strokeStyle='#746951';ctx.beginPath();for(let y=0;y<h;y+=4){ctx.moveTo(0,y);ctx.lineTo(w,y);}ctx.stroke();ctx.restore();}
-function tick(ms){raf=0;if(!running())return;raf=requestAnimationFrame(tick);if(prev&&ms-prev<FRAME_MS-4)return;const dt=prev?Math.min((ms-prev)/1000,.05):0;t+=dt;night+=(targetNight-night)*Math.min(1,dt*4);if(Math.abs(targetNight-night)<.002)night=targetNight;prev=ms;draw();}
-drawBrand();size();document.fonts.ready.then(size);start();})();
+/*
+ * The page's side of its 3D scenery (assets/scenery.js builds and draws it). Where the browser lets a page hand its
+ * canvas to a worker (OffscreenCanvas), the scenery is drawn there, so neither making its WebGL context, nor building
+ * it, nor drawing it takes the page's own thread; elsewhere it is drawn on the page's thread. This side says where the
+ * page's words, sky button and footer stand, and passes on the sky, motion and the page being hidden.
+ * Without WebGL the page keeps its plain background and the sky button its own sun and moon.
+ */
+(() => {
+'use strict';
+const V = '?v=20261007-3d6', KNOWN = 'offergl.software';
+const canvas = () => document.getElementById('landscape');
+if (!canvas() || !window.WebGLRenderingContext) { window.setSceneNight = window.setScenePaused = window.setSceneBusy = () => {}; return; }
+let night = document.body.classList.contains('night'), paused = matchMedia('(prefers-reduced-motion: reduce)').matches, busy = false;
+let send = null, worker = null, drawn = false, settling = 0;
+window.setSceneNight = v => { night = !!v; if (send) send({type: 'night', night}); };
+window.setScenePaused = v => { paused = !!v; if (send) send({type: 'paused', paused}); };
+// Whether the film is moving beside the scenery (where WebGL is drawn by the CPU, the scenery then draws less often).
+window.setSceneBusy = v => { busy = !!v; if (send) send({type: 'busy', busy}); };
+const ratio = () => Math.min(devicePixelRatio || 1, 2);
+
+/* Where things stand, in css px from the canvas's top-left: the footer's links (the land and its road stay above them),
+ * the sky button (the sun or the moon stands behind it) and the words (clouds fade while they pass behind them). Taken
+ * from the layout, which the page's entrance animation and the button's hover do not move, so a measure taken while
+ * they play still holds when they end. */
+function measure() {
+  const c = canvas(), world = c.offsetParent, b = document.getElementById('sky-toggle'), links = document.querySelector('.footer-links');
+  const rect = e => {
+    let left = 0, top = 0;
+    for (let n = e; n && n !== world; n = n.offsetParent) { left += n.offsetLeft; top += n.offsetTop; }
+    return {left: left - c.offsetLeft, top: top - c.offsetTop, right: left - c.offsetLeft + e.offsetWidth, bottom: top - c.offsetTop + e.offsetHeight};
+  };
+  const q = b && b.offsetWidth ? rect(b) : null;
+  return {W: c.clientWidth, H: c.clientHeight, dpr: ratio(),
+    groundTop: links ? rect(links).top : Infinity,
+    sun: q ? {x: (q.left + q.right) / 2, y: (q.top + q.bottom) / 2, r: (q.right - q.left) * .36} : null,
+    words: [...document.querySelectorAll('.wordmark, .hero-eyebrow, .intro h1, .lede, .app-actions, .footer-links')].map(rect)};
+}
+// What the last visit found: whether WebGL here is drawn by the CPU (gl.js keeps the same note on the page's thread).
+function known() { try { const k = localStorage.getItem(KNOWN); return k === '1' ? true : k === '0' ? false : null; } catch (e) { return null; } }
+window.sceneOnCPU = () => known() === true;
+const opening = c => ({type: 'start', canvas: c, software: known(), night, paused, busy, hidden: document.hidden, page: measure()});
+// A canvas once handed to a worker cannot be drawn on here again: a fresh one takes its place.
+function fresh() { const old = canvas(), c = old.cloneNode(false); old.replaceWith(c); return c; }
+
+function receive(m) {
+  if (m.type === 'drawn') { drawn = true; canvas().classList.add('drawn'); document.body.classList.add('sky-3d'); }
+  else if (m.type === 'software') { try { localStorage.setItem(KNOWN, m.software ? '1' : '0'); } catch (e) {} }
+  else if (m.type === 'fresh' && worker) { const off = fresh().transferControlToOffscreen(); worker.postMessage({type: 'canvas', canvas: off}, [off]); }
+  // A browser whose workers cannot draw WebGL (or that failed to start one) draws the scenery here instead.
+  else if (m.type === 'unavailable' && worker) { worker.terminate(); worker = send = null; here(fresh()); }
+}
+/* On the page's own thread: the renderer, the models and the scenery as scripts, in order. */
+function here(c) {
+  const list = [['OfferGL', 'assets/gl.js'], ['OfferModels', 'assets/models.js'], ['OfferScenery', 'assets/scenery.js']].filter(([name]) => !window[name]);
+  let left = list.length;
+  const go = () => { if (!window.OfferScenery) return; send = OfferScenery.connect(receive); send(opening(c)); };
+  if (!left) return go();
+  for (const [, src] of list) {
+    const s = Object.assign(document.createElement('script'), {src: src + V, async: false});
+    s.onload = s.onerror = () => { if (--left === 0) go(); };
+    document.head.append(s);
+  }
+}
+function start() {
+  const c = canvas();
+  if (typeof Worker !== 'function' || !c.transferControlToOffscreen) return here(c);
+  let w = null;
+  try {
+    w = new Worker('assets/scenery.js' + V);
+    const off = c.transferControlToOffscreen();
+    w.onmessage = e => receive(e.data);
+    w.onerror = () => { if (worker === w && !drawn) receive({type: 'unavailable'}); };
+    w.postMessage(opening(off), [off]);
+    worker = w; send = m => w.postMessage(m);
+  } catch (e) {
+    if (w) w.terminate();
+    here(fresh());
+  }
+}
+
+addEventListener('resize', () => {
+  if (!send) return;
+  const c = canvas();
+  send({type: 'size', W: c.clientWidth, H: c.clientHeight, dpr: ratio()});
+  clearTimeout(settling);
+  settling = setTimeout(() => { if (send) send({type: 'page', page: measure()}); }, 160);
+});
+document.addEventListener('visibilitychange', () => { if (send) send({type: 'hidden', hidden: document.hidden}); });
+
+// Begun once the page has loaded and shown its words (its first contentful paint, or a second after loading where the
+// browser cannot say), when the browser is idle; the page's own colors show until the scenery fades in. When the fonts
+// arrive later, the words and buttons have moved: the scenery hears their new places.
+let loaded = false, painted = false, begun = false;
+const go = () => {
+  if (!loaded || !painted || begun) return;
+  begun = true;
+  const idle = window.requestIdleCallback || (fn => setTimeout(fn, 50));
+  idle(() => {
+    start();
+    if (document.fonts && document.fonts.status !== 'loaded') document.fonts.ready.then(() => { if (send) send({type: 'page', page: measure(), force: true}); });
+  }, {timeout: 600});
+};
+try {
+  new PerformanceObserver((list, observer) => {
+    if (list.getEntries().some(e => e.name === 'first-contentful-paint')) { observer.disconnect(); painted = true; go(); }
+  }).observe({type: 'paint', buffered: true});
+} catch (e) {}
+const onLoad = () => { loaded = true; go(); setTimeout(() => { painted = true; go(); }, 1000); };
+if (document.readyState === 'complete') onLoad(); else addEventListener('load', onLoad, {once: true});
+})();

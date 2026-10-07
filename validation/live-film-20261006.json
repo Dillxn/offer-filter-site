@@ -1,0 +1,436 @@
+{
+  "change": "Live canvas film on the homepage, retimed to the supplied 20.4 s narration take, polished animation, bold renderer font fix, lighter and cleaner site.",
+  "preparedFrom": "4e1aa5afd3bd52a61d1a82d97f89daa5c6bcdb43",
+  "scope": "Local renders and local headless Chromium only; not a phone, physical-device, subjective-listening or live-domain receipt.",
+  "audio": {
+    "sourceSha256": "db3b01b116becbf205037d6f176cf23cd847b4449312e21271e2d72b2b2a08ec",
+    "duration": 21,
+    "sourceSeconds": 20.4,
+    "originalPcmUnchangedExceptTrimThroughSeconds": 20.1,
+    "voiceSpeed": 1,
+    "uniformGainDb": -1,
+    "tailFade": [
+      20.1,
+      20.4
+    ],
+    "silentHold": 0.6,
+    "peakAmplitude": 0.8887196183204651
+  },
+  "narration": {
+    "transcribedWith": "faster-whisper medium.en, cross-checked with small.en and base.en",
+    "lines": [
+      [
+        "Your time matters.",
+        1.18,
+        2.8
+      ],
+      [
+        "Set your minimums.",
+        3.74,
+        5.24
+      ],
+      [
+        "Offer Filter declines the offers below them.",
+        5.62,
+        8.18
+      ],
+      [
+        "You choose the good ones.",
+        9.48,
+        10.68
+      ],
+      [
+        "See every offer in perspective.",
+        11.34,
+        12.96
+      ],
+      [
+        "Find your next move.",
+        14.22,
+        15.32
+      ],
+      [
+        "Free",
+        16.08,
+        16.26
+      ],
+      [
+        "and open source.",
+        17.36,
+        18.16
+      ]
+    ]
+  },
+  "beatGrid": {
+    "bpm": 105.15,
+    "beatSeconds": 0.5706,
+    "firstBeatSeconds": 0.085,
+    "method": "spectral-flux onset autocorrelation"
+  },
+  "shots": [
+    {
+      "name": "time",
+      "from": 0,
+      "to": 3.509
+    },
+    {
+      "name": "minimums",
+      "from": 3.509,
+      "to": 5.22
+    },
+    {
+      "name": "decline",
+      "from": 5.22,
+      "to": 9.215
+    },
+    {
+      "name": "choose",
+      "from": 9.215,
+      "to": 10.926
+    },
+    {
+      "name": "perspective",
+      "from": 10.926,
+      "to": 13.779
+    },
+    {
+      "name": "direction",
+      "from": 13.779,
+      "to": 15.491
+    },
+    {
+      "name": "close",
+      "from": 15.491,
+      "to": 21
+    }
+  ],
+  "captions": [
+    [
+      0,
+      1.05,
+      "[Gentle electronic music]"
+    ],
+    [
+      1.08,
+      3,
+      "Your time matters."
+    ],
+    [
+      3.6,
+      5.4,
+      "Set your minimums."
+    ],
+    [
+      5.45,
+      8.4,
+      "Offer Filter declines the offers below them."
+    ],
+    [
+      9.3,
+      10.9,
+      "You choose the good ones."
+    ],
+    [
+      11.15,
+      13.15,
+      "See every offer in perspective."
+    ],
+    [
+      14,
+      15.5,
+      "Find your next move."
+    ],
+    [
+      15.85,
+      18.4,
+      "Free and open source."
+    ],
+    [
+      18.4,
+      20.4,
+      "[Music resolves]"
+    ]
+  ],
+  "posterSeconds": 20.6,
+  "text": {
+    "landscape": {
+      "format": "landscape",
+      "width": 1920,
+      "height": 1080,
+      "frames": 630,
+      "fps": 30,
+      "duration": 21,
+      "minimumTextMargins": {
+        "left": 120,
+        "top": 210.12419454984274,
+        "right": 300.38462307156124,
+        "bottom": 77.01300239562988
+      },
+      "checkedTextDraws": {
+        "time": 129,
+        "minimums": 369,
+        "decline": 354,
+        "choose": 197,
+        "perspective": 313,
+        "direction": 129,
+        "close": 580
+      },
+      "violations": []
+    },
+    "square": {
+      "format": "square",
+      "width": 1080,
+      "height": 1080,
+      "frames": 630,
+      "fps": 30,
+      "duration": 21,
+      "minimumTextMargins": {
+        "left": 76,
+        "top": 77,
+        "right": 264.5591735839844,
+        "bottom": 61.01300239562988
+      },
+      "checkedTextDraws": {
+        "time": 129,
+        "minimums": 369,
+        "decline": 354,
+        "choose": 197,
+        "perspective": 313,
+        "direction": 129,
+        "close": 580
+      },
+      "violations": []
+    },
+    "portrait": {
+      "format": "portrait",
+      "width": 1080,
+      "height": 1920,
+      "frames": 630,
+      "fps": 30,
+      "duration": 21,
+      "minimumTextMargins": {
+        "left": 86,
+        "top": 155,
+        "right": 90.35430908203125,
+        "bottom": 91.01300239562988
+      },
+      "checkedTextDraws": {
+        "time": 129,
+        "minimums": 369,
+        "decline": 354,
+        "choose": 197,
+        "perspective": 313,
+        "direction": 129,
+        "close": 580
+      },
+      "violations": []
+    }
+  },
+  "mediaChecks": {
+    "mp4": "H.264 630 frames, AAC 21.000 s and an English mov_text caption track in each format; full decode without errors; no black segments",
+    "webm": "VP9 and Opus, full decode without errors"
+  },
+  "media": {
+    "offer-filter-landscape.mp4": {
+      "bytes": 3935955,
+      "sha256": "208ed9403f01ad8cb080ca71cf4ba2800c8b29b5741f752cd017b4120593396f",
+      "integratedLufs": -16.3,
+      "truePeakDbtp": -0.8
+    },
+    "offer-filter-square.mp4": {
+      "bytes": 3270368,
+      "sha256": "3ed7c487e57c6a72f10b78487bff2d088db7739e20eff89d560bdb611960fbc0"
+    },
+    "offer-filter-portrait.mp4": {
+      "bytes": 4464261,
+      "sha256": "8241e85ab0b427ba1d7abeb4f393febf65986aaafad78a865cd37bcff826a518"
+    },
+    "offer-filter-portrait.webm": {
+      "bytes": 4201958,
+      "sha256": "f810d38a1a8f1a7d41e99c45d6c96f9f5136f16b6ddf8033098ef09220032862"
+    },
+    "film-soundtrack.webm": {
+      "bytes": 284063,
+      "sha256": "8afa3917a957d36cccf536de2c206aebfe90e466c2fe14f19f2f495b22651114",
+      "integratedLufs": -16.3,
+      "truePeakDbtp": -0.7
+    },
+    "film-soundtrack.m4a": {
+      "bytes": 338201,
+      "sha256": "ffac0203c51be427982de3c1fa6ea6e27636e83ba060177f8d6ee625e69864ba",
+      "integratedLufs": -16.4,
+      "truePeakDbtp": -0.8
+    },
+    "film-poster-wide.jpg": {
+      "bytes": 159504,
+      "sha256": "dfe6ec82250378ce9b8a9a8c2903099a91abe7ef1b558ad42a01cd6c824be4cc"
+    },
+    "film-poster-square.jpg": {
+      "bytes": 98970,
+      "sha256": "c3b72ae9647538f1c66618cef2b82ced0864a369da7ac03f6a21e26c6556fda0"
+    },
+    "film-poster.jpg": {
+      "bytes": 156474,
+      "sha256": "e8bccdfe19499a1de9886116ee376694d7bface9e7e23d2406f5067b70d9fa3a"
+    },
+    "film-captions.vtt": {
+      "bytes": 565,
+      "sha256": "8c34a4e996715abc27342b8f803b816af7a2c0e43549176a8ef8b9de8985cb27"
+    },
+    "your-time-matters.mp3": {
+      "bytes": 491319,
+      "sha256": "db3b01b116becbf205037d6f176cf23cd847b4449312e21271e2d72b2b2a08ec"
+    },
+    "baloo2-latin.woff2": {
+      "bytes": 32860,
+      "sha256": "9a4d50ff75afc7e490ddaba6fbb6cea9546d70f9c4d1e0fa4dcfc4d39469a063"
+    },
+    "atkinson-hyperlegible-latin.woff2": {
+      "bytes": 16244,
+      "sha256": "8524a460570ecc55ed0b8c3af78745c8c85d9ad5b3362307c51a02b42e56aefe"
+    },
+    "baloo2-bold-latin.ttf": {
+      "bytes": 45404,
+      "sha256": "5195b2ed6506be0bb37bc70e8420bb0569d52e75c0025c398b8e0dce23754fe8"
+    },
+    "jesus-loves-you-emblem-560.png": {
+      "bytes": 25483,
+      "sha256": "7e02f9e210517599817a3b7dba9f5c04982a6fffd96a1f4a87086a9bdfd8a31e"
+    }
+  },
+  "liveCanvasVsMp4": {
+    "frames": [
+      2.6,
+      6.5,
+      12.9,
+      20.6
+    ],
+    "psnrDb": [
+      33.9,
+      37.0,
+      33.6,
+      38.1
+    ],
+    "pixelsDifferingOver24Percent": [
+      0.37,
+      0.21,
+      0.39,
+      0.31
+    ],
+    "beforeFontFixPsnrDb": [
+      21.2,
+      21.6,
+      20.4,
+      21.5
+    ]
+  },
+  "baloo2BoldFix": {
+    "widthOfferFilterAt146px": {
+      "skiaVariableFontWeight700": 705.0,
+      "skiaStaticBoldInstance": 740.7,
+      "chromiumWeight700": 740.8
+    }
+  },
+  "pageWeightFirstLoadBytes": {
+    "before": 2616856,
+    "after": 193238
+  },
+  "filmBytesToPlay": {
+    "beforeLandscapeMp4": 3799386,
+    "afterOpusSoundtrack": 284063,
+    "afterAacSoundtrack": 338201
+  },
+  "frameCostMs": {
+    "renderer": "Chromium canvas on SwiftShader (software only, no GPU)",
+    "1108x624": {
+      "mean": 5.9,
+      "p95": 9.3
+    },
+    "1280x720": {
+      "mean": 7.7,
+      "p95": 12.9
+    },
+    "1920x1080": {
+      "mean": 14.0,
+      "p95": 21.3
+    },
+    "688x688": {
+      "mean": 5.2,
+      "p95": 8.4
+    },
+    "1032x1032": {
+      "mean": 8.1,
+      "p95": 13.1
+    }
+  },
+  "browser": {
+    "testSite": {
+      "checkedAt": "2026-10-06T17:44:59.658Z",
+      "scope": "Local Chromium, not phone or live-domain proof",
+      "results": [
+        {
+          "width": 1280,
+          "night": false,
+          "format": "landscape",
+          "poster": "554x312",
+          "sync": -0.006,
+          "keyboardPause": true,
+          "captions": true,
+          "dialogPauses": true,
+          "endAndReplay": true,
+          "noOverflow": true,
+          "noPageErrors": true
+        },
+        {
+          "width": 1280,
+          "night": true,
+          "format": "landscape",
+          "poster": "554x312",
+          "sync": -0.008,
+          "keyboardPause": true,
+          "captions": true,
+          "dialogPauses": true,
+          "endAndReplay": true,
+          "noOverflow": true,
+          "noPageErrors": true
+        },
+        {
+          "width": 400,
+          "night": false,
+          "format": "square",
+          "poster": "344x344",
+          "sync": -0.006,
+          "keyboardPause": true,
+          "captions": true,
+          "dialogPauses": true,
+          "endAndReplay": true,
+          "noOverflow": true,
+          "noPageErrors": true
+        },
+        {
+          "width": 400,
+          "night": true,
+          "format": "square",
+          "poster": "344x344",
+          "sync": -0.005,
+          "keyboardPause": true,
+          "captions": true,
+          "dialogPauses": true,
+          "endAndReplay": true,
+          "noOverflow": true,
+          "noPageErrors": true
+        }
+      ]
+    },
+    "testLaunchHelpCombinationsPassed": 8,
+    "noHorizontalOverflowWidths": [
+      1440,
+      1024,
+      820,
+      390,
+      360
+    ],
+    "noScriptVideoCoversPlayButton": true,
+    "filmScriptBlockedFallsBackToMp4": true
+  }
+}

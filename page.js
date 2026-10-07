@@ -4,51 +4,36 @@
   const FEEDBACK_ENDPOINT = 'https://zlnfvqyyjsltmkmmpgzp.supabase.co/functions/v1/offer-filter-feedback';
   const FEEDBACK_TIMEOUT_MS = 15000;
   const FEEDBACK_MAX = 4000;
-  const film = $('film'), play = $('film-play'), stage = film.closest('.film-stage');
-
-  // Phones get the composed square film. The browser picks the source once (<source media>), so the choice stays
-  // fixed for the visit (no crop, autoplay, reload or reset on rotation) and nothing is fetched before Play. Only the
-  // matching poster is fetched: the HTML has none, and its preload hints use the same media query.
-  const square = film.currentSrc ? /offer-filter-square/.test(film.currentSrc) : matchMedia('(max-width: 600px)').matches;
-  stage.classList.add(square ? 'film-square' : 'film-wide');
-  if (square) {
-    film.width = film.height = 1080;
-    $('film-save').href = film.querySelector('source:last-of-type').getAttribute('src');
-  }
-  film.poster = square ? film.dataset.posterSquare : film.dataset.posterWide;
-  play.hidden = false;
-  // The player's controls appear once the film plays. Before that (and after it ends) they would cover the poster's
-  // last line, "Independent app. Not affiliated with DoorDash." The HTML keeps them for visitors without JavaScript.
-  film.controls = false;
-
-  // Captions: a visible switch that follows the player's own captions menu too. Its name stays "Captions"; the
-  // state is aria-pressed (the on/off word is for sighted visitors only).
-  const captions = $('captions-toggle');
-  const track = film.textTracks && film.textTracks[0];
-  function showCaptions() {
-    const on = !!track && track.mode === 'showing';
-    captions.lastElementChild.textContent = on ? 'on' : 'off';
-    captions.setAttribute('aria-pressed', String(on));
-  }
-  if (track) {
-    captions.hidden = false;
-    captions.addEventListener('click', () => {
-      track.mode = track.mode === 'showing' ? 'hidden' : 'showing';
-      showCaptions();
-    });
-    film.textTracks.addEventListener('change', showCaptions);
-    showCaptions();
+  const MEDIA = '?v=20261007-3d6', play = $('film-play');
+  let film = window.offerFilm || videoFallback();
+  // The live player (player.js) and the MP4 share one interface: play(), pause(), paused, ended and their events.
+  // Without a canvas or the film script, the composed MP4 for this screen plays instead, with native controls.
+  function videoFallback() {
+    const small = matchMedia('(max-width: 600px)').matches, video = document.createElement('video');
+    const src = `assets/offer-filter-${small ? 'square' : 'landscape'}.mp4${MEDIA}`;
+    Object.assign(video, {controls: true, playsInline: true, preload: 'none', src, poster: `assets/film-poster-${small ? 'square' : 'wide'}.jpg${MEDIA}`});
+    video.setAttribute('aria-label', 'Offer Filter animated film');
+    video.append(Object.assign(document.createElement('track'), {kind: 'captions', src: `assets/film-captions.vtt${MEDIA}`, srclang: 'en', label: 'English'}));
+    $('film-stage').replaceChildren(video, play);
+    $('film-stage').classList.add('film-video');
+    return video;
   }
 
-  // Motion: the visitor's choice, the system's reduced-motion setting, and quiet while a dialog or the film is up.
+  // Motion: the visitor's choice and the system's reduced-motion setting, followed as it changes. Rest the scenery and
+  // the film's muted loop while motion is paused or a dialog is open. Otherwise the scenery rides on whatever the film
+  // does, except where WebGL is drawn by the CPU: there it rests while the film plays with its sound, so the film has
+  // the machine.
   const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
   let paused = reduceMotion.matches;
   function syncMotion() {
     const dialogOpen = document.querySelector('dialog[open]') !== null;
-    const quiet = paused || dialogOpen || (!film.paused && !film.ended && !film.error);
+    const withSound = !film.paused && !film.ended && !film.error && !film.quiet;
+    const quiet = paused || dialogOpen || (withSound && !!window.sceneOnCPU?.());
     document.body.classList.toggle('dialog-open', dialogOpen);
     document.body.classList.toggle('motion-paused', quiet);
     window.setScenePaused?.(quiet);
+    window.setSceneBusy?.(!film.paused && !film.ended && !film.error);
+    film.rest?.(paused || dialogOpen);
   }
   function labelMotion() {
     const button = $('motion-toggle');
@@ -211,35 +196,66 @@
   });
 
   // Film.
-  const startFilm = () => film.play().catch(() => { play.hidden = false; syncMotion(); });
-  play.addEventListener('click', startFilm);
-  film.addEventListener('click', () => { if (!film.controls) startFilm(); });
-  film.addEventListener('play', () => { play.hidden = true; film.controls = true; syncMotion(); });
-  film.addEventListener('pause', syncMotion);
-  film.addEventListener('error', syncMotion);
-  film.addEventListener('ended', () => {
-    film.controls = false;
-    play.hidden = false;
-    play.querySelector('b').textContent = 'Replay film';
-    play.setAttribute('aria-label', 'Replay the Offer Filter film');
-    syncMotion();
+  play.addEventListener('click', () => {
+    film.play().catch(() => { play.hidden = false; syncMotion(); });
+  });
+  // The play button offers the sound while the film loops muted, steps aside while it plays, and offers a replay at
+  // its end.
+  const offer = (text, label) => { play.hidden = false; play.querySelector('b').textContent = text; play.setAttribute('aria-label', label); };
+  function follow(f) {
+    f.addEventListener('loop', () => { offer('Play with sound', 'Play the Offer Filter film with sound'); syncMotion(); });
+    f.addEventListener('play', () => { play.hidden = true; syncMotion(); });
+    f.addEventListener('pause', syncMotion);
+    f.addEventListener('error', syncMotion);
+    f.addEventListener('ended', () => { offer('Replay film', 'Replay the Offer Filter film'); syncMotion(); });
+  }
+  follow(film);
+  // The live film finds out it has no WebGL only when first wanted: the MP4 takes its place, playing if asked to.
+  if (window.offerFilm) window.offerFilm.addEventListener('unavailable', () => {
+    const wanted = window.offerFilm.wanted;
+    film = videoFallback(); follow(film);
+    if (wanted) film.play().catch(() => {});
   });
 
-  // Sky: night when the phone or computer is in dark mode (a script at the top of <body> sets it before the first
-  // paint), following the system's changes until the visitor chooses with the sky button. Nothing is stored.
-  const skyButton = $('sky-toggle'), themeColor = document.querySelector('meta[name="theme-color"]');
-  const darkScheme = matchMedia('(prefers-color-scheme: dark)');
-  let skyChosen = false;
-  function labelSky(night) {
-    skyButton.setAttribute('aria-label', night ? 'Switch to day' : 'Switch to night');
+  // The sky button works as the app's sun button does: each tap moves on through Day, Night, System (the device's own
+  // light or dark) and Auto (night from 6 pm to 6 am on this device's clock: the app's fallback when it knows no
+  // place), Auto to begin with. A small badge marks System and Auto, and a short note names the new choice. The
+  // browser's own bars (theme-color) follow the sky.
+  const THEME = 'offerfilter.theme', MODES = ['DAY', 'NIGHT', 'SYSTEM', 'AUTO'], LABEL = {DAY: 'Day', NIGHT: 'Night', SYSTEM: 'System', AUTO: 'Auto'};
+  const dark = matchMedia('(prefers-color-scheme: dark)'), sky = $('sky-toggle'), toast = $('sky-toast');
+  const themeColor = document.querySelector('meta[name="theme-color"]');
+  let mode = 'AUTO', toastTimer = 0, turnTimer = 0;
+  try { if (MODES.includes(localStorage.getItem(THEME))) mode = localStorage.getItem(THEME); } catch (e) {}
+  const next = m => MODES[(MODES.indexOf(m) + 1) % MODES.length];
+  const clockNight = () => { const hour = new Date().getHours(); return hour < 6 || hour >= 18; };
+  const isNight = () => mode === 'DAY' ? false : mode === 'NIGHT' ? true : mode === 'SYSTEM' ? dark.matches : clockNight();
+  function showTheme() {
+    const night = isNight();
+    if (document.body.classList.contains('night') !== night) {
+      // The page's colors ease while the sky turns (style.css), then settle back to their own quick transitions.
+      document.documentElement.classList.add('turning');
+      clearTimeout(turnTimer);
+      turnTimer = setTimeout(() => document.documentElement.classList.remove('turning'), 1700);
+      document.body.classList.toggle('night', night);
+      window.setSceneNight?.(night);
+    }
     if (themeColor) themeColor.content = night ? '#102032' : '#efe9db';
+    const basis = mode === 'AUTO' ? 'night from 6 pm to 6 am on this device' : mode === 'SYSTEM' ? 'follows this device' : 'fixed';
+    const said = `Sky: ${LABEL[mode]}, ${night ? 'night' : 'day'}, ${basis}. Tap for ${LABEL[next(mode)]}.`;
+    sky.setAttribute('aria-label', said); sky.title = said;
+    sky.dataset.mode = mode;
   }
-  function setSky(night) {
-    document.body.classList.toggle('night', night);
-    labelSky(night);
-    window.setSceneNight?.(night);
-  }
-  labelSky(document.body.classList.contains('night'));
-  skyButton.addEventListener('click', () => { skyChosen = true; setSky(!document.body.classList.contains('night')); });
-  darkScheme.addEventListener?.('change', event => { if (!skyChosen) setSky(event.matches); });
+  sky.addEventListener('click', () => {
+    mode = next(mode);
+    try { localStorage.setItem(THEME, mode); } catch (e) {}
+    showTheme();
+    toast.textContent = LABEL[mode] + (mode === 'AUTO' ? ' · 6 am–6 pm local clock' : mode === 'SYSTEM' ? ' · follows this device' : '');
+    toast.classList.add('shown');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove('shown'), 2200);
+  });
+  dark.addEventListener('change', showTheme);
+  // Auto turns the sky at 6 am and 6 pm while the page is open.
+  setInterval(() => { if (mode === 'AUTO') showTheme(); }, 60000);
+  showTheme();
 })();

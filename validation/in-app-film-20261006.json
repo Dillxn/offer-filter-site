@@ -1,0 +1,336 @@
+{
+  "change": "In-app footage: shots 2-6 of the film show the Offer Filter app's own main page on a phone, redrawn from the app's Java drawing code, playing a beat-cued story with invented offers.",
+  "preparedFrom": "a6d32d249e68242979ba54e4e17e56cadaf1e9b3",
+  "scope": "Local renders and local headless Chromium only; not a phone, physical-device, subjective-listening or live-domain receipt.",
+  "appSource": {
+    "branch": "app-source",
+    "commit": "ebba04f28f617b8512b6128e92f555c6a65cd8cd",
+    "versionName": "0.4.68",
+    "license": "MIT",
+    "ported": [
+      "MinimumsStarView (constellation) with SkyStage placement and veils",
+      "FilterHeroView (mascot, Enso ring, offer play-out, counts)",
+      "DecisionChartView (skyline), OfferCardView (ticket), OutcomeBadge",
+      "AreaMapView with AreaMap ranking",
+      "ScenePage, Scenery ground, Glyph icons, header buttons, AppearanceButton",
+      "MainActivity layout (buildMain, LeastColumn weights), showSelection ticket with Decor.Ticket and Decor.Stamp, OfferAlerts heads-up text"
+    ],
+    "genericNotApp": [
+      "phone frame",
+      "Android status bar and gesture handle",
+      "heads-up notification card chrome",
+      "touch indicator"
+    ]
+  },
+  "modules": {
+    "order": [
+      "base.js",
+      "scene.js",
+      "constellation.js",
+      "hero.js",
+      "skyline.js",
+      "areamap.js",
+      "phone.js",
+      "page.js"
+    ],
+    "files": {
+      "base.js": {
+        "bytes": 5934,
+        "gzipBytes": 2733
+      },
+      "scene.js": {
+        "bytes": 41230,
+        "gzipBytes": 13651
+      },
+      "constellation.js": {
+        "bytes": 93595,
+        "gzipBytes": 28328
+      },
+      "hero.js": {
+        "bytes": 35233,
+        "gzipBytes": 12160
+      },
+      "skyline.js": {
+        "bytes": 36584,
+        "gzipBytes": 12408
+      },
+      "areamap.js": {
+        "bytes": 31389,
+        "gzipBytes": 10879
+      },
+      "phone.js": {
+        "bytes": 10021,
+        "gzipBytes": 3826
+      },
+      "page.js": {
+        "bytes": 13962,
+        "gzipBytes": 5241
+      }
+    },
+    "totalBytes": 267948,
+    "totalGzipBytes": 89226,
+    "loaded": "on Play or when the pointer/focus/touch reaches the Play button; not on first visit"
+  },
+  "story": {
+    "invented": "13 offers (9 earlier this evening, 4 during the film), times 8:52-9:41 PM, an invented area at sea; 'Corner Café' is an invented store",
+    "cues": {
+      "phoneEnters": 3.359,
+      "knobPress": 3.879,
+      "dragPerMile150to185": [
+        4.079,
+        4.7
+      ],
+      "lift": 4.9,
+      "declineBadges": [
+        6.362,
+        7.503,
+        8.644
+      ],
+      "passBadge": 10.356,
+      "alert": [
+        9.465,
+        11.126
+      ],
+      "tap": 12.018,
+      "sheet": [
+        12.138,
+        13.659
+      ],
+      "dayPalette": "middle third of the dawn, from 14.059 s",
+      "phoneBowsOut": 15.241
+    },
+    "requiredCentsRule": "max(.00, per-mile x miles, /bin/bash.30 x minutes); per mile .50 before the drag, .85 after"
+  },
+  "text": {
+    "landscape": {
+      "minimumTextMargins": {
+        "left": 120,
+        "top": 253,
+        "right": 993.5328979492188,
+        "bottom": 66
+      },
+      "violations": []
+    },
+    "portrait": {
+      "minimumTextMargins": {
+        "left": 86,
+        "top": 155,
+        "right": 90.35430908203125,
+        "bottom": 91.01300239562988
+      },
+      "violations": []
+    },
+    "square": {
+      "minimumTextMargins": {
+        "left": 76,
+        "top": 77,
+        "right": 264.5591735839844,
+        "bottom": 61.01300239562988
+      },
+      "violations": []
+    }
+  },
+  "media": {
+    "offer-filter-landscape.mp4": {
+      "bytes": 5477669,
+      "sha256": "b8ead3c974f68246bd80800247644a2e729b489ef2b85bc0fad5305345039b44"
+    },
+    "offer-filter-portrait.mp4": {
+      "bytes": 5883136,
+      "sha256": "9a9e580f40ab48549d4bc9ff0fae176ad7e3f50e191a5badc0f2f10d12257ef0"
+    },
+    "offer-filter-square.mp4": {
+      "bytes": 4360372,
+      "sha256": "d474fa1a09af88a1689ea82a45d72f53160029cefbe7bec3f64c7a25485ec906"
+    },
+    "offer-filter-portrait.webm": {
+      "bytes": 5463162,
+      "sha256": "e4a19e28e94fea7141b045488caf15843dd93c6d7752bedb7f332d4ccd237372"
+    }
+  },
+  "mediaChecks": {
+    "mp4": "H.264 630 frames at 30 fps, AAC 21.000 s and an English mov_text caption track in each format",
+    "webm": "VP9 and Opus, 21.02 s",
+    "postersAndCaptions": "byte-identical to the previous release (the closing frame and captions are unchanged)"
+  },
+  "liveCanvasVsMp4": {
+    "frames": [
+      2,
+      4.4,
+      6.5,
+      10.4,
+      12.5,
+      14.9
+    ],
+    "psnrDb": [
+      37.2,
+      33.7,
+      33.6,
+      34.5,
+      33.4,
+      33.4
+    ],
+    "note": "Chromium canvas frames against decoded landscape MP4 frames; same range as the previous release (33.6-38.1 dB)"
+  },
+  "viewCulling": {
+    "framesCompared": 150,
+    "formats": [
+      "landscape",
+      "square",
+      "portrait"
+    ],
+    "worstPsnrDb": 77.8,
+    "note": "frames with and without skipping off-screen views"
+  },
+  "saveLayerForVeils": {
+    "psnrDbAgainstClippedZones": 40.6,
+    "constellationMsBefore": 17.2,
+    "constellationMsAfter": 9.6,
+    "renderer": "@napi-rs/canvas at 2x"
+  },
+  "phoneShadow": {
+    "msBefore": 27.3,
+    "msAfter": 8.2,
+    "method": "blurred once into a small bitmap and stretched",
+    "renderer": "@napi-rs/canvas at 2x"
+  },
+  "frameCostMs": {
+    "renderer": "Chromium canvas on SwiftShader (software only, no GPU)",
+    "before": {
+      "1108x624": {
+        "film": 6.2,
+        "phoneShots": 6.4,
+        "script": 0.4
+      },
+      "688x688": {
+        "film": 4.9,
+        "phoneShots": 5.1,
+        "script": 0.4
+      },
+      "1920x1080": {
+        "film": 15.4,
+        "phoneShots": 16.7,
+        "script": 0.5
+      }
+    },
+    "after": {
+      "1108x624": {
+        "film": 11.1,
+        "phoneShots": 14.6,
+        "phoneShotsP95": 22.6,
+        "script": 3.7
+      },
+      "688x688": {
+        "film": 9.5,
+        "phoneShots": 12.6,
+        "phoneShotsP95": 17.0,
+        "script": 3.6
+      },
+      "1920x1080": {
+        "film": 22.8,
+        "phoneShots": 30.2,
+        "script": 4.8
+      }
+    }
+  },
+  "browser": {
+    "testSite": {
+      "checkedAt": "2026-10-06T20:53:08.616Z",
+      "scope": "Local Chromium, not phone or live-domain proof",
+      "results": [
+        {
+          "width": 1280,
+          "night": false,
+          "format": "landscape",
+          "poster": "554x312",
+          "sync": -0.011,
+          "appScreens": 8,
+          "keyboardPause": true,
+          "captions": true,
+          "dialogPauses": true,
+          "endAndReplay": true,
+          "noOverflow": true,
+          "noPageErrors": true
+        },
+        {
+          "width": 1280,
+          "night": true,
+          "format": "landscape",
+          "poster": "554x312",
+          "sync": -0.006,
+          "appScreens": 8,
+          "keyboardPause": true,
+          "captions": true,
+          "dialogPauses": true,
+          "endAndReplay": true,
+          "noOverflow": true,
+          "noPageErrors": true
+        },
+        {
+          "width": 400,
+          "night": false,
+          "format": "square",
+          "poster": "344x344",
+          "sync": -0.006,
+          "appScreens": 8,
+          "keyboardPause": true,
+          "captions": true,
+          "dialogPauses": true,
+          "endAndReplay": true,
+          "noOverflow": true,
+          "noPageErrors": true
+        },
+        {
+          "width": 400,
+          "night": true,
+          "format": "square",
+          "poster": "344x344",
+          "sync": -0.005,
+          "appScreens": 8,
+          "keyboardPause": true,
+          "captions": true,
+          "dialogPauses": true,
+          "endAndReplay": true,
+          "noOverflow": true,
+          "noPageErrors": true
+        }
+      ]
+    },
+    "testLaunchHelp": "passes all eight combinations (day and night, 1280 and 400 px, help and deep link), no page errors"
+  },
+  "live": {
+    "publishedCommit": "fd8ce60d74ea495e44e02ef96331366b75d8c0de",
+    "pagesRun": 37532310515,
+    "servedAfterSeconds": 15,
+    "bytesMatch": {
+      "checked": 37,
+      "mismatched": 0,
+      "note": "cache-busted fetches of https://offerfilter.org/ against the committed files"
+    },
+    "playback": [
+      {
+        "width": 1280,
+        "sync": -0.008,
+        "version": "v=20261006-app",
+        "overflow": 0,
+        "errors": [],
+        "modules": 8
+      },
+      {
+        "width": 400,
+        "sync": -0.008,
+        "version": "v=20261006-app",
+        "overflow": 0,
+        "errors": [],
+        "modules": 8
+      }
+    ],
+    "appMomentsDrawn": [
+      4.4,
+      10.4,
+      12.5,
+      14.9
+    ],
+    "scope": "Headless Chromium through the session proxy; not a physical phone"
+  }
+}
