@@ -615,12 +615,18 @@ async function main() {
       await page.goBack();
       await page.waitForFunction(() => !document.getElementById('help-dialog').open);
       assert.equal(new URL(page.url()).hash, '');
-      // A deep link opens its dialog; closing it stays on the page.
+      // A deep link opens its dialog; closing it stays on the page. The film's muted loop, due while the dialog is open
+      // (every reading page links to /#help and /#feedback), waits for it and begins once it closes. (From about:blank,
+      // so the page loads afresh, as it does from another page: from / the browser would only change the hash.)
+      await page.goto('about:blank');
       await page.goto(base + '/#help', {waitUntil: 'networkidle'});
       assert(await isOpen('help-dialog'), '#help deep link');
+      const settled = (test, timeout) => page.waitForFunction(test, null, {timeout}).then(() => true, () => false);
+      assert(await settled(() => window.offerFilm && offerFilm.quiet && offerFilm.paused, 30000), 'the muted loop comes due behind the dialog, and waits');
       await page.keyboard.press('Escape');
       await page.waitForFunction(() => !document.getElementById('help-dialog').open && location.hash === '');
       assert.equal(await page.evaluate(() => location.href), base + '/');
+      assert(await settled(() => offerFilm.quiet && !offerFilm.paused, 10000), 'the muted loop begins once the dialog closes');
       // The film's player: its controls stay off the poster (and its "Not affiliated with DoorDash" line) and off the
       // muted loop, come up when the film plays with sound, with a Captions button, and leave again when the film goes
       // back to its loop after the end. Without JavaScript the <noscript> video keeps its own controls.

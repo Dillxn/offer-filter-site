@@ -312,9 +312,10 @@
   }
   const warm = () => { if (audio.preload === 'none') audio.preload = 'auto'; wake(); };
   for (const type of ['pointerenter', 'focus', 'touchstart']) $('film-play').addEventListener(type, warm, {once: true, passive: true});
-  // The muted loop begins once the page has loaded and shown its words, when the browser is idle.
+  // The muted loop begins once the page has loaded and shown its words, when the browser is idle. If a dialog is open
+  // then or motion is paused (a visit to /#help, say), the loop is due all the same and begins when they end (rest()).
   if (!still) {
-    const go = () => (window.requestIdleCallback || (fn => setTimeout(fn, 50)))(() => wake().then(() => { if (mode === 'idle') player.loop(); }), {timeout: 1500});
+    const go = () => (window.requestIdleCallback || (fn => setTimeout(fn, 50)))(() => wake().then(() => { if (mode === 'idle') { mode = 'loop'; t = 0; player.loop(); } }), {timeout: 1500});
     let loaded = document.readyState === 'complete', painted = false;
     const both = () => { if (loaded && painted) { loaded = false; go(); } };
     try {
