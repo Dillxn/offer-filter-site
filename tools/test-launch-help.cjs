@@ -360,6 +360,8 @@ async function main() {
         'Allow notification access', 'Offer Filter background offers', 'Allow alerts',
         'Allow Offer Filter to send you notifications?', 'Allow updates', 'Update ready · Install now',
         'Already on 0.4.72?', 'Update ready: installs after your dash', 'install it over the old app',
+        'may stop the install right here', 'open OfferFilter.apk again (step 2)', 'Tap Updates to try again',
+        'isn’t tried again by itself', 'may remind you once, with a notification',
         'Turn Offer Filter off and on in Accessibility', 'Reconnect notification access', 'minimum pay', 'pay per mile',
         'pay per hour', 'max stops', 'no per-item or per-stop minimum', 'Tap to start with typical minimums',
         'Your rules are simpler now', 'Autopilot', 'What matters more?', 'Keep a top tier', 'acceptance rate 70% or more',
@@ -378,7 +380,8 @@ async function main() {
       // "Updates can't install" became the homepage's Allow updates step).
       for (const stale of ['items on shopping orders', 'items for shopping orders', 'Every screen your phone may show',
         'anonymous diagnostics is optional', 'pay per minute', 'pay per item', 'Updates can’t install', 'Screen reading is off',
-        'Background offers are off', 'Alerts are blocked', 'combined area score', 'Keep the learning you choose']) {
+        'Background offers are off', 'Alerts are blocked', 'combined area score', 'Keep the learning you choose',
+        'updates will wait until it’s off again']) {
         assert(!text.includes(stale), 'install page still says: ' + stale);
       }
       assert(!/exact setup steps/.test(await page.locator('meta[property="og:description"]').getAttribute('content')), 'og:description overclaims');
@@ -431,7 +434,8 @@ async function main() {
         'Maps and Dasher in split screen with the tab', 'for planning while parked', 'Peek waits for Dasher',
         'unlock within 40 seconds', 'never woken or unlocked', 'the power button still turns it off',
         'In Offer Filter, tap the mascot on its home screen', 'doesn’t read Dasher at all', 'turn off Auto-accept',
-        'A beta, not a guarantee of reliability', 'best effort, not a promise', 'Never handle your phone while driving']) {
+        'A beta, not a guarantee of reliability', 'best effort, not a promise', 'Never handle your phone while driving',
+        'view and control your screen']) {
         assert(help.toLowerCase().includes(phrase.toLowerCase()), 'Help lacks: ' + phrase);
       }
       assert(!/items on shopping orders|items for shopping orders|pay per item|pay per minute|Updates can’t install|From 0\.5\.0:/.test(copy),

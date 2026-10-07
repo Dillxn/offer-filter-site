@@ -62,7 +62,8 @@
 <li><h3>Download the file</h3>
 <p>Tap <strong>Download Offer Filter</strong> above. Chrome may say <strong>File might be harmful</strong> (older versions: <strong>This type of file can harm your device</strong>). Chrome says this about every app that doesn’t come from the Play Store. Tap <strong>Download anyway</strong> (or <strong>OK</strong>). Samsung Internet asks a similar question.</p></li>
 <li><h3>Open it</h3>
-<p>When the download finishes, tap <strong>Open</strong> in the message at the bottom of the screen. Missed it? Open Chrome’s <strong>⋮</strong> menu, then <strong>Downloads</strong>, or your Files app, and tap <strong>OfferFilter.apk</strong>.</p></li>
+<p>When the download finishes, tap <strong>Open</strong> in the message at the bottom of the screen. Missed it? Open Chrome’s <strong>⋮</strong> menu, then <strong>Downloads</strong>, or your Files app, and tap <strong>OfferFilter.apk</strong>.</p>
+<p class="note">On a Samsung Galaxy, <strong>Auto Blocker</strong> may stop the install right here: see step 5.</p></li>
 <li><h3>Let your browser install apps, once</h3>
 <p>The first time, Android says that for your security your phone isn’t allowed to install unknown apps from this source. Tap <strong>Settings</strong>, turn on <strong>Allow from this source</strong>, go back, and tap <strong>Install</strong>.</p>
 <p class="note">This applies only to the browser you used. You can turn it off again afterwards: <span class="path">Settings → Apps → Special app access → Install unknown apps</span> (Samsung: <span class="path">Settings → Apps → ⋮ → Special access → Install unknown apps</span>).</p></li>
@@ -71,7 +72,7 @@
 <p>If Play Protect says the app is harmful, or blocks it, stop there and don’t install it. Please <a href="../#feedback">tell us through Feedback</a> so we can look into it. Never turn Play Protect off for Offer Filter.</p></li>
 <li><h3>Samsung Galaxy: Auto Blocker</h3>
 <p>If a Galaxy phone says Auto Blocker blocked the install, that’s Samsung’s <strong>Auto Blocker</strong>, at <span class="path">Settings → Security and privacy → Auto Blocker</span>. While it’s on, it blocks apps from anywhere except Galaxy Store and Google Play, and that includes Offer Filter’s own updates later.</p>
-<p>Turning it off lowers that protection for every app, not only this one. If you’re not comfortable with that, it’s fine to stop here. If you turn it off, Offer Filter can install and update itself; you can turn Auto Blocker back on at any time, but updates will wait until it’s off again. If it stops an update, Offer Filter’s <span class="path">Settings → Updates</span> says so (step 10).</p></li>
+<p>Turning it off lowers that protection for every app, not only this one. If you’re not comfortable with that, it’s fine to stop here. If you turn it off, open <strong>OfferFilter.apk</strong> again (step 2) to install, and Offer Filter can then install and update itself. You can turn Auto Blocker back on at any time, but it then blocks Offer Filter’s updates too: Offer Filter’s <span class="path">Settings → Updates</span> says so (step 10), and that update isn’t tried again by itself. Turn Auto Blocker off, then tap <strong>Updates</strong> there to try again.</p></li>
 </ol>
 
 <h2 id="first-run">First run</h2>
@@ -83,7 +84,7 @@
 <p><span class="since">New in 0.5.0</span> The steps are numbered, one line each and only while needed. With three or more to do, the first shows and <strong>N more to set up · Show</strong> lists the rest:</p>
 <ol>
 <li><strong>Allow restricted settings</strong> (Android 13 and later, when the app came from your browser): see step 8.</li>
-<li><strong>Turn on Offer Filter in Accessibility</strong>: in Accessibility, open <strong>Downloaded apps</strong> (<strong>Installed apps</strong> on Samsung), choose Offer Filter and turn it on. Android warns that the app can see and control your screen; that’s how it reads offers and taps Decline in Dasher.</li>
+<li><strong>Turn on Offer Filter in Accessibility</strong>: in Accessibility, open <strong>Downloaded apps</strong> (<strong>Installed apps</strong> on Samsung), choose Offer Filter and turn it on. Android warns that the app can see and control your screen; that’s how it reads offers and taps Decline in Dasher. On Android 12 and later, about a day later Android may remind you once, with a notification, that Offer Filter can view and control your screen. That’s expected; turning it off there stops Offer Filter.</li>
 <li><strong>Allow notification access</strong>: choose <strong>Offer Filter background offers</strong> and allow it. It reads only Dasher’s notifications and ignores every other app.</li>
 <li><strong>Allow alerts</strong>: Offer Filter’s own notifications (step 9).</li>
 <li><strong>Allow updates</strong>: shows once the rest is done, or right away when an update is waiting (step 10).</li>
@@ -107,7 +108,7 @@
 <p>Tap <strong>Fix</strong> beside <strong>Allow alerts</strong>. On Android 13 and later, Android asks <strong>Allow Offer Filter to send you notifications?</strong> Tap <strong>Allow</strong>. Offer Filter uses them for offers it lets through or can’t read, and for update notices. On Android 8 to 12 they’re on unless you turned them off.</p></li>
 <li><h3>Let Offer Filter install its own updates</h3>
 <p>On Offer Filter’s home screen, tap <strong>Fix</strong> beside <strong>Allow updates</strong> and turn on <strong>Allow from this source</strong>. This is separate from your browser’s permission in step 3. Updates are signed and checked before they install. Keep the app installed; there’s no need to uninstall to update.</p>
-<p class="note">When an update is ready and you’re not dashing, the home screen shows <strong>Update ready · Install now</strong>, and <span class="path">Settings → Updates</span> shows where updates stand. Automatic installs wait until a dash ends, or until nothing of a dash has been seen for 8 hours with the screen off. If Auto Blocker stops an update, Settings → Updates says so: “Android blocked the update (on Samsung, check Auto Blocker).”</p>
+<p class="note">When an update is ready and you’re not dashing, the home screen shows <strong>Update ready · Install now</strong>, and <span class="path">Settings → Updates</span> shows where updates stand. Automatic installs wait until a dash ends, or until nothing of a dash has been seen for 8 hours with the screen off. If Auto Blocker stops an update, Settings → Updates says so: “Android blocked the update (on Samsung, check Auto Blocker). Tap Updates to try again.” Turn Auto Blocker off first; the blocked update waits for that tap.</p>
 <p class="note"><strong>Already on 0.4.72?</strong> It installs an update by itself only after it has seen your dash end, and it has no Install now line or 8-hour limit (those start with 0.5.0). If its <span class="path">Settings → Updates</span> says <strong>Update ready: installs after your dash</strong> while you’re not dashing (for example because you turned Offer Filter’s Accessibility off to get through 0.4.72’s frozen Dasher), tap <strong>Updates</strong> once with Dasher not on screen, or download 0.5.0 above and install it over the old app. Your rules and history stay. If you turned Accessibility off, turn it back on afterwards.</p></li>
 </ol>
 
