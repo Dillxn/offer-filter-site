@@ -47,8 +47,11 @@ The sections above describe the app. This one covers offerfilter.org itself.
 - **Hosting.** The site is a set of static pages hosted by GitHub Pages. Like any web host, GitHub receives the \
 usual request information (your IP address, browser details and the page you asked for) and may keep it in server \
 logs under GitHub's own privacy statement. The site has no accounts and no sign-in.
-- **No cookies, no analytics.** The site sets no cookies, stores nothing in your browser, and runs no analytics, ads \
-or tracking. Its pages, fonts, images and film come from offerfilter.org itself.
+- **No cookies, no analytics.** The site sets no cookies and runs no analytics, ads or tracking. Its pages, fonts, \
+images and film come from offerfilter.org itself. The home page remembers three small settings in your browser's \
+local storage, and they never leave your device: the sky you chose with the sky button (Day, Night, System or \
+Auto), whether the film's captions are on, and whether your device draws the page's 3D graphics in software, so \
+the next visit starts lighter. Clearing this site's data in your browser removes them.
 - **Feedback form.** Nothing is sent until you tap Send. Then the site sends the type you chose and the message you \
 typed, marked as coming from the website, to the Offer Filter feedback service: a Supabase Edge Function, reached \
 through Supabase's network (which includes Cloudflare). The service turns your connection's IP address into a \
@@ -63,7 +66,8 @@ you directly. Please leave out customer names, addresses, payment, account or pa
 (dash-offer-filter-build.onrender.com), which receives ordinary connection information. The install page reads the \
 current version number from offerfilter.org.
 - **Tips and other links.** The tip links open Cash App or Venmo; the site sends them nothing and counts nothing. \
-Source-code links open GitHub. Those services handle your visit under their own policies.
+Source-code links open GitHub, and the emblem at the foot of the home page opens jesuslovesyou.xyz. Those sites \
+handle your visit under their own policies.
 - **Contact.** For privacy, data deletion or security requests, email {CONTACT}. Unlike feedback, email isn't \
 anonymous: the developer sees your address and uses it only to answer you. To ask about feedback you sent, include \
 its reference: feedback has no name or account, so the reference is how it can be found. Please send everything else \
