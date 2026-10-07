@@ -219,20 +219,23 @@ function direction(c,l,t,T){
 }
 /* 7 · Offer Filter: the name, then "Free" and "& open source" land with the voice; sparkles take the last hits. */
 const cue=n=>beat(n)-beat(27);
-// Wide: a paired illustration and type column. Stacked: one shared centerline.
+// Wide: the mascot and, beside it on the right, a type column, close together as one centred group. Stacked: one
+// shared centerline.
 function closing(c,l){
- const {w,wide,square:sq}=l,tx=wide?165:w/2,fy=wide?510:sq?590:1100,size=wide?38:sq?34:43;
+ const {w,wide,square:sq}=l,tx=wide?950:w/2,fy=wide?483:sq?590:1100,size=wide?38:sq?34:43;
  c.font=`400 ${size}px "Atkinson Hyperlegible"`;
- return {mx:wide?1390:540,my:wide?530:sq?250:520,ms:wide?3.45:sq?1.72:3.2,tx,align:wide?'left':'center',fy,size,
+ return {mx:wide?555:540,my:wide?530:sq?250:520,ms:wide?3.2:sq?1.72:3.2,tx,align:wide?'left':'center',fy,size,
   lead:c.measureText('Free ').width,fx:wide?tx+48:(w-c.measureText('Free & open source').width)/2+25};
 }
 function close3d(r,set,l,c,t,dx,alpha){
  const {M}=GL,art=set.art,q=closing(c,l),D=40,tm=t+8;
- // The mascot grows in as its ensō is brushed round it, bobbing, breathing, waving; it cheers at "Free".
- const ms=q.ms*(.9+.1*pop(t/.6)),sx=q.mx,sy=q.my+Math.sin(tm*1.4)*5-8,[yaw,pitch]=facing(l,sx,sy,12*Math.PI/180);
+ // The mascot grows in as its ensō is brushed round it, bobbing, breathing, waving; it cheers at "Free". In landscape
+ // it waits until the last shot's words, where it stands, have gone.
+ const g=t-(l.wide?.3:0);
+ const ms=q.ms*(.9+.1*pop(g/.6)),sx=q.mx,sy=q.my+Math.sin(tm*1.4)*5-8,[yaw,pitch]=facing(l,sx,sy,12*Math.PI/180);
  const model=M.trs(at(l,sx,sy,D,dx),[yaw+Math.sin(tm*.7)*.12,pitch,0],per(l,62*ms,D));
  const mood=t>cue(28)&&t<cue(28)+.8?'cheer':Math.floor(tm*2)%13===11?'blink':'happy';
- r.faded(alpha*clamp(t/.2),()=>art.mascot(model,{mood,wave:12+Math.sin(tm*2)*7,breathe:Math.sin(tm*2),ring:ease(t/.8)}));
+ r.faded(alpha*clamp(g/.2),()=>art.mascot(model,{mood,wave:12+Math.sin(tm*2)*7,breathe:Math.sin(tm*2),ring:ease(g/.8)}));
  for(let i=0;i<4;i++){
   const k=pop((t-cue(32+i))/.35);if(k<=0)continue;
   const a=i*TAU/4+.3,px=q.mx+Math.cos(a)*q.ms*115,py=q.my+Math.sin(a)*q.ms*107,[sy2,sp2]=facing(l,px,py);
@@ -248,12 +251,12 @@ function close(c,l,t,T,emblem){
  rise(c,t-.05,()=>text(c,'Offer Filter',tx,wide?395:sq?529:990,wide?146:sq?109:145,C.ink,{align,maxWidth:wide?850:910}),24);
  rise(c,t-cue(28),()=>body(c,'Free',fx,fy,size,green),12);
  rise(c,t-cue(30),()=>body(c,'& open source',fx+lead,fy,size,green),12);
- rise(c,t-cue(31),()=>text(c,'offerfilter.org',tx,wide?594:sq?657:1193,wide?52:sq?48:56,'#276BAE',{align}),12);
+ rise(c,t-cue(31),()=>text(c,'offerfilter.org',tx,wide?553:sq?657:1193,wide?52:sq?48:56,'#276BAE',{align}),12);
  // A quiet signature on the same alignment, without a filled badge. The
  // emblem arrives pre-tinted: only its ink is colored, its alpha silhouette is unchanged.
- const mw=wide?224:sq?198:270,mh=mw*emblem.height/emblem.width,ex=wide?tx:(w-mw)/2,ey=wide?698:sq?704:1324;
+ const mw=wide?224:sq?198:270,mh=mw*emblem.height/emblem.width,ex=wide?tx:(w-mw)/2,ey=wide?605:sq?704:1324;
  c.save();c.globalAlpha*=ease((t-cue(32))/.6);c.drawImage(emblem,ex,ey,mw,mh);c.restore();
- rise(c,t-cue(33),()=>body(c,'Independent app. Not affiliated with DoorDash.',wide?165:w/2,wide?992:sq?1008:1818,wide?26:sq?22:27,'#183D4E',{align,maxWidth:wide?920:sq?690:928}),8);
+ rise(c,t-cue(33),()=>body(c,'Independent app. Not affiliated with DoorDash.',tx,wide?992:sq?1008:1818,wide?26:sq?22:27,'#183D4E',{align,maxWidth:wide?920:sq?690:928}),8);
 }
 /* The phone: the app's own main page (assets/app/, ported from its Java drawing code) in one continuous layer from
  * "Set your minimums" until the close, so it never flickers through a crossfade: its body in 3D, in front of the first

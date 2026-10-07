@@ -1,11 +1,12 @@
 #!/usr/bin/env node
 'use strict';
 // Local Chromium checks for the homepage and its live film player: the page fitting a laptop's screen, the hero's
-// buttons, the footer's row, the sky button cycling as the app's does, the 3D sky drawn after the page's first
-// paint (in a worker, and once on the page's own thread as browsers without OffscreenCanvas draw it), the film's
-// poster picture with no renderer until it is wanted, playback in sync with the soundtrack, the
-// app's screens loaded and drawn on the phone, keyboard pause, seeking, captions, dialogs pausing the film, the ending
-// and replay. Chromium draws WebGL with SwiftShader here, so the 3D paths run without a GPU.
+// buttons, the footer's links and the emblem's corner, the tip buttons' icons, the sky button cycling as the app's
+// does, the 3D sky drawn after the page's first paint (in a worker, and once on the page's own thread as browsers
+// without OffscreenCanvas draw it), the film's poster picture with no renderer until it is wanted, playback in sync
+// with the soundtrack, the app's screens loaded and drawn on the phone, keyboard pause, seeking, captions, dialogs
+// pausing the film, the ending and replay. Chromium draws WebGL with SwiftShader here, so the 3D paths run without a
+// GPU.
 // Local browser evidence only, not a phone or live-domain receipt.
 const assert = require('node:assert/strict');
 const http = require('node:http');
@@ -67,7 +68,8 @@ async function main() {
           poster: getComputedStyle(stage).backgroundImage, posterLoaded: performance.getEntriesByType('resource').some(e => /film-poster-(wide|square)\.avif/.test(e.name)),
           filmScript: !!window.OfferFilm, renderer: !!window.OfferGL, save: !!document.getElementById('film-save'),
           icons: [...document.querySelectorAll('#download-open svg, .source-button svg')].length, github: document.querySelector('.source-button').href,
-          githubText: document.querySelector('.source-button').textContent.trim(), links: box('.footer-links'), signature: box('.signature'), world: box('.world'),
+          githubText: document.querySelector('.source-button').textContent.trim(), links: box('.footer-links'), signature: box('.signature'), world: box('.world'), stage: stage.getBoundingClientRect(),
+          payIcons: document.querySelectorAll('.tip-options .pay-icon').length,
           overflow: document.documentElement.scrollWidth - innerWidth, scroll: document.documentElement.scrollHeight - innerHeight};
       });
       assert.equal(look.night, night, 'the chosen sky shows');
@@ -84,13 +86,14 @@ async function main() {
       assert.equal(look.githubText, 'View on GitHub');
       assert.match(look.github, /github\.com\/Dillxn\/offer-filter-site/);
       assert(look.overflow <= 0, 'no horizontal overflow');
-      if (format === 'landscape') {
-        assert(look.scroll <= 0, `the page fits the screen (${look.scroll} px over)`);
-        assert(Math.abs(look.links.left - look.world.left) < 90 && look.signature.right > look.world.right - 90, 'links left, the emblem right');
-        assert(Math.abs((look.links.top + look.links.bottom) / 2 - (look.signature.top + look.signature.bottom) / 2) < 20, 'links and emblem share a row');
-      } else {
-        assert(Math.abs((look.signature.left + look.signature.right) / 2 - (look.links.left + look.links.right) / 2) < 4 && look.signature.top > look.links.bottom, 'the emblem centred under the links');
-      }
+      if (format === 'landscape') assert(look.scroll <= 0, `the page fits the screen (${look.scroll} px over)`);
+      // The links at the left; the emblem on its quarter circle in the page's bottom-right corner, clear of the links
+      // and the film.
+      assert(look.links.left - look.world.left < 90, 'links at the left');
+      assert(Math.abs(look.signature.right - look.world.right) < 1 && Math.abs(look.signature.bottom - look.world.bottom) < 1, 'the emblem in the bottom-right corner');
+      const clear = b => Math.hypot(look.world.right - Math.min(b.right, look.world.right), look.world.bottom - Math.min(b.bottom, look.world.bottom)) > look.signature.width;
+      assert(clear(look.links) && clear(look.stage), 'the corner clear of the links and the film');
+      assert.equal(look.payIcons, 2, 'Cash App and Venmo carry icons');
 
       // The sky button moves on as the app's sun does: Day, Night, System, Auto; a badge marks System and Auto.
       const sky = [];
