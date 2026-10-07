@@ -628,8 +628,8 @@ async function main() {
       assert.equal(await page.evaluate(() => location.href), base + '/');
       assert(await settled(() => offerFilm.quiet && !offerFilm.paused, 10000), 'the muted loop begins once the dialog closes');
       // The film's player: its controls stay off the poster (and its "Not affiliated with DoorDash" line) and off the
-      // muted loop, come up when the film plays with sound, with a Captions button, and leave again when the film goes
-      // back to its loop after the end. Without JavaScript the <noscript> video keeps its own controls.
+      // muted loop, come up when the film plays with sound, with a Captions button, and leave again at its end, where
+      // the closing frame shows that line. Without JavaScript the <noscript> video keeps its own controls.
       assert.match(fs.readFileSync(path.join(root, 'index.html'), 'utf8'), /<noscript><video controls /, 'controls without JavaScript');
       const controls = page.locator('#film-controls');
       assert(await controls.isHidden(), 'no player controls over the poster or the muted loop');
@@ -640,18 +640,20 @@ async function main() {
       const pressed = await captions.getAttribute('aria-pressed');
       await captions.click();
       assert.notEqual(await captions.getAttribute('aria-pressed'), pressed, 'captions toggle');
-      // The end offers a replay; then the muted loop comes back and the controls go. (Played from 20.3 s, as in
-      // tools/test-site.cjs: started at the very end, the film can finish before its soundtrack's own "play" event
-      // arrives, and that late event starts it over.)
+      // The end offers a replay, which takes the focus the controls had, and the controls leave; then the muted loop
+      // comes back. (Played from 20.3 s, as in tools/test-site.cjs: started at the very end, the film can finish before
+      // its soundtrack's own "play" event arrives, and that late event starts it over.)
       await page.click('[data-act=toggle]');
       await page.evaluate(() => { const seek = document.getElementById('film-seek'); seek.value = 20.3; seek.dispatchEvent(new Event('input')); });
       await page.click('[data-act=toggle]');
       await page.waitForFunction(() => !document.getElementById('film-play').hidden && window.offerFilm.ended, null, {timeout: 10000});
       assert.equal(await page.locator('#film-play').textContent(), '▶Replay film');
+      assert(await controls.isHidden(), 'the controls leave at the end, off the closing frame\'s "Not affiliated with DoorDash" line');
+      assert.equal(await page.evaluate(() => document.activeElement.id), 'film-play', 'Replay takes the focus the controls had');
       await page.waitForFunction(() => window.offerFilm.quiet && !offerFilm.paused && document.getElementById('film-controls').hidden, null, {timeout: 10000});
       assert.deepEqual(errors, [], 'dialog errors');
       await ctx.close();
-      pass('dialogs', 'labelled; Tab/Enter/Escape; #help/#feedback addresses; Feedback→Help; Back closes; player controls only while the film plays with sound, Captions button, Replay at the end');
+      pass('dialogs', 'labelled; Tab/Enter/Escape; #help/#feedback addresses; Feedback→Help; Back closes; player controls only while the film plays with sound (gone at its end), Captions button, Replay at the end');
     }
 
     // 8. Motion: reduced motion keeps the 3D scenery still and the film a picture (nothing of it loads); otherwise the

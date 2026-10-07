@@ -129,8 +129,13 @@
   function finish() {
     playing = false; ended = true; t = D;
     if (!silent && !audio.paused) audio.pause();
-    draw(); sync(); showControls();
+    // The controls step aside, so the closing frame shows whole, its "Not affiliated with DoorDash" line too (for good,
+    // where the loop does not come back); the play button offers a replay (page.js) and takes the focus they had.
+    const focused = controls.contains(document.activeElement);
+    controls.hidden = true;
+    draw(); sync();
     emit('ended');
+    if (focused) $('film-play').focus({preventScroll: true});
     // The closing frame holds a moment; then the film goes back to its muted loop.
     clearTimeout(back);
     if (!still) back = setTimeout(() => { if (ended && !playing) { mode = 'loop'; t = 0; player.loop(); } }, 3000);
