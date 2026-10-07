@@ -1,6 +1,6 @@
 # Site validation record
 
-Current record for the public-beta site (Cincinnati area), prepared 6 October 2026 on branch
+Current record for the public-beta site (Cincinnati area), prepared 6–7 October 2026 on branch
 `claude/nifty-fermi-su0qus`. Nothing here is deployed until the branch reaches `main`. Earlier entries (film, narration
 and signature work of 3–4 October) are in this file's history: `git show 4e1aa5a:SITE_VALIDATION.md`.
 
@@ -15,7 +15,8 @@ python3 tools/build-legal.py --check        # terms/, privacy/, license/ match t
 The test serves the site like GitHub Pages and checks, at 360 and 1366 px: no horizontal overflow, no text under
 11 px, no console errors, every local link and asset (including CSS `url()`s, `og:image` and the sitemap), one
 cache-buster, one poster and one small signature image per load with no video before Play, the download button
-labelled from `release.json` (and working without JavaScript), the install steps and visible risk text, the legal
+labelled from `release.json` (and working without JavaScript), the install steps and visible risk text (every risk
+statement pinned; the 0.5.0 guide's words present and the retired ones absent, also in Help and About), the legal
 pages and links to them, the feedback form's messages (201, 429, 400, 413, 502, network failure, 15 s timeout,
 offline, whitespace-only, the 4,000-character counter, the message kept on failure), dialog labels, keyboard use,
 `#help`/`#feedback` addresses, Feedback returning to Help, Back closing a dialog, the captions switch, the film's
@@ -28,7 +29,29 @@ the app's privacy text naming the site's contact (privacy@offerfilter.org), and,
 later, terms and privacy that describe Autopilot without the retired area-mode and 0.4.73 wording. A failed gate ends
 the run with "NOT READY TO DEPLOY" and exit code 1, after every other check.
 
-## Latest local results (6 October 2026, after the QA fixes)
+## Latest local results (7 October 2026: the 0.5.0 guide and the final legal texts)
+
+- Legal pages: built with `python3 tools/build-legal.py --app-repo <app worktree wip/wp8-legal>` from the app's
+  final TERMS.md and PRIVACY.md ("Beta terms, effective 7 October 2026 · for Offer Filter 0.5.0"; no drafting
+  notes; privacy@offerfilter.org named; Ohio law; Autopilot described). `--check` against that worktree reports all
+  three pages current. Run without `--app-repo`, it still refuses while the app checkout beside this repository
+  carries the old drafts: build from the app branch that holds the final texts.
+- Install guide, Help and About describe 0.5.0: three minimums (minimum pay, per mile, per hour) plus max stops, with
+  no per-item or per-stop minimum; Autopilot's "What matters more?" (keep a top tier, 70%, suggested and
+  preselected; keep a tier, 50%; pay first), changed by a long press, its goal a best effort; the homepage's
+  numbered setup steps (Allow restricted settings first, then Accessibility, notification access, alerts, Allow
+  updates) in place of Settings' "Updates can't install"; Peek waiting for Dasher's offer and checking one that
+  dinged while the phone was locked; the screen held during a dash; paused meaning Offer Filter is not reading
+  Dasher; and the four layouts (three for driving, Offer Filter's own split for planning). 17 steps (a Peek step is
+  new). The restricted-settings section keeps the stock and Samsung ("App was denied access") wording.
+- Test: all nine sections pass (0.4.72, version code 78, in `release.json`). Release gates: no drafting notes in
+  /terms/ or /privacy/, and the app's privacy text names the site's contact: both pass. The Autopilot-wording gate
+  is checked once `release.json` says 0.5.0 (`sync-release.py --live`, at the real release only). On a scratch
+  copy with `release.json` set to 0.5.0 (code 80), every check and all seven gates pass: both texts describe
+  Autopilot and neither says "compensating" or "0.4.73".
+- `sync-release.py --check`: `assets/release.json` is current (0.4.72, the app's published feed).
+
+## Earlier local results (6 October 2026, after the QA fixes)
 
 - Test: all nine sections pass (0.4.72, version code 78, in `release.json`). Three release gates fail, as they
   should: the app's TERMS.md and PRIVACY.md still open with "Draft of 6 October 2026. Not legal advice; have a lawyer
@@ -59,16 +82,21 @@ the run with "NOT READY TO DEPLOY" and exit code 1, after every other check.
 
 ## Not verified here
 
-- privacy@offerfilter.org: offerfilter.org had no MX record on 6 October 2026, so mail to it would bounce. The
-  forward must exist (and get a test message) before the site goes live.
-- The final app texts: the gates hold the deploy until they drop the drafting notes, name the contact and describe
-  Autopilot.
+- privacy@offerfilter.org: offerfilter.org still had no MX record on 7 October 2026 (public DNS answered with the
+  zone's SOA only), so mail to it would bounce. The forward must exist (and get a test message) before the site goes
+  live; the test's gates only check that the texts name it.
+- The legal pages carry the texts on the app's `wip/wp8-legal` branch. If TERMS.md or PRIVACY.md change again before
+  0.5.0 ships, rebuild them (`build-legal.py --check --app-repo <that checkout>` reports drift).
+- `assets/brand.js` still holds the retired four-spoke constellation drawing (with a "learned" shape). No page and no
+  film tool draws it; the rendered film is unchanged.
 - The Render page at https://dash-offer-filter-build.onrender.com/ (built by the app repository) still shows the
   GitHub-era setup text; it needs its own update and a manual Render deploy, after this site is live.
 - A real install on Samsung and Pixel phones (Chrome's warning, Play Protect, Auto Blocker, restricted settings). The
   guide follows Android's documented prompts and the app's own labels; record the real screens on first install.
 - A real feedback submission from https://offerfilter.org (the test never contacts the endpoint).
-- The 0.5.0 features the install page describes (Autopilot and the rest) against the final 0.5.0 build.
+- The 0.5.0 features the install page and Help describe (the numbered setup steps, Autopilot's question, Peek
+  after an unlock, the screen held during a dash, paused, Back to map, the driving strip) against the final 0.5.0
+  build on a real phone. The words follow the app's 0.5.0 source and README; none of it has been seen on a phone.
 
 ## Production records kept in `validation/`
 

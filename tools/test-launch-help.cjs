@@ -367,7 +367,7 @@ async function main() {
         'check the Dasher app for your current requirements', 'Earn per Offer', 'Earn by Time', 'Dasher full screen',
         'Google Maps or Waze full screen', 'Peek', 'Maps and Dasher in split screen', 'split screen', 'for planning',
         'Back to map', 'Tap the mascot', 'Paused means Offer Filter isn’t reading Dasher at all',
-        'Paused: Offer Filter is not reading Dasher', 'Peek waits for Dasher’s offer', 'unlock within 40 seconds',
+        'resume from Offer Filter’s home screen', 'Peek waits for Dasher’s offer', 'unlock within 40 seconds',
         'keeps your screen from timing out', 'the power button still turns the screen off', 'Peek pauses while your phone is locked',
         'Send anonymous feedback', 'feedback form', 'Android 8', 'New in 0.5.0', 'Attach masked diagnostics',
         'Share anonymous diagnostics after each dash', 'Both start off', 'The screens you’re most likely to see']) {
