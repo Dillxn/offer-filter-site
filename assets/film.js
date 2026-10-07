@@ -1,10 +1,12 @@
-/* Offer Filter: one deterministic, narration-timed vector film.
- * The website plays it live in a canvas (player.js); tools/render-film.cjs renders the same frames to MP4.
+/* Offer Filter: one deterministic, narration-timed film in two layers. The art is 3D (OfferGL with OfferModels): the
+ * sky and its stars, three hills and a town, the rain of offers, the road and the car, the phone's body, the mascot
+ * and its sparkles. Over it, a flat layer carries every word, the emblem and the app's own screen.
+ * The website plays it live (player.js); tools/render-film.cjs renders the same frames to MP4 in Chromium.
  * Each aspect ratio is composed independently. Cuts and accents sit on the soundtrack's beat grid.
  */
 (function(root) {
 'use strict';
-const A=root.OfferArt, TAU=Math.PI*2;
+const GL=root.OfferGL, TAU=Math.PI*2;
 const C={ink:'#162844',cream:'#FFF7DF',blue:'#4385EB',sky:'#AFD0FF',pink:'#F29791',mint:'#B9E4BE',gold:'#F5C66F',purple:'#C3ABF7'};
 const FOG='#3C5A8F';
 const clamp=(v,a=0,b=1)=>Math.max(a,Math.min(b,v));
@@ -12,6 +14,10 @@ const lerp=(a,b,t)=>a+(b-a)*t;
 const ease=t=>1-Math.pow(1-clamp(t),3);
 const smooth=t=>{t=clamp(t);return t*t*(3-2*t);};
 const pop=t=>{t=clamp(t);return 1+3.4*Math.pow(t-1,3)+2.4*Math.pow(t-1,2);};
+// Two '#rrggbb' colors mixed: as CSS for the flat layer, as numbers for the 3D one.
+const mix=(a,b,t)=>{const c=GL.mix(a,b,t);return `rgb(${Math.round(c[0]*255)},${Math.round(c[1]*255)},${Math.round(c[2]*255)})`;};
+const mix3=(a,b,t)=>GL.mix(a,b,t);
+const rnd=seed=>{let s=seed>>>0;return()=>((s=(s*1664525+1013904223)>>>0)/4294967296);};
 const DURATION=21, FPS=30, POSTER=20.6, XF=.22;
 // "Your Time Matters" runs at 105.15 BPM: beat n of the take, in seconds.
 const BEAT=.5706, beat=n=>.085+n*BEAT;
@@ -37,11 +43,6 @@ const CAPTIONS=[
  [18.4,20.4,'[Music resolves]'],
 ];
 let bounds=[], scene='', timestamp=0, audit=true;
-function box(c,x,y,w,h,r,fill,stroke){A.roundRect(c,x,y,w,h,r);if(fill){c.fillStyle=fill;c.fill();}if(stroke){c.strokeStyle=stroke;c.stroke();}}
-function dot(c,x,y,r,col){c.beginPath();c.arc(x,y,Math.max(.001,r),0,TAU);c.fillStyle=col;c.fill();}
-function stroke(c,pts,col,w=2){c.beginPath();pts.forEach((p,i)=>i?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1]));c.strokeStyle=col;c.lineWidth=w;c.stroke();}
-// Canvas shadows ignore the transform; scale them so every render size matches the 1080p composition.
-function shade(c,blur,dy,col){const m=c.getTransform(),k=Math.hypot(m.a,m.b);c.shadowColor=col;c.shadowBlur=blur*k;c.shadowOffsetY=dy*k;}
 // Measure the actual font, including ink overhang and descenders. Never use a
 // fixed-height clipping rectangle or Canvas's horizontally squashed maxWidth.
 function text(c,str,x,y,size,col=C.cream,opt={}) {
@@ -64,96 +65,134 @@ function body(c,str,x,y,size,col=C.sky,opt={}){return text(c,str,x,y,size,col,{f
 function rise(c,lt,draw,dist=18){const p=ease(lt/.42);if(p<=0)return;c.save();c.globalAlpha*=p;c.translate(0,(1-p)*dist);draw();c.restore();}
 function layout(w,h){
  const wide=w/h>1.25,square=w===h;
- return {w,h,wide,square,tx:wide?120:square?76:86,ty:wide?338:square?148:248,
-  head:wide?120:square?101:134,headW:wide?810:w-(square?152:172),
-  cx:wide?1360:w/2,cy:wide?552:square?615:1060,r:wide?298:square?235:330,
-  k:wide?1:square?.82:1.08};
+ return {w,h,wide,square,f:h/2/Math.tan(FOV/2),tx:wide?120:square?76:86,ty:wide?338:square?148:248,
+  head:wide?120:square?101:134,headW:wide?810:w-(square?152:172)};
 }
 const dawn=T=>smooth((T-beat(24))/.8);
 function heading(c,lines,l,t,times,day=0){
- const base=A.mix(C.cream,C.ink,day),accent=A.mix(C.sky,'#2772C4',day);
+ const base=mix(C.cream,C.ink,day),accent=mix(C.sky,'#2772C4',day);
  lines.forEach((s,i)=>rise(c,t-times[i],()=>text(c,s,l.tx,l.ty+i*l.head*.98,l.head,i===1?accent:base,{maxWidth:l.headW}),22));
 }
-function supporting(c,str,l,lt,day=0){rise(c,lt,()=>body(c,str,l.tx,l.ty+l.head*2.25,l.square?30:36,A.mix(C.sky,'#426275',day),{maxWidth:l.headW}),10);}
+function supporting(c,str,l,lt,day=0){rise(c,lt,()=>body(c,str,l.tx,l.ty+l.head*2.25,l.square?30:36,mix(C.sky,'#426275',day),{maxWidth:l.headW}),10);}
 
-/* The shared backdrop: sky, stars and hills keep moving through every cut; only the city fades in and out. */
+/* The sky, night to dawn: behind the 3D layer, and in the flat strips that blend the phone into it. */
+const SKY=[['#0C1732','#CFE7ED'],['#263753','#F0DFBB'],['#354260','#F8B27E']],HALO=[121,166,235];
 function sky(c,l,T,x,y,w,h){
- const day=dawn(T),g=c.createLinearGradient(0,0,l.w*.3,l.h);g.addColorStop(0,A.mix('#0C1732','#CFE7ED',day));g.addColorStop(.57,A.mix('#263753','#F0DFBB',day));g.addColorStop(1,A.mix('#354260','#F8B27E',day));c.fillStyle=g;c.fillRect(x,y,w,h);
- if(day<1){const halo=c.createRadialGradient(l.w*.75,l.h*.4,0,l.w*.75,l.h*.4,l.w*.65);halo.addColorStop(0,`rgba(121,166,235,${.19*(1-day)})`);halo.addColorStop(1,'rgba(121,166,235,0)');c.fillStyle=halo;c.fillRect(x,y,w,h);}
-}
-function backdrop(c,l,T,city){
- const {w,h}=l,day=dawn(T);
- sky(c,l,T,0,0,w,h);
- if(day<1){
-  for(let i=0;i<75;i++){const x=((i*367)%997)/997*w,y=((i*151)%787)/787*h*.75;dot(c,x,y,.8+(i%3)*.6,`rgba(255,245,218,${(1-day)*(.15+.14*Math.sin(i+T))})`);}
- }
- if(city>.01){c.save();c.globalAlpha*=city;skyline(c,l,day);c.restore();}
- const colors=[['#2C4260','#B9C8BA'],['#253B56','#7FA99E'],['#1B3049','#477E85']];
- for(let j=0;j<3;j++){c.beginPath();c.moveTo(0,h);for(let x=0;x<=w+20;x+=20)c.lineTo(x,h*(.82+j*.085)+Math.sin(x/w*5.8+j*1.5+T*.025)*h*.035);c.lineTo(w,h);c.closePath();c.fillStyle=A.mix(colors[j][0],colors[j][1],day);c.fill();}
-}
-// Solid, hazy buildings behind the first hill: lit windows at night, quiet ones by day.
-// The city never moves, so its shapes are built once per format and filled in three calls.
-const CITY={};
-function skyline(c,l,day){
- const {w,h}=l,key=w+'x'+h;
- if(!CITY[key]){const u=(w+h)/2160,base=h*.87,city={blocks:new Path2D(),lit:new Path2D(),dark:new Path2D()};
-  for(let i=0;i<17;i++){const bw=(29+i*11%36)*u,x=i*w/16-15*u,bh=(60+i*67%135)*u;
-   city.blocks.roundRect?city.blocks.roundRect(x,base-bh,bw,bh,5*u):city.blocks.rect(x,base-bh,bw,bh);
-   for(let row=0;row<bh/(20*u)-1;row++)for(let col=0;col<bw/(14*u)-1;col++)((i*7+row*3+col*5)%9<4?city.lit:city.dark).rect(x+8*u+col*14*u,base-bh+10*u+row*20*u,4*u,6*u);}
-  CITY[key]=city;}
- const city=CITY[key];
- c.fillStyle=A.mix('#33496C','#D5DBD2',day);c.fill(city.blocks);
- c.fillStyle=A.mix('#E9C98A','#E9ECE3',day);c.fill(city.lit);
- c.fillStyle=A.mix('#2A3D5C','#CAD2C9',day);c.fill(city.dark);
-}
-function drive(c,l,t,T,x){
- const {w,h}=l,day=dawn(T),y=h*.915,s=l.wide?2.3:l.square?1.75:2.15;
- c.fillStyle=A.mix('#15293F','#396B78',day);c.fillRect(0,y,w,h-y);
- c.setLineDash([40,60]);c.lineDashOffset=-t*115;stroke(c,[[0,y+h*.042],[w,y+h*.042]],A.mix('#677D94','#DDCCA1',day),3);c.setLineDash([]);
- const cy=y+(l.wide?62:l.square?56:72);
- if(day<1){const hx=x+46*s,hy=cy-24*s,len=210*s,g=c.createLinearGradient(hx,0,hx+len,0);g.addColorStop(0,`rgba(255,227,160,${.2*(1-day)})`);g.addColorStop(1,'rgba(255,227,160,0)');
-  c.fillStyle=g;c.beginPath();c.moveTo(hx,hy-5*s);c.lineTo(hx+len,hy-30*s);c.lineTo(hx+len,hy+38*s);c.lineTo(hx,hy+6*s);c.closePath();c.fill();}
- A.car(c,x,cy,s,-Math.abs(Math.sin(t*9))*1.5);
-}
-function ticket(c,x,y,s,rot,o){
- const fog=o.fog||0,f=col=>fog?A.mix(col,FOG,fog):col;
- c.save();c.globalAlpha*=o.alpha==null?1:o.alpha;c.translate(x,y);c.rotate(rot);c.scale(s,s);
- if(fog<.3)shade(c,20,12,`rgba(5,18,40,${.22*(1-fog)})`);box(c,-157,-89,314,178,19,f(C.cream));c.shadowColor='transparent';
- const col=o.kind==='decline'?C.pink:o.kind==='pass'?C.mint:C.sky;box(c,-157,-89,58,178,19,f(col));c.fillStyle=f(C.cream);c.fillRect(-113,-89,22,178);
- c.setLineDash([4,6]);stroke(c,[[-100,-74],[-100,74]],f('#B4BCB3'),1.4);c.setLineDash([]);
- c.save();c.translate(-128,0);c.rotate(-Math.PI/2);body(c,'OFFER',0,7,17,f(C.ink),{align:'center',track:false});c.restore();
- text(c,o.pay,-79,6,58,f(C.ink),{maxWidth:216,track:!!o.track});body(c,o.info,-78,45,22,f('#49616C'),{maxWidth:214,track:!!o.track});
- dot(c,-100,-89,6,f('#2C415D'));dot(c,-100,89,6,f('#2C415D'));
- // A stamp travels with its ticket, so it never covers the route text.
- if(o.stamp>0){const k=pop(o.stamp);c.save();c.translate(157,-89);c.rotate(-rot*.5);icon(c,0,0,30*k,o.kind==='pass'?'check':'cross',o.kind==='pass'?C.mint:C.pink);c.restore();}
- c.restore();
-}
-function mascot(c,x,y,s,t,ring=1,o={}){
- c.save();c.translate(x,y+Math.sin(t*1.4)*5);if(o.tilt)c.rotate(o.tilt);A.enso(c,0,0,97*s,ring,C.blue,8*s);
- A.mascot(c,0,-8,s,{mood:o.mood||(Math.floor(t*2)%13===11?'blink':'happy'),wave:12+Math.sin(t*2)*7,breathe:Math.sin(t*2)});c.restore();
-}
-function icon(c,x,y,r,kind,col){
- shade(c,10,4,'rgba(5,18,40,.18)');dot(c,x,y,r,col);c.shadowColor='transparent';
- const p=kind==='check'?[[-.44,.01],[-.1,.35],[.45,-.33]]:[[-.3,-.3],[.3,.3]];
- stroke(c,p.map(([a,b])=>[x+a*r,y+b*r]),C.ink,r*.13);
- if(kind!=='check')stroke(c,[[x+r*.3,y-r*.3],[x-r*.3,y+r*.3]],C.ink,r*.13);
+ const day=dawn(T),g=c.createLinearGradient(0,0,l.w*.3,l.h);
+ SKY.forEach(([n,d],i)=>g.addColorStop([0,.57,1][i],mix(n,d,day)));c.fillStyle=g;c.fillRect(x,y,w,h);
+ // The night's glow fades out with the square of the distance, as the 3D sky's does.
+ if(day<1){const halo=c.createRadialGradient(l.w*.75,l.h*.4,0,l.w*.75,l.h*.4,l.w*.65);
+  for(let k=0;k<=4;k++)halo.addColorStop(k/4,`rgba(${HALO},${.19*(1-day)*(1-k/4)**2})`);c.fillStyle=halo;c.fillRect(x,y,w,h);}
 }
 
-/* 1 · Your time matters: a steady rain of offers, far ones lost in the night haze. */
-const RAIN=(()=>{const r=A.rnd(23),o=[['$3.50','9.2 mi'],['$4.25','12.4 mi'],['$2.75','7.8 mi'],['$18.40','4.1 mi'],['$5.10','10.6 mi'],['$3.90','8.3 mi']],out=[];
- for(let z=0;z<3;z++)for(let j=0;j<5;j++){const n=out.length;out.push({z,x:(j+.5+(r()-.5)*.45+z*.33)/5%1,y:(j*.618+z*.29)%1,spin:r()*2-1,phase:r()*TAU,pay:o[n%6][0],info:o[(n+2)%6][1]});}
- return out;})();
-function time(c,l,t,T){
- const {w,h,wide}=l,x0=wide?980:90,x1=wide?w-110:w-90,top=wide?-360:l.ty+l.head*1.2,bottom=h*.86,k=wide?1:l.square?.85:1.2;
- for(const p of RAIN){
-  const s=[.42,.6,.82][p.z]*k,speed=[70,110,165][p.z]*h/1080,span=bottom-top+220*s;
-  const y=top-110*s+(p.y*span+speed*t)%span,x=lerp(x0,x1,p.x)+Math.sin(t*.8+p.phase)*18;
-  const seen=clamp((y-95*s-top)/(70*s))*clamp((bottom-y)/(90*s));
-  if(seen>0)ticket(c,x,y,s,p.spin*.22+Math.sin(t*.9+p.phase)*.07,{pay:p.pay,info:p.info,fog:1-(1-[.42,.18,0][p.z])*seen,alpha:clamp(seen*4)});
- }
- drive(c,l,t,T,lerp(w*.5,w*.58,smooth(t/3.6)));
- heading(c,['Your time','matters.'],l,t,[1.1,1.92]);
+/* ---- The 3D layer ----
+ * A level camera with a 30° field (vertically): f, its focal length in frame px, makes a thing px pixels tall at depth D
+ * px / f * D world units tall. Each piece stands where the flat composition drew it, at a depth that keeps its size;
+ * the camera drifts slowly right all film long, so near hills pass far ones and the town. */
+const FOV=30*Math.PI/180;
+const at=(l,sx,sy,D,dx=0)=>[dx+(sx-l.w/2)/l.f*D,(l.h/2-sy)/l.f*D,-D];
+const per=(l,px,D)=>px/l.f*D;
+const drift=(l,T)=>T*.8*l.w/l.f;
+// Turns that show a thing drawn at (sx, sy) to the camera as its design view does: square on, or from `above` (radians).
+const facing=(l,sx,sy,above=0)=>{const X=(sx-l.w/2)/l.f,Y=(l.h/2-sy)/l.f;return [Math.atan2(-X,1),above+Math.asin(Y/Math.hypot(X,Y,1))];};
+// The land's light, moonlit to dawn; the story's things keep a soft studio light whatever the hour.
+const NIGHT={dir:[-.3,.62,.72],color:[.26,.27,.31],sky:[.8,.82,.88],ground:[.54,.56,.62],rim:[.16,.2,.28]};
+const DAWN={dir:[.62,.42,.66],color:[.5,.42,.32],sky:[.74,.76,.76],ground:[.62,.58,.52],rim:[.3,.27,.22]};
+const STUDIO={dir:[-.45,.5,.75],color:[.42,.41,.39],sky:[.86,.88,.92],ground:[.8,.76,.74],rim:[.45,.5,.58],gloss:[-.8,-.05,.55],fogNear:1e4,fogFar:2e4};
+function landLight(day){const o={gloss:[0,0,0],fog:mix3(...SKY[1],day),fogNear:260,fogFar:2400};for(const k in NIGHT)o[k]=NIGHT[k].map((v,n)=>lerp(v,DAWN[k][n],day));return o;}
+// The hills, far to near: the depth of each crest, its night and dawn colors (the flat film's).
+const HILLS=[[300,'#2C4260','#B9C8BA'],[190,'#253B56','#7FA99E'],[110,'#1B3049','#477E85']];
+const IDENT=GL.M.ident(),once=make=>{let v=null;return()=>v||(v=make());};
+function rrect(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();}
+// The meshes, built on a renderer's first frame of each format, each piece only once a shot needs it.
+const WORLDS=new WeakMap();
+function world(r,l){
+ let all=WORLDS.get(r);
+ if(!all)WORLDS.set(r,all=props(r));
+ const key=l.w+'x'+l.h;
+ return all[key]||(all[key]=land(r,l,all));
 }
+function props(r){
+ const all={art:root.OfferModels.build(r)},quad=once(()=>r.mesh(GL.G.plane(1,1,'#ffffff')));
+ // The rain's six faces, as the flat film paired its pays and distances.
+ all.faces=once(()=>{const o=RAIN_OFFERS;all.art.setTickets(o.map((p,n)=>({pay:p[0],info:o[(n+2)%6][1]})));return true;});
+ // A headlight's beam: a glowing wedge, bright at the lamp and gone 210 px on (the flat film's).
+ all.beam=once(()=>{const cv=document.createElement('canvas');cv.width=128;cv.height=64;
+  const b=cv.getContext('2d'),g=b.createLinearGradient(0,0,128,0);g.addColorStop(0,'#fff');g.addColorStop(1,'rgba(255,255,255,0)');
+  b.fillStyle=g;b.beginPath();b.moveTo(0,64*25/68);b.lineTo(128,0);b.lineTo(128,64);b.lineTo(0,64*36/68);b.closePath();b.fill();
+  return {tex:r.texture(cv),quad:quad()};});
+ // The phone's soft shadow: its outline blurred 60 dp, once, on a quad 640 x 1280 dp.
+ all.shadow=once(()=>{const cv=document.createElement('canvas');cv.width=128;cv.height=256;const s=cv.getContext('2d');
+  s.shadowColor='#fff';s.shadowBlur=12;s.shadowOffsetX=256;s.fillStyle='#fff';rrect(s,(128-86.8)/2-256,(256-187.4)/2,86.8,187.4,10.8);s.fill();
+  return {tex:r.texture(cv),quad:quad()};});
+ return all;
+}
+function land(r,l,all){
+ const {M,G}=GL,{w,h}=l,O=root.OfferModels,set={art:all.art};
+ // Three long rounded ridges, each crest where the flat film drew it, falling gently behind and further in front.
+ set.hills=once(()=>HILLS.map(([D],j)=>{
+  const crest=sx=>(h/2-h*(.82+j*.085)-Math.sin(sx/w*5.8+j*1.5)*h*.035-Math.sin(sx/w*17+j*2.3)*h*.006)/l.f*D;
+  const y=(x,z)=>{const u=(z+D)/D;return crest(x/D*l.f+w/2)-D*(u>0?.09*(u/.3)**2:.05*(u/.12)**2);};
+  const tone=(x,z)=>{const v=.965+.035*Math.sin(x/D*l.f/w*21+j)*Math.sin(z/D*55);return [v,v,v,0];};
+  return r.mesh(G.terrain(per(l,-.58*w,D),per(l,.75*w,D),-D*1.12,-D*.7,150,14,y,tone));
+ }));
+ set.stars=once(()=>r.points(Array.from({length:75},(_,i)=>[...at(l,((i*367)%997)/997*w,((i*151)%787)/787*h*.75,1500),(.8+(i%3)*.6)*2.6,(i*.77)%6,1])));
+ // The town behind the first hill: the flat film's blocks (and two more for the drift), their windows lit by night.
+ set.city=once(()=>{
+  const u=(w+h)/2160,base=h*.87,D=420,walls=new G.Geo(),lit=new G.Geo(),dark=new G.Geo();let tall=0;
+  for(let i=0;i<19;i++){
+   const bw=(29+i*11%36)*u,x=i*w/16-15*u,bh=(60+i*67%135)*u,cols=Math.max(1,Math.ceil(bw/(14*u)-1)),rows=Math.max(1,Math.ceil(bh/(20*u)-1));
+   const b=O.buildingParts(per(l,bw,D),per(l,bh,D),per(l,bw,D)*.8,{seed:i*7+3,cols,rows,round:.09,win:[.3,.32]}),m=M.trs(at(l,x+bw/2,base,D));
+   walls.add(b.walls,m);lit.add(b.lit,m);dark.add(b.dark,m);tall=Math.max(tall,bh);
+  }
+  return {walls:r.mesh(walls),lit:r.mesh(lit),dark:r.mesh(dark),sink:per(l,tall+8*u,D)};
+ });
+ // The first shot's road, its far edge 26 deep where the flat film's began, a curb along it, dashes 40 px long every 100.
+ set.road=once(()=>{
+  const Yg=per(l,h*.415,26),DD=Yg*l.f/(h*.457),len=per(l,40,DD),gap=per(l,100,DD),thick=per(l,3.4,DD)*DD/Yg,road=new G.Geo(),dashes=new G.Geo();
+  road.add(G.plane(34,6,'#ffffff',true),M.trs([2,-Yg,-23]));
+  const curb=new G.Geo().add(G.box(34,.07,.22,.03,'#ffffff',2),M.trs([2,-Yg+.035,-25.89]));
+  for(let k=-18;k<=30;k++)dashes.add(G.box(len,.01,thick,0,'#ffffff',1),M.trs([k*gap,-Yg+.006,-DD]));
+  return {Yg,road:r.mesh(road),curb:r.mesh(curb),dashes:r.mesh(dashes)};
+ });
+ return set;
+}
+
+/* 1 · Your time matters: a steady rain of offers, far ones lost in the night haze, over the car on the road. */
+const RAIN_OFFERS=[['$3.50','9.2 mi'],['$4.25','12.4 mi'],['$2.75','7.8 mi'],['$18.40','4.1 mi'],['$5.10','10.6 mi'],['$3.90','8.3 mi']];
+const RAIN=(()=>{const r=rnd(23),out=[];
+ for(let z=0;z<3;z++)for(let j=0;j<5;j++){const n=out.length;out.push({z,face:n%6,x:(j+.5+(r()-.5)*.45+z*.33)/5%1,y:(j*.618+z*.29)%1,spin:r()*2-1,phase:r()*TAU});}
+ return out;})();
+function road3d(r,set,l,t,day,alpha){
+ const {M}=GL,k=set.road(),I=M.ident();
+ r.draw(k.road,I,{tint:mix3('#15293F','#396B78',day),rim:0,spec:.08,shine:14,alpha,cull:false});
+ r.draw(k.curb,I,{tint:mix3('#2B4664','#5B8C93',day),rim:.2,spec:.06,alpha});
+ r.draw(k.dashes,I,{tint:mix3('#677D94','#DDCCA1',day),rim:0,spec:0,alpha});
+}
+function time3d(r,set,all,l,t,day,dx,alpha){
+ const {M}=GL,{w,h,wide}=l,art=set.art,q=art.carSize;
+ // The car rolls on in its lane, a little right of centre, its lamps lit by night.
+ const s=wide?2.3:l.square?1.75:2.15,cx=lerp(w*.5,w*.58,smooth(t/3.6)),cy=h*.915+(wide?62:l.square?56:72),D=set.road().Yg*l.f/(cy-h/2);
+ const p=at(l,cx,cy,D,dx);p[1]+=Math.abs(Math.sin(t*9))*per(l,1.5,D);
+ const car=M.trs(p,[-.22,0,0],per(l,92*s,D)/(92*q));
+ r.faded(alpha,()=>art.car(car,{wheel:t*6,lights:1-day}));
+ if(day<1){const b=all.beam(),look={tex:b.tex,texAlpha:true,additive:true,unlit:true,tint:'#FFE3A0',alpha:.17*(1-day)*alpha,cull:false,fog:false};
+  r.draw(b.quad,M.mul(car,M.trs([151*q,20*q,0],null,[210*q,68*q,1])),look);
+  r.draw(b.quad,M.mul(car,M.trs([151*q,22*q,0],[0,-Math.PI/2,0],[210*q,60*q,1])),look);}
+ // The offers fall far to near, turning as they go: each where the flat film drew it, at a depth that keeps its size.
+ all.faces();
+ const x0=wide?980:90,x1=wide?w-110:w-90,top=wide?-360:l.ty+l.head*1.2,bottom=h*.86,k=wide?1:l.square?.85:1.2;
+ for(const o of RAIN){
+  const s=[.42,.6,.82][o.z]*k,speed=[70,110,165][o.z]*h/1080,span=bottom-top+220*s;
+  const y=top-110*s+(o.y*span+speed*t)%span,x=lerp(x0,x1,o.x)+Math.sin(t*.8+o.phase)*18;
+  const seen=clamp((y-95*s-top)/(70*s))*clamp((bottom-y)/(90*s));
+  if(seen<=0)continue;
+  const Dz=[64,48,36][o.z],[yaw,pitch]=facing(l,x,y);
+  const m=M.trs(at(l,x,y,Dz,dx),[yaw+Math.sin(t*.7+o.phase)*.45,pitch+Math.sin(t*.55+o.phase*1.7)*.3,-(o.spin*.22+Math.sin(t*.9+o.phase)*.07)],per(l,s*100,Dz));
+  art.ticket(m,o.face,{alpha:alpha*clamp(seen*4),haze:1-(1-[.42,.18,0][o.z])*seen,fog:false,fogColor:FOG});
+ }
+}
+function time(c,l,t){heading(c,['Your time','matters.'],l,t,[1.1,1.92]);}
 /* 2–6 · The app itself: the phone layer (below) carries the picture; these shots set the words beside it. Square
  * frames give the phone the room under the heading, so their supporting lines rest. */
 function aside(c,str,l,lt,day){if(!l.square)supporting(c,str,l,lt,day);}
@@ -179,29 +218,46 @@ function direction(c,l,t,T){
  aside(c,'Guided by your offer history.',l,t-.75,day);
 }
 /* 7 · Offer Filter: the name, then "Free" and "& open source" land with the voice; sparkles take the last hits. */
-function android(c,x,y,s,col){c.save();c.translate(x,y);c.scale(s,s);c.lineCap='round';stroke(c,[[-11,-14],[-17,-24]],col,3);stroke(c,[[11,-14],[17,-24]],col,3);c.beginPath();c.arc(0,0,24,Math.PI,TAU);c.lineTo(24,5);c.lineTo(-24,5);c.closePath();c.fillStyle=col;c.fill();dot(c,-10,-6,2.6,C.cream);dot(c,10,-6,2.6,C.cream);c.restore();}
+const cue=n=>beat(n)-beat(27);
+// Wide: a paired illustration and type column. Stacked: one shared centerline.
+function closing(c,l){
+ const {w,wide,square:sq}=l,tx=wide?165:w/2,fy=wide?510:sq?590:1100,size=wide?38:sq?34:43;
+ c.font=`400 ${size}px "Atkinson Hyperlegible"`;
+ return {mx:wide?1390:540,my:wide?530:sq?250:520,ms:wide?3.45:sq?1.72:3.2,tx,align:wide?'left':'center',fy,size,
+  lead:c.measureText('Free ').width,fx:wide?tx+48:(w-c.measureText('Free & open source').width)/2+25};
+}
+function close3d(r,set,l,c,t,dx,alpha){
+ const {M}=GL,art=set.art,q=closing(c,l),D=40,tm=t+8;
+ // The mascot grows in as its ensō is brushed round it, bobbing, breathing, waving; it cheers at "Free".
+ const ms=q.ms*(.9+.1*pop(t/.6)),sx=q.mx,sy=q.my+Math.sin(tm*1.4)*5-8,[yaw,pitch]=facing(l,sx,sy,12*Math.PI/180);
+ const model=M.trs(at(l,sx,sy,D,dx),[yaw+Math.sin(tm*.7)*.12,pitch,0],per(l,62*ms,D));
+ const mood=t>cue(28)&&t<cue(28)+.8?'cheer':Math.floor(tm*2)%13===11?'blink':'happy';
+ r.faded(alpha*clamp(t/.2),()=>art.mascot(model,{mood,wave:12+Math.sin(tm*2)*7,breathe:Math.sin(tm*2),ring:ease(t/.8)}));
+ for(let i=0;i<4;i++){
+  const k=pop((t-cue(32+i))/.35);if(k<=0)continue;
+  const a=i*TAU/4+.3,px=q.mx+Math.cos(a)*q.ms*115,py=q.my+Math.sin(a)*q.ms*107,[sy2,sp2]=facing(l,px,py);
+  art.sparkle(M.trs(at(l,px,py,D,dx),[sy2+Math.sin(t*1.6+i)*.5,sp2,0],per(l,(l.wide?16:12)*k*(1+.12*Math.sin(t*2+i)),D)),i%2?C.gold:'#7AADE3',alpha);
+ }
+ // The Android head beside "Free" rises with the word.
+ const p=ease((t-cue(28))/.42);
+ if(p>0){const ax=q.fx-38,ay=q.fy-5+(1-p)*12,[ay2,ap2]=facing(l,ax,ay,.15);
+  art.android(M.trs(at(l,ax,ay,D,dx),[ay2+Math.sin(t*1.3)*.35,ap2,0],per(l,18,D)),'#315B54',alpha*p);}
+}
 function close(c,l,t,T,emblem){
- const {w,wide,square:sq}=l,at=n=>beat(n)-beat(27);
- // Wide: a paired illustration and type column. Stacked: one shared centerline.
- const mx=wide?1390:540,my=wide?530:sq?250:520,ms=wide?3.45:sq?1.72:3.2,grow=pop(t/.6);
- c.save();c.globalAlpha*=clamp(t/.2);mascot(c,mx,my,ms*(.9+.1*grow),t+8,ease(t/.8),{mood:t>at(28)&&t<at(28)+.8?'cheer':undefined});c.restore();
- for(let i=0;i<4;i++){const k=pop((t-at(32+i))/.35);if(k<=0)continue;const a=i*TAU/4+.3;A.sparkle(c,mx+Math.cos(a)*ms*115,my+Math.sin(a)*ms*107,(wide?16:12)*k*(1+.12*Math.sin(t*2+i)),i%2?C.gold:'#7AADE3');}
- const tx=wide?165:w/2,align=wide?'left':'center';
+ const {w,wide,square:sq}=l,{tx,align,fy,size,lead,fx}=closing(c,l),green='#315B54';
  rise(c,t-.05,()=>text(c,'Offer Filter',tx,wide?395:sq?529:990,wide?146:sq?109:145,C.ink,{align,maxWidth:wide?850:910}),24);
- const fy=wide?510:sq?590:1100,size=wide?38:sq?34:43,green='#315B54';
- c.font=`400 ${size}px "Atkinson Hyperlegible"`;const lead=c.measureText('Free ').width,fx=wide?tx+48:(w-c.measureText('Free & open source').width)/2+25;
- rise(c,t-at(28),()=>{android(c,fx-38,fy-5,.75,green);body(c,'Free',fx,fy,size,green);},12);
- rise(c,t-at(30),()=>body(c,'& open source',fx+lead,fy,size,green),12);
- rise(c,t-at(31),()=>text(c,'offerfilter.org',tx,wide?594:sq?657:1193,wide?52:sq?48:56,'#276BAE',{align}),12);
+ rise(c,t-cue(28),()=>body(c,'Free',fx,fy,size,green),12);
+ rise(c,t-cue(30),()=>body(c,'& open source',fx+lead,fy,size,green),12);
+ rise(c,t-cue(31),()=>text(c,'offerfilter.org',tx,wide?594:sq?657:1193,wide?52:sq?48:56,'#276BAE',{align}),12);
  // A quiet signature on the same alignment, without a filled badge. The
  // emblem arrives pre-tinted: only its ink is colored, its alpha silhouette is unchanged.
  const mw=wide?224:sq?198:270,mh=mw*emblem.height/emblem.width,ex=wide?tx:(w-mw)/2,ey=wide?698:sq?704:1324;
- c.save();c.globalAlpha*=ease((t-at(32))/.6);c.drawImage(emblem,ex,ey,mw,mh);c.restore();
- rise(c,t-at(33),()=>body(c,'Independent app. Not affiliated with DoorDash.',wide?165:w/2,wide?992:sq?1008:1818,wide?26:sq?22:27,'#183D4E',{align,maxWidth:wide?920:sq?690:928}),8);
+ c.save();c.globalAlpha*=ease((t-cue(32))/.6);c.drawImage(emblem,ex,ey,mw,mh);c.restore();
+ rise(c,t-cue(33),()=>body(c,'Independent app. Not affiliated with DoorDash.',wide?165:w/2,wide?992:sq?1008:1818,wide?26:sq?22:27,'#183D4E',{align,maxWidth:wide?920:sq?690:928}),8);
 }
 /* The phone: the app's own main page (assets/app/, ported from its Java drawing code) in one continuous layer from
- * "Set your minimums" until the close, so it never flickers through a crossfade: in front of the first shot's falling
- * offers, under the later shots' words. */
+ * "Set your minimums" until the close, so it never flickers through a crossfade: its body in 3D, in front of the first
+ * shot's falling offers; its screen in the flat layer, under the later shots' words. */
 const ENTER=beat(6)-.15,EXIT=beat(27)-.25;
 // The offers are invented (no real customer data): this evening's history, then four that land on the beat. Each
 // needed the most of $4.00, $1.50 a mile ($1.85 once the knob is dragged) and $0.30 a minute, as the app works it out.
@@ -256,47 +312,93 @@ function camera(T){
  const a=CAMERA[Math.max(0,i-1)],b=CAMERA[i],p=i?smooth((T-b[0])/.7):1;
  return {y:lerp(a[1],b[1],p),z:lerp(a[2],b[2],p)};
 }
-function phone(c,l,T){
- const App=root.OfferApp;if(!App||!App.page||T<ENTER||T>EXIT+.5)return;
+// Where the phone's screen is (its top-left x, y and dp scale k), or null while it is away or the app's views are unloaded.
+function place(l,T){
+ const App=root.OfferApp;if(!App||!App.page||T<ENTER||T>EXIT+.5)return null;
  // It slides in, and bows out a little smaller as the close comes in.
  const P=App.phone,s=stage(l),cam=camera(T),inp=ease((T-ENTER)/.8),out=smooth((T-EXIT)/.4),k=s.k*Math.min(cam.z,s.most)*(1-.08*out);
  let x=s.ax-P.W/2*k,y=s.ay-cam.y*k;
  // Beside the words in landscape, the phone never crosses into their column.
  x=Math.max(x,s.left+P.BEZEL*k);
  if(l.wide)x+=(1-inp)*1000;else y+=(1-inp)*1200;
- y+=out*140;
+ return {App,P,s,k,x,y:y+out*140,out};
+}
+function phone3d(r,set,all,l,T,dx){
+ const p=place(l,T);if(!p)return;
+ const {M}=GL,{P,s,k,x,y,out}=p,D=30,cx=x+P.W/2*k,cy=y+P.H/2*k,sc=per(l,100*k,D),front=at(l,cx,cy,D,dx);
+ // Stacked, the phone slips under the sky beneath the words.
+ if(!l.wide)r.scissor([0,s.top,l.w,l.h-s.top]);
+ const sh=all.shadow(),SD=D+3;
+ r.draw(sh.quad,M.trs(at(l,cx,cy+26*k,SD,dx),null,[per(l,640*k,SD),per(l,1280*k,SD),1]),{tex:sh.tex,texAlpha:true,unlit:true,tint:'#040A16',alpha:.45*(1-out),fog:false,cull:false});
+ // Its face square to the camera, in line with the flat screen drawn over it.
+ r.faded(1-out,()=>set.art.phoneBody(M.trs([front[0],front[1],-D-sc*set.art.phoneSize.D/2],null,sc)));
+ if(!l.wide)r.scissor(null);
+}
+function screen(c,l,T){
+ const p=place(l,T);if(!p)return;
+ const {App,P,s,k,x,y,out}=p;
  c.save();c.globalAlpha*=1-out;
  if(!l.wide){c.beginPath();c.rect(0,s.top,l.w,l.h-s.top);c.clip();}
  c.translate(x,y);c.scale(k,k);
  // The part of the screen in sight, in the page's dp (under the status bar), so views out of sight are skipped.
- const day=dawn(T),state=story(T,App);state.view={top:((l.wide?0:s.top)-y)/k-P.STATUS,bottom:(l.h-y)/k-P.STATUS};P.body(c,day>.5);
+ const day=dawn(T),state=story(T,App);state.view={top:((l.wide?0:s.top)-y)/k-P.STATUS,bottom:(l.h-y)/k-P.STATUS};
  // The app turns to its day palette in the middle third of the film's dawn: quickly, as a theme switch does.
  const lit=smooth((day-.35)/.3);
  c.save();P.clip(c);
  if(lit<1)App.page.draw(c,Object.assign({},state,{dark:true}));
  if(lit>0){c.globalAlpha*=lit;App.page.draw(c,Object.assign({},state,{dark:false}));}
  c.restore();P.lens(c);c.restore();
- // Stacked, the phone slips under the sky beneath the words: the sky itself, redrawn in fading strips once it is up.
+ // Stacked, the sky itself, redrawn in fading strips once the phone is up, blends it away under the words.
  if(!l.wide&&y-P.BEZEL*k<s.top+70)for(let i=0;i<14;i++){const y0=s.top+i*5;c.save();c.globalAlpha*=1-smooth(i/14);sky(c,l,T,0,y0,l.w,5.5);c.restore();}
  // The screens are drawn from the app's own source with invented offers, and the film says so, quietly.
  c.save();c.globalAlpha*=(1-out)*ease((T-ENTER-.6)/.5);
- body(c,'App screens drawn from its source · invented offers',s.note[0],s.note[1],s.note[2],A.mix('#8FA6C9','#5B7383',dawn(T)),{align:s.note[3],maxWidth:l.wide?760:l.w-120});
+ body(c,'App screens drawn from its source · invented offers',s.note[0],s.note[1],s.note[2],mix('#8FA6C9','#5B7383',dawn(T)),{align:s.note[3],maxWidth:l.wide?760:l.w-120});
  c.restore();
 }
-const DRAW=[time,minimums,decline,choose,perspective,direction,close];
-// t is film time in seconds. Draws into (0,0)-(w,h) of the current transform, so callers may scale it.
-function frame(c,t,w,h,emblem,opt){
+/* The 3D layer of one frame: the land and sky, then the shots' things in the studio light. */
+function stage3d(r,c,l,t,i,x){
+ const {M}=GL,I=IDENT,set=world(r,l),all=WORLDS.get(r),shot=SHOTS[i],prev=SHOTS[i-1],day=dawn(t),dx=drift(l,t);
+ r.clear(mix3(...SKY[2],day));
+ r.camera({eye:[dx,0,0],at:[dx,0,-1],fov:FOV,near:2,far:3000});
+ r.light(landLight(day));
+ // Near to far, so the depth test spares the far hills' hidden parts.
+ const hills=set.hills();for(let j=HILLS.length-1;j>=0;j--)r.draw(hills[j],I,{tint:mix3(HILLS[j][1],HILLS[j][2],day),rim:.18,spec:.05,shine:10,cull:false});
+ // The town rises from behind the first hill for the shots it belongs to and sinks for the others.
+ const city=prev?lerp(prev.city,shot.city,smooth((t-shot.from)/.8)):shot.city;
+ if(city>.005){const k=set.city(),m=M.trs([0,-k.sink*(1-city),0]);
+  // Far off, the town keeps the flat film's haze.
+  const haze=lerp(.32,.24,day);
+  r.draw(k.walls,m,{tint:mix3('#33496C','#D5DBD2',day),rim:.12,spec:.05,haze});
+  r.draw(k.dark,m,{tint:mix3('#2A3D5C','#CAD2C9',day),rim:0,spec:0,haze});
+  r.draw(k.lit,m,{tint:mix3('#E9C98A','#E9ECE3',day),rim:0,spec:0,glow:1-day,haze:haze*.6});}
+ r.sky({c0:mix3(...SKY[0],day),c1:mix3(...SKY[1],day),c2:mix3(...SKY[2],day),mid:.57,from:[0,0],to:[.3,1],
+  halo:'#79A6EB',haloAt:[.75,.4],haloR:l.w*.65,haloA:.19*(1-day)});
+ if(day<1)r.stars(set.stars(),{color:'#FFF5DA',alpha:.29*(1-day),time:t,twinkle:1});
+ // The first shot's road, car and rain, fading out through the cut to the second.
+ const first=i===0?1:i===1?1-x:0;
+ if(first>0)road3d(r,set,l,t,day,first);
+ r.light(STUDIO);
+ if(first>0)time3d(r,set,all,l,t,day,dx,first);
+ phone3d(r,set,all,l,t,dx);
+ if(i===SHOTS.length-1)close3d(r,set,l,c,t-shot.from,dx,x);
+ r.done();
+}
+const WORDS=[time,minimums,decline,choose,perspective,direction,close];
+// t is film time in seconds. c is a 2D context whose transform maps (0,0)-(w,h) onto the frame; r, an OfferGL renderer
+// whose canvas is the frame's size and its view w x h units. Returns the visible text's bounds.
+function frame(r,c,t,w,h,emblem,opt){
  bounds=[];timestamp=t;audit=!opt||opt.audit!==false;t=clamp(t,0,DURATION-1/FPS);
  const l=layout(w,h);let i=SHOTS.findIndex(s=>t<s.to);if(i<0)i=SHOTS.length-1;
  // The backdrop never cuts; outgoing and incoming foregrounds overlap briefly instead of a hard cut.
  const shot=SHOTS[i],prev=SHOTS[i-1],x=prev?smooth((t-shot.from)/XF):1;
+ // The 3D art, drawn into its own canvas, laid in as the frame's background.
+ if(r){stage3d(r,c,l,t,i,x);c.drawImage(r.canvas,0,0,w,h);}
  c.save();c.lineJoin='round';c.lineCap='round';
- backdrop(c,l,t,prev?lerp(prev.city,shot.city,x):shot.city);
- // The phone passes in front of the first shot's falling offers and under the later shots' words.
- if(x<1){scene=prev.name;c.save();c.globalAlpha=1-x;DRAW[i-1](c,l,t-prev.from,t,emblem);c.restore();}
- if(i)phone(c,l,t);
- scene=shot.name;c.save();c.globalAlpha=x;DRAW[i](c,l,t-shot.from,t,emblem);c.restore();
- if(!i)phone(c,l,t);
+ // The phone's screen passes in front of the first shot's words and under the later shots'.
+ if(x<1){scene=prev.name;c.save();c.globalAlpha=1-x;WORDS[i-1](c,l,t-prev.from,t,emblem);c.restore();}
+ if(i)screen(c,l,t);
+ scene=shot.name;c.save();c.globalAlpha=x;WORDS[i](c,l,t-shot.from,t,emblem);c.restore();
+ if(!i)screen(c,l,t);
  c.restore();
  return bounds;
 }

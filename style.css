@@ -16,6 +16,8 @@ button:disabled{cursor:wait}
 /* One illustrated world: the scenery canvas behind a header, a single hero and the footer. */
 .world{position:relative;isolation:isolate;overflow:hidden;display:flex;flex-direction:column;min-height:max(760px,100svh);padding:30px 4.8% 18px;background:#e7e7dd}
 #landscape{position:absolute;inset:0;width:100%;height:100%;z-index:-2}
+/* The scenery's paper grain: faint lines every 4 px, a still layer over the moving picture. */
+.world::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:repeating-linear-gradient(to bottom,transparent 0 3px,rgba(116,105,81,.06) 3px 4px)}
 .atmosphere{position:absolute;inset:0;z-index:-1;pointer-events:none;overflow:hidden;mix-blend-mode:soft-light}
 .atmosphere i{position:absolute;border:1px solid rgba(255,255,255,.36);border-radius:50%;animation:drift 16s ease-in-out infinite}
 .atmosphere i:nth-child(1){width:54vw;height:54vw;right:-16vw;top:-24vw}
@@ -26,7 +28,7 @@ button:disabled{cursor:wait}
 
 header{position:relative;z-index:2;flex:none;display:flex;align-items:center;justify-content:space-between}
 .wordmark{display:flex;align-items:center;gap:12px;text-decoration:none;font-family:"Baloo 2",Arial,sans-serif;font-size:29px;font-weight:700;letter-spacing:-.8px}
-.wordmark canvas{width:58px;height:58px;flex:none}
+.wordmark img{width:58px;height:58px;flex:none}
 .top-right{display:flex;align-items:center;gap:26px}
 .sky-toggle{width:42px;height:42px;display:grid;place-items:center;background:rgba(250,246,235,.42);border:1px solid var(--line);border-radius:50%;transition:transform .35s,background .35s}
 .sky-toggle:hover{transform:rotate(12deg) scale(1.06)}
@@ -148,7 +150,7 @@ body.night{--ink:#d9dfd0;--halo:#1d3036;color:#e9e5d5}
 
 @media(min-width:1700px){.hero-content{gap:8%;width:88%;margin-top:90px;margin-bottom:130px}}
 @media(max-width:1050px){.hero-content{gap:4%;width:100%}.intro h1{font-size:clamp(48px,5.5vw,65px)}.lede{font-size:15px}.primary{font-size:12px;padding:15px;gap:14px}}
-@media(max-width:850px){.world{padding:22px 6% 20px;min-height:100svh}.wordmark{font-size:26px;gap:9px}.wordmark canvas{width:51px;height:51px}.hero-content{grid-template-columns:minmax(0,1fr);gap:36px;max-width:590px;margin:40px auto 90px}.intro h1{font-size:clamp(51px,9vw,72px);letter-spacing:-2.6px;margin-bottom:18px}.lede{font-size:16px;max-width:440px;line-height:1.55;margin-bottom:22px}.primary{font-size:14px;padding:16px 19px;gap:22px}.footer-links{gap:8px 20px}.atmosphere i:nth-child(1){width:90vw;height:90vw}.atmosphere i:nth-child(2){width:70vw;height:70vw}}
+@media(max-width:850px){.world{padding:22px 6% 20px;min-height:100svh}.wordmark{font-size:26px;gap:9px}.wordmark img{width:51px;height:51px}.hero-content{grid-template-columns:minmax(0,1fr);gap:36px;max-width:590px;margin:40px auto 90px}.intro h1{font-size:clamp(51px,9vw,72px);letter-spacing:-2.6px;margin-bottom:18px}.lede{font-size:16px;max-width:440px;line-height:1.55;margin-bottom:22px}.primary{font-size:14px;padding:16px 19px;gap:22px}.footer-links{gap:8px 20px}.atmosphere i:nth-child(1){width:90vw;height:90vw}.atmosphere i:nth-child(2){width:70vw;height:70vw}}
 @media(max-width:600px){.film-stage{aspect-ratio:1}}
-@media(max-width:480px){.world{padding-left:7%;padding-right:7%}.wordmark{font-size:24px}.wordmark canvas{width:46px;height:46px}.sky-toggle{width:44px;height:44px}.hero-content{margin-top:34px;margin-bottom:70px;gap:32px}.intro h1{font-size:clamp(46px,12vw,58px);letter-spacing:-2px;line-height:1.04}.lede{font-size:15px}.primary{font-size:14px;padding:15px 18px;gap:16px}.tip-options a{padding:15px 11px}}
+@media(max-width:480px){.world{padding-left:7%;padding-right:7%}.wordmark{font-size:24px}.wordmark img{width:46px;height:46px}.sky-toggle{width:44px;height:44px}.hero-content{margin-top:34px;margin-bottom:70px;gap:32px}.intro h1{font-size:clamp(46px,12vw,58px);letter-spacing:-2px;line-height:1.04}.lede{font-size:15px}.primary{font-size:14px;padding:15px 18px;gap:16px}.tip-options a{padding:15px 11px}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}.atmosphere i{animation:none!important}}

@@ -1,13 +1,17 @@
-/* The film, drawn live. OfferFilm renders each frame into a canvas, clocked by the soundtrack, so the page
- * downloads a few hundred kilobytes of audio instead of megabytes of video and stays sharp at any size.
- * The MP4 renders of the same frames remain the download and the no-script fallback. */
+/* The film, drawn live. OfferFilm renders each frame, clocked by the soundtrack, so the page downloads a few hundred
+ * kilobytes of audio instead of megabytes of video and stays sharp at any size: its art in 3D (WebGL, on a canvas off
+ * the page), copied into the film's canvas under its words and the app's screen, so the page composites one layer.
+ * The MP4 renders of the same frames remain the download and the fallback without script or WebGL. */
 (() => {
   'use strict';
   const $ = id => document.getElementById(id);
-  const F = window.OfferFilm, stage = $('film-stage'), canvas = $('film-canvas');
-  let ctx = null;
-  try { ctx = F && canvas.getContext('2d'); } catch (e) {}
-  if (!ctx) return; // page.js falls back to the MP4.
+  const F = window.OfferFilm, GL = window.OfferGL, stage = $('film-stage'), canvas = $('film-canvas');
+  const art3d = document.createElement('canvas');
+  let r = null, ctx = null;
+  try { r = F && GL && GL.create(art3d); ctx = r && canvas.getContext('2d'); } catch (e) {}
+  if (!r || !ctx) return; // page.js falls back to the MP4.
+  // Where WebGL is drawn by the CPU, the art is drawn at half the frame's pixels and smoothed up to it.
+  const quality = GL.software() ? .5 : 1;
   const audio = $('film-audio'), controls = $('film-controls'), seek = $('film-seek'), clockText = $('film-time'), cue = $('film-cue'), save = $('film-save');
   const button = act => controls.querySelector(`[data-act="${act}"]`);
   const D = F.DURATION, MEDIA = '?v=20261006-app';
@@ -27,12 +31,16 @@
     if (a !== lastAudio || buffering) { lastAudio = a; anchorT = a; anchorAt = now; return a; }
     return anchorT + Math.min((now - anchorAt) / 1000, .25);
   }
+  // The frame is the composition (comp units) scaled by `scale` device pixels and letterboxed at (ox, oy); the 3D art
+  // fills a canvas of its own the frame's size.
   function draw() {
+    const w = comp[0] * scale, h = comp[1] * scale;
+    r.size(w, h, quality); r.view(0, 0, w, h, comp);
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     if (ox || oy) { ctx.fillStyle = '#0b1725'; ctx.fillRect(0, 0, canvas.width, canvas.height); }
     ctx.setTransform(scale, 0, 0, scale, ox, oy);
     ctx.save(); ctx.beginPath(); ctx.rect(0, 0, comp[0], comp[1]); ctx.clip();
-    F.frame(ctx, t, comp[0], comp[1], emblem, {audit: false});
+    F.frame(r, ctx, t, comp[0], comp[1], emblem, {audit: false});
     ctx.restore();
   }
   const fmt = s => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
@@ -203,6 +211,9 @@
     if (ready) draw();
   }
   new ResizeObserver(fit).observe(stage);
+  // A lost WebGL context (a GPU reset, a long while in the background) comes back empty: build the renderer again.
+  art3d.addEventListener('webglcontextlost', e => e.preventDefault());
+  art3d.addEventListener('webglcontextrestored', () => { r = GL.create(art3d) || r; if (ready) fit(); });
   new IntersectionObserver(entries => {
     visible = entries[entries.length - 1].isIntersecting;
     if (visible && ready) draw();

@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Offer Filter film frames</title>
+<!-- The film's frames for tools/render-film.cjs: frame t of a format drawn as the page's player draws it (its 3D art
+     on a WebGL canvas off the page, laid into the frame's 2D canvas under the words), for headless Chromium to
+     capture. Served from the repository's root. -->
+<style>
+@font-face{font-family:"Baloo 2";src:url(../../assets/baloo2-latin.woff2) format("woff2");font-weight:400 800}
+@font-face{font-family:"Atkinson Hyperlegible";src:url(../../assets/atkinson-hyperlegible-latin.woff2) format("woff2");font-weight:400}
+@font-face{font-family:Roboto;src:url(../../assets/roboto-latin-400.woff2) format("woff2");font-weight:400}
+@font-face{font-family:Roboto;src:url(../../assets/roboto-latin-500.woff2) format("woff2");font-weight:500}
+html,body{margin:0;background:#000;overflow:hidden}
+canvas{display:block}
+</style></head><body>
+<canvas id="frame"></canvas>
+<script src="../../assets/gl.js"></script><script src="../../assets/models.js"></script>
+<script>
+(async () => {
+  const add = src => new Promise((resolve, reject) => document.head.append(Object.assign(document.createElement('script'), {src, onload: resolve, onerror: reject})));
+  const files = await (await fetch('../../assets/app/files.json')).json();
+  for (const file of files) await add('../../assets/app/' + file);
+  await add('../../assets/film.js');
+  await Promise.all(['700 1em "Baloo 2"', '400 1em "Atkinson Hyperlegible"', '400 1em Roboto', '500 1em Roboto'].map(f => document.fonts.load(f)));
+  // The emblem, its ink tinted as the page tints it.
+  const img = new Image();
+  img.src = '../../assets/jesus-loves-you-emblem.png';
+  await img.decode();
+  const emblem = Object.assign(document.createElement('canvas'), {width: img.naturalWidth, height: img.naturalHeight}), e = emblem.getContext('2d');
+  e.drawImage(img, 0, 0); e.globalCompositeOperation = 'source-in'; e.fillStyle = '#315B54'; e.fillRect(0, 0, emblem.width, emblem.height);
+  const frame = document.getElementById('frame'), ctx = frame.getContext('2d');
+  // Multisampled, whatever draws it: a render's edges should be as smooth as a GPU's.
+  const r = OfferGL.create(document.createElement('canvas'), {antialias: true});
+  if (!r) throw Error('WebGL is unavailable');
+  window.renderFrame = (t, w, h) => {
+    if (frame.width !== w || frame.height !== h) { frame.width = w; frame.height = h; }
+    r.size(w, h, 1); r.view(0, 0, w, h, [w, h]);
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    return OfferFilm.frame(r, ctx, t, w, h, emblem);
+  };
+  window.film = {DURATION: OfferFilm.DURATION, FPS: OfferFilm.FPS, POSTER: OfferFilm.POSTER, CAPTIONS: OfferFilm.CAPTIONS,
+    renderer: r.gl.getParameter(r.gl.RENDERER)};
+})().catch(error => { window.failed = String(error && error.stack || error); });
+</script>
+</body></html>
