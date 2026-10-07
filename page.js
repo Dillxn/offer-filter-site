@@ -11,7 +11,12 @@
   function videoFallback() {
     const small = matchMedia('(max-width: 600px)').matches, video = document.createElement('video');
     const src = `assets/offer-filter-${small ? 'square' : 'landscape'}.mp4${MEDIA}`;
-    Object.assign(video, {controls: true, playsInline: true, preload: 'none', src, poster: `assets/film-poster-${small ? 'square' : 'wide'}.jpg${MEDIA}`});
+    Object.assign(video, {controls: false, playsInline: true, preload: 'none', src, poster: `assets/film-poster-${small ? 'square' : 'wide'}.jpg${MEDIA}`});
+    // Its controls come up once it plays and leave at its end, so they never cover the poster's closing line ("Not
+    // affiliated with DoorDash"); the play button stands in for them meanwhile, and so does a click on the picture.
+    video.addEventListener('play', () => { video.controls = true; });
+    video.addEventListener('ended', () => { video.controls = false; });
+    video.addEventListener('click', () => { if (!video.controls) play.click(); });
     video.setAttribute('aria-label', 'Offer Filter animated film');
     video.append(Object.assign(document.createElement('track'), {kind: 'captions', src: `assets/film-captions.vtt${MEDIA}`, srclang: 'en', label: 'English'}));
     $('film-stage').replaceChildren(video, play);

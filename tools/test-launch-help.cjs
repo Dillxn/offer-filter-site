@@ -653,7 +653,26 @@ async function main() {
       await page.waitForFunction(() => window.offerFilm.quiet && !offerFilm.paused && document.getElementById('film-controls').hidden, null, {timeout: 10000});
       assert.deepEqual(errors, [], 'dialog errors');
       await ctx.close();
-      pass('dialogs', 'labelled; Tab/Enter/Escape; #help/#feedback addresses; Feedback→Help; Back closes; player controls only while the film plays with sound (gone at its end), Captions button, Replay at the end');
+      // Without WebGL the page plays the composed MP4 instead, its own controls likewise off the poster until it plays
+      // and gone again at its end; a click on the picture plays it. (Events and play() are stood in for: Playwright's
+      // Chromium has no H.264.)
+      const flat = await context({viewport: {width: 1366, height: 860}});
+      await flat.addInitScript(() => { delete window.WebGLRenderingContext; });
+      const fallback = await flat.newPage();
+      const fallbackErrors = watch(fallback);
+      await fallback.goto(base + '/', {waitUntil: 'networkidle'});
+      const video = fallback.locator('#film-stage video');
+      assert.equal(await video.evaluate(v => v.controls), false, 'MP4: no controls over the poster');
+      await video.evaluate(v => { v.play = () => { window.__played = true; return Promise.resolve(); }; });
+      await video.click();
+      assert(await fallback.evaluate(() => window.__played), 'MP4: a click on the picture plays it');
+      await video.evaluate(v => v.dispatchEvent(new Event('play')));
+      assert.equal(await video.evaluate(v => v.controls), true, 'MP4: controls while it plays');
+      await video.evaluate(v => v.dispatchEvent(new Event('ended')));
+      assert.equal(await video.evaluate(v => v.controls), false, 'MP4: controls leave at its end');
+      assert.deepEqual(fallbackErrors, [], 'MP4 fallback errors');
+      await flat.close();
+      pass('dialogs', 'labelled; Tab/Enter/Escape; #help/#feedback addresses; Feedback→Help; Back closes; player controls only while the film plays with sound (gone at its end), Captions button, Replay at the end; the MP4 fallback\'s controls likewise');
     }
 
     // 8. Motion: reduced motion keeps the 3D scenery still and the film a picture (nothing of it loads); otherwise the
