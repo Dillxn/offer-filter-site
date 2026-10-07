@@ -1,0 +1,425 @@
+{
+  "change": "The page scenery drawn in a worker (OffscreenCanvas) with a page-thread fallback; renderer and models load on the page only for the film; entrance animation starts words at 40% opacity; AVIF stage posters preloaded at high priority; MP4s and WebM re-encoded from the 3D frames within the 2D films' sizes.",
+  "preparedFrom": "e43d8bb5dd8272b48dd1e9213c44225a0514adc8",
+  "baseline2d": "fa55bdb5bd675e359b104157f3a6dec6b3642822",
+  "scope": "Local headless Chromium with SwiftShader (software WebGL, no GPU) only; not a phone, GPU, other-browser or live-domain receipt.",
+  "correction": "The 3D entry's earlier first-contentful-paint figure (within about 0.13 s of the 2D page) was measured incorrectly; the published 3D page showed its words at about 1.1 s against 0.56 s and blocked the page thread about 0.5 s.",
+  "loadingFast": {
+    "method": "median of 5 fresh visits; load + 3 s observed",
+    "1365x689@1": {
+      "2d": {
+        "fcpMs": 564,
+        "lcpMs": 564,
+        "blockingMs": 0
+      },
+      "previous3d": {
+        "fcpMs": 1108,
+        "lcpMs": 1936,
+        "blockingMs": 559,
+        "longestTaskMs": 463
+      },
+      "3d": {
+        "fcpMs": 448,
+        "lcpMs": 448,
+        "blockingMs": 0
+      }
+    },
+    "390x844@2": {
+      "2d": {
+        "fcpMs": 580,
+        "lcpMs": 580,
+        "blockingMs": 0
+      },
+      "previous3d": {
+        "fcpMs": 1036,
+        "lcpMs": 1992,
+        "blockingMs": 592,
+        "longestTaskMs": 635
+      },
+      "3d": {
+        "fcpMs": 432,
+        "lcpMs": 432,
+        "blockingMs": 0
+      }
+    }
+  },
+  "loadingThrottled": {
+    "method": "median of 5 fresh visits; CDP 1.6 Mbit/s down, 750 kbit/s up, 150 ms latency; uncompressed local server",
+    "1365x689@1": {
+      "2d": {
+        "fcpMs": 1184,
+        "lcpMs": 1184
+      },
+      "3dWithHighPriorityPosterPreload": {
+        "fcpMs": 1172,
+        "lcpMs": 1172,
+        "blockingMs": 0
+      },
+      "3dWithoutPreload": {
+        "fcpMs": 1256,
+        "lcpMs": 1420
+      }
+    },
+    "390x844@2": {
+      "2d": {
+        "fcpMs": 1196,
+        "lcpMs": 1196
+      },
+      "3dWithHighPriorityPosterPreload": {
+        "fcpMs": 1160,
+        "lcpMs": 1160,
+        "blockingMs": 0
+      },
+      "3dWithoutPreload": {
+        "fcpMs": 1276,
+        "lcpMs": 1644
+      }
+    }
+  },
+  "scenery": {
+    "method": "5 s idle animation after 3 s; scenery frames counted where drawn; CPU of all browser processes; page-thread TaskDuration from CDP",
+    "rows": [
+      [
+        "1365x689@1",
+        "day",
+        "2D",
+        "page",
+        "scenery",
+        "fps",
+        "5.6",
+        "cpu",
+        "ms/frame",
+        "683",
+        "page",
+        "thread",
+        "busy",
+        "ms/s",
+        "8"
+      ],
+      [
+        "1365x689@1",
+        "day",
+        "3D",
+        "worker",
+        "scenery",
+        "fps",
+        "13.2",
+        "cpu",
+        "ms/frame",
+        "294",
+        "page",
+        "thread",
+        "busy",
+        "ms/s",
+        "1"
+      ],
+      [
+        "1365x689@1",
+        "day",
+        "3Dpage",
+        "page",
+        "scenery",
+        "fps",
+        "9.0",
+        "cpu",
+        "ms/frame",
+        "428",
+        "page",
+        "thread",
+        "busy",
+        "ms/s",
+        "14"
+      ],
+      [
+        "1365x689@1",
+        "night",
+        "2D",
+        "page",
+        "scenery",
+        "fps",
+        "5.8",
+        "cpu",
+        "ms/frame",
+        "647",
+        "page",
+        "thread",
+        "busy",
+        "ms/s",
+        "10"
+      ],
+      [
+        "1365x689@1",
+        "night",
+        "3D",
+        "worker",
+        "scenery",
+        "fps",
+        "12.4",
+        "cpu",
+        "ms/frame",
+        "307",
+        "page",
+        "thread",
+        "busy",
+        "ms/s",
+        "0"
+      ],
+      [
+        "1365x689@1",
+        "night",
+        "3Dpage",
+        "page",
+        "scenery",
+        "fps",
+        "9.0",
+        "cpu",
+        "ms/frame",
+        "411",
+        "page",
+        "thread",
+        "busy",
+        "ms/s",
+        "10"
+      ],
+      [
+        "390x844@2",
+        "day",
+        "2D",
+        "page",
+        "scenery",
+        "fps",
+        "5.2",
+        "cpu",
+        "ms/frame",
+        "706",
+        "page",
+        "thread",
+        "busy",
+        "ms/s",
+        "10"
+      ],
+      [
+        "390x844@2",
+        "day",
+        "3D",
+        "worker",
+        "scenery",
+        "fps",
+        "12.8",
+        "cpu",
+        "ms/frame",
+        "298",
+        "page",
+        "thread",
+        "busy",
+        "ms/s",
+        "1"
+      ],
+      [
+        "390x844@2",
+        "day",
+        "3Dpage",
+        "page",
+        "scenery",
+        "fps",
+        "10.0",
+        "cpu",
+        "ms/frame",
+        "376",
+        "page",
+        "thread",
+        "busy",
+        "ms/s",
+        "11"
+      ],
+      [
+        "390x844@2",
+        "night",
+        "2D",
+        "page",
+        "scenery",
+        "fps",
+        "5.8",
+        "cpu",
+        "ms/frame",
+        "658",
+        "page",
+        "thread",
+        "busy",
+        "ms/s",
+        "10"
+      ],
+      [
+        "390x844@2",
+        "night",
+        "3D",
+        "worker",
+        "scenery",
+        "fps",
+        "13.4",
+        "cpu",
+        "ms/frame",
+        "285",
+        "page",
+        "thread",
+        "busy",
+        "ms/s",
+        "0"
+      ],
+      [
+        "390x844@2",
+        "night",
+        "3Dpage",
+        "page",
+        "scenery",
+        "fps",
+        "10.2",
+        "cpu",
+        "ms/frame",
+        "369",
+        "page",
+        "thread",
+        "busy",
+        "ms/s",
+        "12"
+      ]
+    ]
+  },
+  "filmPlayback": {
+    "method": "8 s of playback from 4 s; frames drawn by OfferFilm.frame; CPU of all browser processes",
+    "rows": [
+      [
+        "1440x900@1",
+        "2D",
+        "film",
+        "fps",
+        "5.4",
+        "frame()",
+        "ms",
+        "4.2",
+        "cpu",
+        "ms/frame",
+        "558",
+        "cores",
+        "3.00"
+      ],
+      [
+        "1440x900@1",
+        "3D",
+        "film",
+        "fps",
+        "7.5",
+        "frame()",
+        "ms",
+        "3.4",
+        "cpu",
+        "ms/frame",
+        "428",
+        "cores",
+        "3.21"
+      ],
+      [
+        "390x844@2",
+        "2D",
+        "film",
+        "fps",
+        "5.4",
+        "frame()",
+        "ms",
+        "4.0",
+        "cpu",
+        "ms/frame",
+        "602",
+        "cores",
+        "3.23"
+      ],
+      [
+        "390x844@2",
+        "3D",
+        "film",
+        "fps",
+        "6.4",
+        "frame()",
+        "ms",
+        "3.6",
+        "cpu",
+        "ms/frame",
+        "504",
+        "cores",
+        "3.21"
+      ]
+    ]
+  },
+  "firstVisitBytes": {
+    "3d": {
+      "stored": 245480,
+      "gzip": 148946,
+      "renderBlockingGzip": 22625,
+      "workerFetchedAfterFirstPaintGzip": 31637
+    },
+    "2d": {
+      "stored": 172570,
+      "gzip": 109548,
+      "renderBlockingGzip": 34961
+    },
+    "note": "Excludes the footer emblem's second request (its CSS mask), which both pages make and a caching server answers from cache."
+  },
+  "films": {
+    "offer-filter-landscape.mp4": {
+      "bytes": 5105388,
+      "sha256": "f96cad3a06a3fb9047c40fb2550d37d52b96382524cd05ed16d0927b4cc1ea26",
+      "previous2dBytes": 5477669,
+      "psnrDbAgainstFrames": 50.231707,
+      "ssimAgainstFrames": 0.996192
+    },
+    "offer-filter-portrait.mp4": {
+      "bytes": 5270463,
+      "sha256": "ae4edcb810868e2b156d17a47c0592a94ff1ccc76cdd462fbca593d9ba55d163",
+      "previous2dBytes": 5883136,
+      "psnrDbAgainstFrames": 49.925413,
+      "ssimAgainstFrames": 0.996208
+    },
+    "offer-filter-square.mp4": {
+      "bytes": 3894129,
+      "sha256": "e571d733796749f203b7298cef3065f170fe4200049d94bcb784bc721bbaddbd",
+      "previous2dBytes": 4360372,
+      "psnrDbAgainstFrames": 49.195193,
+      "ssimAgainstFrames": 0.9956
+    },
+    "offer-filter-portrait.webm": {
+      "bytes": 5100016,
+      "sha256": "3b10b5bd03d640b3d2701d7098f58f6b39d2fbbdad5a9650543615ec450317a0",
+      "previous2dBytes": 5463162,
+      "psnrDbAgainstFrames": 48.211591,
+      "ssimAgainstFrames": 0.995119
+    }
+  },
+  "filmEncoding": {
+    "h264": "libx264 veryslow CRF 20 tune animation, yuv420p, AAC 192k, mov_text captions",
+    "vp9": "libvpx-vp9 CRF 30 cpu-used 2 row-mt, yuv420p, Opus 160k",
+    "frames": 630,
+    "fps": 30,
+    "durationSeconds": 21.0,
+    "textAudit": "all 630 frames of each format inside the 24 px safe frame",
+    "postersAndCaptions": "byte-identical to the previous release"
+  },
+  "posters": {
+    "film-poster-wide.avif": {
+      "bytes": 14101,
+      "sha256": "83af7cd4a66cb23b5b02a10717d5b8adc6dac5b4c3a06fe81f9aaeebcc40575c"
+    },
+    "film-poster-square.avif": {
+      "bytes": 12599,
+      "sha256": "104bd5a5a86be4f81b15a2b6f820380a93fa1d40a0117e6c4645d919a499d71d"
+    },
+    "film-poster-wide.webp": {
+      "bytes": 35890,
+      "sha256": "a596a95132435a3f17f930befd271b1d2c6868712a00c4eb813653cfdde5ad78"
+    },
+    "film-poster-square.webp": {
+      "bytes": 30282,
+      "sha256": "1a6be4b42835a2b431456e01b13e1e695b3a383aa7052695fe870dc6ef34a415"
+    }
+  },
+  "tests": "tools/test-site.cjs (four runs: day/night at 1280 and 400 px, one drawing the sky on the page thread) and tools/test-launch-help.cjs; see SITE_VALIDATION.md"
+}
