@@ -37,6 +37,20 @@ the app's privacy text naming the site's contact (privacy@offerfilter.org), and,
 later, terms and privacy that describe Autopilot without the retired area-mode and 0.4.73 wording. A failed gate ends
 the run with "NOT READY TO DEPLOY" and exit code 1, after every other check.
 
+## Live: the site on `main` and app 0.5.0 published (7 October 2026)
+
+- 18:47 UTC: `main` fast-forwarded to the beta branch (`8ac9efc`); GitHub Pages built it (run 51). `/`, `/install/`,
+  `/terms/`, `/privacy/` and `/license/` answered 200, and `/privacy/` carried the app's current text.
+- 18:56 UTC: Render served Offer Filter 0.5.0 (code 80), 1,336,846 bytes, SHA-256
+  `eb77df9ec7aa4343bd3e9ae4928943af1021360ac7ea4b19fb784d37be33a9cf`; the app repository's
+  `tools/verify_channel.py` passed against the live bytes (original signer).
+- `tools/sync-release.py --live` then wrote that release to `assets/release.json` (`7d5cd4e`), and
+  `test-launch-help.cjs` passed with all seven release gates, including the Autopilot checks that start at 0.5.0.
+  GitHub started no Pages build for that commit, so the live install page still named 0.4.72 and its SHA-256 beside a
+  download that was already 0.5.0; this entry's commit builds the site again. After any `release.json` change, check
+  that the Pages run for that exact commit appears and that `https://offerfilter.org/assets/release.json` names the new
+  version.
+
 ## Merged with main's 3D site and film (7 October 2026)
 
 `main` at `320b5ad` (what offerfilter.org serves: the page and film in 3D, the live player, the worker-drawn sky, the
