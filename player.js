@@ -41,7 +41,7 @@
   }
   const audio = $('film-audio'), controls = $('film-controls'), seek = $('film-seek'), clockText = $('film-time'), cue = $('film-cue');
   const button = act => controls.querySelector(`[data-act="${act}"]`);
-  const MEDIA = '?v=20261007-3d6', D = +seek.max;
+  const MEDIA = '?v=20261007-beta', D = +seek.max;
   const SIZES = {landscape: [1920, 1080], square: [1080, 1080], portrait: [1080, 1920]};
   const player = new EventTarget();
   let format = 'landscape', comp = SIZES.landscape, scale = 1, ox = 0, oy = 0, visible = true;
@@ -330,7 +330,7 @@
   const fonts = document.fonts ? Promise.all([document.fonts.load('700 1em "Baloo 2"'), document.fonts.load('400 1em "Atkinson Hyperlegible"')]) : Promise.resolve();
   // The footer signature already loads the emblem; tint a copy of it rather than fetching it again.
   const art = new Promise(resolve => {
-    const img = document.querySelector('.signature img') || Object.assign(new Image(), {src: 'assets/jesus-loves-you-emblem-560.png'});
+    const img = document.querySelector('.signature img') || Object.assign(new Image(), {src: 'assets/jesus-loves-you-emblem-560.png' + MEDIA});
     const tint = () => {
       const c = document.createElement('canvas'), x = c.getContext('2d');
       c.width = img.naturalWidth; c.height = img.naturalHeight;

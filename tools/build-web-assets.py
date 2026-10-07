@@ -1,84 +1,34 @@
 #!/usr/bin/env python3
-"""Builds the small files the website loads from the unchanged masters in assets/.
+"""Builds the reading pages' small signature image from the unchanged emblem master in assets/.
 
     python3 tools/build-web-assets.py            # everything
-    python3 tools/build-web-assets.py fonts      # or any of: fonts signature posters
+    python3 tools/build-web-assets.py signature  # or a named step
 
-Needs Pillow, fonttools and brotli (pip install Pillow fonttools brotli). Nothing here changes a master: the film
-tools keep drawing with the TTF fonts and the emblem PNG, and the JPEG posters stay (the wide one is the social
-share image).
+Needs Pillow (pip install Pillow). Nothing here changes a master: the film tools keep drawing with the emblem PNG.
 
-fonts      assets/fonts/baloo2-latin.woff2 (Baloo 2, weights 600-700) and assets/fonts/atkinson-latin.woff2,
-           Latin subsets. Both fonts are SIL OFL 1.1 with no Reserved Font Name; every name record, including the
-           copyright and license, is kept. Licenses: assets/OFL-*.txt.
-signature  assets/jesus-loves-you-signature.webp and .png: the emblem master's own alpha at 432 px wide (3x the
-           144 px it is shown at) in the forest-green ink #36594b the page used to apply with a CSS mask. One small
-           image replaces two downloads of the 818 KB master. Night mode turns it white with a CSS filter.
-posters    assets/film-poster-wide.webp and assets/film-poster-square.webp from the JPEG posters, so a phone loads
-           one ~40 KB poster instead of two JPEGs (~300 KB).
+signature  assets/jesus-loves-you-signature.webp and .png, for the install guide, the legal pages and the 404 page:
+           the emblem master's own alpha at 432 px wide (3x the 144 px it is shown at) in the forest-green ink #36594b,
+           pre-tinted, so those pages need no CSS mask. Night mode turns it white with a CSS filter. (The home page's
+           footer and the film use assets/jesus-loves-you-emblem-560.png, which they tint themselves.)
 
-assets/favicon.svg is minified separately with svgo (npx svgo --precision 1 --multipass assets/favicon.svg) after
-tools/render-favicon.cjs writes it.
+The other web files come from the tools that draw them: the Latin WOFF2 fonts from tools/make-fonts.sh; the posters
+(JPEG, AVIF and WebP, the film's closing frame) from `node tools/render-film.cjs posters`; the logo, touch icon and
+favicons from tools/render-icons.cjs (the 3D mascot).
 """
-import io
 import pathlib
 import sys
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 ASSETS = ROOT / 'assets'
 
-# Google Fonts' "latin" range, plus the arrows and symbols the pages use where a font has them.
-LATIN = [
-    (0x0000, 0x00FF), (0x0131, 0x0131), (0x0152, 0x0153), (0x02BB, 0x02BC), (0x02C6, 0x02C6), (0x02DA, 0x02DA),
-    (0x02DC, 0x02DC), (0x0304, 0x0304), (0x0308, 0x0308), (0x0329, 0x0329), (0x2000, 0x206F), (0x20AC, 0x20AC),
-    (0x2122, 0x2122), (0x2190, 0x2193), (0x2212, 0x2212), (0x2215, 0x2215), (0x25B6, 0x25B6), (0xFEFF, 0xFEFF),
-    (0xFFFD, 0xFFFD),
-]
 INK = (0x36, 0x59, 0x4B)
 SIGNATURE_WIDTH = 432
 ALPHA_LEVELS = 64  # smooth antialiasing with a small palette
-POSTER_QUALITY = 84
 
 
 def report(path, source=None):
     note = f' from {source.name} ({source.stat().st_size:,})' if source else ''
     print(f'{path.relative_to(ROOT)}: {path.stat().st_size:,} bytes{note}')
-
-
-def fonts():
-    from fontTools import subset
-    from fontTools.ttLib import TTFont
-    from fontTools.varLib import instancer
-
-    def options():
-        opts = subset.Options()
-        opts.flavor = 'woff2'
-        opts.layout_features = ['*']  # kerning, ligatures and contextual forms
-        opts.name_IDs = ['*']         # copyright, license and every other name record
-        opts.name_languages = ['*']
-        opts.notdef_outline = True
-        opts.hinting = False          # most of the weight; not needed by today's browsers
-        opts.desubroutinize = True
-        return opts
-
-    def build(source, target, limit=None):
-        font = TTFont(ASSETS / source, lazy=False)
-        if limit:
-            # Limit the weight axis, then reload so the subsetter sees fully built tables.
-            buffer = io.BytesIO()
-            instancer.instantiateVariableFont(font, limit).save(buffer)
-            font = TTFont(io.BytesIO(buffer.getvalue()), lazy=False)
-        cmap = font.getBestCmap()
-        subsetter = subset.Subsetter(options())
-        subsetter.populate(unicodes=[cp for start, end in LATIN for cp in range(start, end + 1) if cp in cmap])
-        subsetter.subset(font)
-        (ASSETS / 'fonts').mkdir(exist_ok=True)
-        font.flavor = 'woff2'
-        font.save(ASSETS / 'fonts' / target)
-        report(ASSETS / 'fonts' / target, ASSETS / source)
-
-    build('Baloo2.ttf', 'baloo2-latin.woff2', {'wght': (600, 700)})
-    build('AtkinsonHyperlegible-Regular.ttf', 'atkinson-latin.woff2')
 
 
 def signature():
@@ -101,17 +51,7 @@ def signature():
     report(png, master)
 
 
-def posters():
-    from PIL import Image
-
-    for name in ('film-poster-wide', 'film-poster-square'):
-        source = ASSETS / f'{name}.jpg'
-        target = ASSETS / f'{name}.webp'
-        Image.open(source).convert('RGB').save(target, 'WEBP', quality=POSTER_QUALITY, method=6)
-        report(target, source)
-
-
-STEPS = {'fonts': fonts, 'signature': signature, 'posters': posters}
+STEPS = {'signature': signature}
 
 if __name__ == '__main__':
     for step in sys.argv[1:] or STEPS:

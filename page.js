@@ -4,7 +4,7 @@
   const FEEDBACK_ENDPOINT = 'https://zlnfvqyyjsltmkmmpgzp.supabase.co/functions/v1/offer-filter-feedback';
   const FEEDBACK_TIMEOUT_MS = 15000;
   const FEEDBACK_MAX = 4000;
-  const MEDIA = '?v=20261007-3d6', play = $('film-play');
+  const MEDIA = '?v=20261007-beta', play = $('film-play');
   let film = window.offerFilm || videoFallback();
   // The live player (player.js) and the MP4 share one interface: play(), pause(), paused, ended and their events.
   // Without a canvas or the film script, the composed MP4 for this screen plays instead, with native controls.
