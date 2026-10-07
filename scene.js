@@ -7,29 +7,38 @@
  */
 (() => {
 'use strict';
-const V = '?v=20261007-3d4', KNOWN = 'offergl.software';
+const V = '?v=20261007-3d5', KNOWN = 'offergl.software';
 const canvas = () => document.getElementById('landscape');
-if (!canvas() || !window.WebGLRenderingContext) { window.setSceneNight = window.setScenePaused = () => {}; return; }
-let night = document.body.classList.contains('night'), paused = matchMedia('(prefers-reduced-motion: reduce)').matches;
+if (!canvas() || !window.WebGLRenderingContext) { window.setSceneNight = window.setScenePaused = window.setSceneBusy = () => {}; return; }
+let night = document.body.classList.contains('night'), paused = matchMedia('(prefers-reduced-motion: reduce)').matches, busy = false;
 let send = null, worker = null, drawn = false, settling = 0;
 window.setSceneNight = v => { night = !!v; if (send) send({type: 'night', night}); };
 window.setScenePaused = v => { paused = !!v; if (send) send({type: 'paused', paused}); };
+// Whether the film is moving beside the scenery (where WebGL is drawn by the CPU, the scenery then draws less often).
+window.setSceneBusy = v => { busy = !!v; if (send) send({type: 'busy', busy}); };
 const ratio = () => Math.min(devicePixelRatio || 1, 2);
 
 /* Where things stand, in css px from the canvas's top-left: the footer's links (the land and its road stay above them),
- * the sky button (the sun or the moon stands behind it) and the words (clouds fade while they pass behind them). */
+ * the sky button (the sun or the moon stands behind it) and the words (clouds fade while they pass behind them). Taken
+ * from the layout, which the page's entrance animation and the button's hover do not move, so a measure taken while
+ * they play still holds when they end. */
 function measure() {
-  const c = canvas(), box = c.getBoundingClientRect(), b = document.getElementById('sky-toggle'), q = b && b.getBoundingClientRect();
-  const links = document.querySelector('.footer-links');
-  const rect = e => { const k = e.getBoundingClientRect(); return {left: k.left - box.left, top: k.top - box.top, right: k.right - box.left, bottom: k.bottom - box.top}; };
+  const c = canvas(), world = c.offsetParent, b = document.getElementById('sky-toggle'), links = document.querySelector('.footer-links');
+  const rect = e => {
+    let left = 0, top = 0;
+    for (let n = e; n && n !== world; n = n.offsetParent) { left += n.offsetLeft; top += n.offsetTop; }
+    return {left: left - c.offsetLeft, top: top - c.offsetTop, right: left - c.offsetLeft + e.offsetWidth, bottom: top - c.offsetTop + e.offsetHeight};
+  };
+  const q = b && b.offsetWidth ? rect(b) : null;
   return {W: c.clientWidth, H: c.clientHeight, dpr: ratio(),
-    groundTop: links ? links.getBoundingClientRect().top - box.top : Infinity,
-    sun: q && q.width ? {x: q.left + q.width / 2 - box.left, y: q.top + q.height / 2 - box.top, r: q.width * .36} : null,
+    groundTop: links ? rect(links).top : Infinity,
+    sun: q ? {x: (q.left + q.right) / 2, y: (q.top + q.bottom) / 2, r: (q.right - q.left) * .36} : null,
     words: [...document.querySelectorAll('.wordmark, .intro h1, .lede, .app-actions, .footer-links')].map(rect)};
 }
 // What the last visit found: whether WebGL here is drawn by the CPU (gl.js keeps the same note on the page's thread).
 function known() { try { const k = localStorage.getItem(KNOWN); return k === '1' ? true : k === '0' ? false : null; } catch (e) { return null; } }
-const opening = c => ({type: 'start', canvas: c, software: known(), night, paused, hidden: document.hidden, page: measure()});
+window.sceneOnCPU = () => known() === true;
+const opening = c => ({type: 'start', canvas: c, software: known(), night, paused, busy, hidden: document.hidden, page: measure()});
 // A canvas once handed to a worker cannot be drawn on here again: a fresh one takes its place.
 function fresh() { const old = canvas(), c = old.cloneNode(false); old.replaceWith(c); return c; }
 

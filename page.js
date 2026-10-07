@@ -2,7 +2,7 @@
   'use strict';
   const $ = id => document.getElementById(id);
   const FEEDBACK_ENDPOINT = 'https://zlnfvqyyjsltmkmmpgzp.supabase.co/functions/v1/offer-filter-feedback';
-  const MEDIA = '?v=20261007-3d4', play = $('film-play');
+  const MEDIA = '?v=20261007-3d5', play = $('film-play');
   let film = window.offerFilm || videoFallback();
   // The live player (player.js) and the MP4 share one interface: play(), pause(), paused, ended and their events.
   // Without a canvas or the film script, the composed MP4 for this screen plays instead, with native controls.
@@ -19,14 +19,17 @@
   let opener = null;
   let paused = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  // Quiet the scenery while the film plays with its sound or a dialog is open, and rest the film's muted loop while
-  // motion is paused or a dialog is open; preserve the visitor's motion preference. The scenery rides on beside the loop.
+  // Rest the scenery and the film's muted loop while motion is paused or a dialog is open; preserve the visitor's
+  // motion preference. Otherwise the scenery rides on whatever the film does, except where WebGL is drawn by the CPU:
+  // there it rests while the film plays with its sound, so the film has the machine.
   function syncMotion() {
     const dialogOpen = document.querySelector('dialog[open]') !== null;
-    const quiet = paused || dialogOpen || (!film.paused && !film.ended && !film.error && !film.quiet);
+    const withSound = !film.paused && !film.ended && !film.error && !film.quiet;
+    const quiet = paused || dialogOpen || (withSound && !!window.sceneOnCPU?.());
     document.body.classList.toggle('dialog-open', dialogOpen);
     document.body.classList.toggle('motion-paused', quiet);
     window.setScenePaused?.(quiet);
+    window.setSceneBusy?.(!film.paused && !film.ended && !film.error);
     film.rest?.(paused || dialogOpen);
   }
   function open(id, source) {

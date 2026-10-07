@@ -40,7 +40,7 @@ let t = 2, prev = 0, raf = 0;
 // The ride: metres along the road so far, at RIDE metres a second, and the car's wheels turned to match.
 const RIDE = 3.5;
 let ride = 0, spin = 0;
-let paused = false, hidden = false;
+let paused = false, hidden = false, busy = false;
 let L = null;          // the layout and meshes for this size
 const CAM_H = 2;       // the camera's height over the ground, metres
 // A worker's frames come from its own requestAnimationFrame where it has one.
@@ -135,21 +135,23 @@ function layout() {
   add(walls[0], 'wallA', P, back, {rim: .1, spec: .03}); add(walls[1], 'wallB', P, back, {rim: .1, spec: .03});
   add(dark, 'window', P, back, {rim: 0, spec: 0}); add(lit, 'lit', P, back, {rim: 0, spec: 0, glowing: true});
   // The land: gently rolling, rising a little before the town so its feet sit behind a near swell. Each of its waves
-  // along x fits the period a whole number of times, so its repeats meet without a seam.
-  const swell = town * .5, wave = k => 2 * Math.PI * Math.max(1, Math.round(k * P / (2 * Math.PI))) / P;
+  // along x fits the period a whole number of times, so its repeats meet without a seam. Its fine bumps, finer than the
+  // ground's mesh can follow, are kept off the near ground, where seen this flat they would rise through the road: they
+  // begin past the road (dm, its middle distance) and are whole at three times its distance.
+  const swell = town * .5, wave = k => 2 * Math.PI * Math.max(1, Math.round(k * P / (2 * Math.PI))) / P, dm = depthAt(L, 70);
   const kA = wave(9 / swell), kB = wave(.011), kC = wave(.023), kD = wave(.7), kE = wave(.021), kF = wave(.008);
   const land = L.land = (x, z) => {
     const d = camZ - z, far = Math.min(1, Math.max(0, (d - 60) / 260)) * Math.min(1, Math.max(0, (town * .92 - d) / 60));
     return .55 * Math.exp(-Math.pow((d - swell) / (swell * .35), 2)) * (1 + .6 * Math.sin(x * kA + 2)) +
       far * (2.6 * Math.sin(x * kB + 1.3) * Math.sin(z * .008 + .4) + 1.4 * Math.sin(x * kC - z * .01)) +
-      .12 * Math.sin(x * kD + z * .3) * Math.min(1, d / 30);
+      .12 * Math.sin(x * kD + z * .3) * Math.min(1, Math.max(0, (d - dm * 1.6) / (dm * 1.4)));
   };
   const patch = (x, z) => { const v = .965 + .035 * Math.sin(x * kE + z * .013) * Math.cos(z * .017 - x * kF); return [v, v, v, 0]; };
   add(field(P, camZ - town * .985, camZ + 1, Math.max(24, Math.round(P / (town * .0267))), 90, land, patch), 'near', P, town, {rim: .02, spec: 0});
   // The road, winding nearer and farther: one wave to about a screen and a third at its middle distance, as the flat
   // drawing's curve did. Seen side on, it is wide enough to show 14 px deep there; its edges run along it and dashes
   // down its middle, a whole number of them to the period.
-  const dm = depthAt(L, 70), kR = wave(2 * Math.PI / (1.3 * W / f * dm)), kS = wave(2.3 * 2 * Math.PI / (1.3 * W / f * dm));
+  const kR = wave(2 * Math.PI / (1.3 * W / f * dm)), kS = wave(2.3 * 2 * Math.PI / (1.3 * W / f * dm));
   L.roadDepth = x => dm * (1 + .2 * Math.sin(x * kR + .7) + .04 * Math.sin(x * kS + 2.1));
   L.roadSlope = x => dm * (.2 * kR * Math.cos(x * kR + .7) + .04 * kS * Math.cos(x * kS + 2.1));
   const onRoad = x => { const z = camZ - L.roadDepth(x); return [x, land(x, z), z]; };
@@ -204,10 +206,11 @@ function layout() {
 }
 
 /* The canvas at a new size, drawn at once with the scenery as it was; scene.js sends the page's new places once the
- * resizing has settled. */
+ * resizing has settled. Where WebGL is drawn by the CPU, the scenery (soft shapes, no type) is drawn at 60% of the
+ * page's pixels and smoothed up, so it leaves the film beside it the most of the machine. */
 function resize(w, h, d) {
   if (!w || !h) return;
-  W = w; H = h; dpr = d; r.size(W, H, dpr);
+  W = w; H = h; dpr = d; r.size(W, H, dpr * (r.software ? .6 : 1));
 }
 /* The page's places: the scenery is rebuilt when the canvas's size really changed (a phone's address bar coming and
  * going leaves it alone) or the places moved (`force`: the fonts arrived), else only drawn. */
@@ -319,7 +322,10 @@ function sunAndMoon(n, eye) {
 function tick(ms) {
   raf = 0;
   if (hidden || paused) return;
-  const dt = prev ? Math.min((ms - prev) / 1000, .05) : 0;
+  // Where WebGL is drawn by the CPU and the film is moving beside it, the scenery takes ten frames a second and leaves
+  // the rest of the machine to the film; it rides on all the same.
+  if (r.software && busy && prev && ms - prev < 95) { raf = frame(tick); return; }
+  const dt = prev ? Math.min((ms - prev) / 1000, .15) : 0;
   prev = ms; t += dt;
   night = lerp(turn.from, turn.to, smooth((t - turn.at) / TURN));
   // The wheels (10 of the car's units in radius, at its scale for its depth) roll the ground the ride covers.
@@ -346,7 +352,7 @@ function setPaused(v) {
 // then the scenery.
 function start(m) {
   night = m.night ? 1 : 0; turn = {from: night, to: night, at: -1e9};
-  paused = m.paused; hidden = m.hidden; page = m.page;
+  paused = m.paused; hidden = m.hidden; busy = m.busy; page = m.page;
   // A worker's context is made as gl.js would make it on the page: multisampled unless WebGL here is known to be drawn
   // by the CPU (scene.js remembers what the last visit found).
   begin(m.canvas, worker ? {antialias: m.software !== true} : undefined);
@@ -377,7 +383,7 @@ function settle() {
   setTimeout(() => { place(page, true); wake(); }, 0);
 }
 /** What scene.js says: start (with the canvas and how things stand), a fresh canvas, the canvas's size while the page
- *  resizes, the page's places, the sky, motion paused, the page hidden. */
+ *  resizes, the page's places, the sky, motion paused, the page hidden, the film moving beside it. */
 function receive(m) {
   switch (m.type) {
     case 'start': start(m); break;
@@ -387,6 +393,7 @@ function receive(m) {
     case 'night': setNight(m.night); break;
     case 'paused': setPaused(m.paused); break;
     case 'hidden': hidden = m.hidden; wake(); break;
+    case 'busy': busy = m.busy; break;
   }
 }
 if (worker) { post = m => postMessage(m); onmessage = e => receive(e.data); }

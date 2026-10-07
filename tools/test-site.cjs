@@ -121,7 +121,10 @@ async function main() {
       await page.waitForFunction(() => +document.getElementById('film-seek').value > 2.5, null, {timeout: 20000});
       const playing = await state(page);
       assert(Math.abs(playing.film - playing.audio) < .3, `film ${playing.film} follows audio ${playing.audio}`);
-      assert(playing.quiet && playing.playHidden, 'scenery rests and the play button steps aside');
+      // The scenery rides on beside the film, except where WebGL is drawn by the CPU (SwiftShader here): there it rests
+      // while the film plays with its sound.
+      const onCPU = await page.evaluate(() => localStorage.getItem('offergl.software') === '1');
+      assert(playing.quiet === onCPU && playing.playHidden, 'the scenery rides on (resting on a CPU) and the play button steps aside');
       assert.match(await page.evaluate(() => document.getElementById('film-audio').currentSrc), /film-soundtrack\.(webm|m4a)/);
 
       // Play fetched the app's ported views (assets/app/files.json) and Roboto; seeking into the app's shots draws its page.
@@ -148,6 +151,7 @@ async function main() {
       const held = (await state(page)).film;
       await page.waitForTimeout(600);
       assert.equal((await state(page)).film, held, 'K pauses picture and sound');
+      assert(!(await state(page)).quiet, 'pausing the film leaves the scenery riding');
       assert.equal(await page.evaluate(() => document.getElementById('film-audio').paused), true);
 
       await page.locator('[data-act=captions]').click();
