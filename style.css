@@ -68,8 +68,9 @@ header{position:relative;z-index:2;flex:none;display:flex;align-items:center;jus
 /* The film plays live in a canvas; until someone reaches for it, its closing frame stands in as a picture (AVIF, or
    WebP where image-set() cannot choose by type). */
 .film-section{position:relative;min-width:0;scroll-margin-top:24px}
-.film-stage{position:relative;container-type:inline-size;aspect-ratio:16/9;width:100%;overflow:hidden;border-radius:12px;background:url(assets/film-poster-wide.webp?v=20261007-3d3) center/cover no-repeat,linear-gradient(160deg,#d6e5e6,#efdfbd 55%,#f6b585);background-image:image-set(url(assets/film-poster-wide.avif?v=20261007-3d3) type("image/avif"),url(assets/film-poster-wide.webp?v=20261007-3d3) type("image/webp")),linear-gradient(160deg,#d6e5e6,#efdfbd 55%,#f6b585);box-shadow:0 22px 65px #16364426}
-.film-stage canvas{display:block;width:100%;height:100%}
+.film-stage{position:relative;container-type:inline-size;aspect-ratio:16/9;width:100%;overflow:hidden;border-radius:12px;background:url(assets/film-poster-wide.webp?v=20261007-3d4) center/cover no-repeat,linear-gradient(160deg,#d6e5e6,#efdfbd 55%,#f6b585);background-image:image-set(url(assets/film-poster-wide.avif?v=20261007-3d4) type("image/avif"),url(assets/film-poster-wide.webp?v=20261007-3d4) type("image/webp")),linear-gradient(160deg,#d6e5e6,#efdfbd 55%,#f6b585);box-shadow:0 22px 65px #16364426}
+.film-stage canvas{display:block;width:100%;height:100%;opacity:0;transition:opacity .8s ease}
+.film-stage.live canvas{opacity:1}
 .film-stage video{position:absolute;inset:0;z-index:3;display:block;width:100%;height:100%;object-fit:contain;background:#0b1725}
 .film-video video{z-index:auto}
 .film-stage.playing:not(.controls-on){cursor:none}
@@ -106,18 +107,17 @@ header{position:relative;z-index:2;flex:none;display:flex;align-items:center;jus
 /* Links over the scenery keep a soft halo of ground color, so the road, trees and car never cross the type. */
 .footer-links{text-shadow:0 0 4px var(--halo),0 0 10px var(--halo),0 0 18px var(--halo)}
 
-/* The links at the left; the signature in the page's bottom-right corner, white on a quarter circle of forest green
-   that clears the emblem's ink by about 14 px, as a painter signs a picture. */
+/* The links at the left; the signature in the row's right corner, as a painter signs a picture (centred under the
+   links on phones). */
 footer{position:relative;z-index:1;flex:none;display:flex;align-items:center;justify-content:space-between;gap:16px}
 .footer-links{display:flex;align-items:center;justify-content:flex-start;flex-wrap:wrap;gap:8px 24px}
 .tip-link,.quiet-link{display:inline-flex;align-items:center;min-height:44px;padding:8px 0;border:0;background:transparent;font-size:14px}
 .tip-link span{font-size:17px;margin-left:5px}
 .quiet-link{opacity:.72;text-decoration:underline;text-underline-offset:4px}
-.signature{--corner:142px;--mark:104px;--mark-right:4.6px;--mark-bottom:14.3px;position:absolute;right:0;bottom:0;z-index:1;width:var(--corner);height:var(--corner);border-top-left-radius:100%;background:#36594b;--signature-ink:#fff}
-.signature img,.signature::before{position:absolute;right:var(--mark-right);bottom:var(--mark-bottom);width:var(--mark);height:calc(var(--mark) * 442 / 560)}
-.signature img{display:block;filter:brightness(0) invert(1)}
+.signature{position:relative;flex:none;display:flex;justify-content:center;width:min(96px,100%);margin:0;--signature-ink:#36594b}
+.signature img{display:block;width:100%;height:auto;filter:brightness(.58)}
 /* Tint the original alpha; keep the image and full alt text as the no-mask fallback. */
-@supports (mask-image:url("")) or (-webkit-mask-image:url("")){.signature::before{content:"";background:var(--signature-ink);-webkit-mask:url(assets/jesus-loves-you-emblem-560.png) center/contain no-repeat;mask:url(assets/jesus-loves-you-emblem-560.png) center/contain no-repeat}.signature img{opacity:0}}
+@supports (mask-image:url("")) or (-webkit-mask-image:url("")){.signature::before{content:"";position:absolute;inset:0;background:var(--signature-ink);-webkit-mask:url(assets/jesus-loves-you-emblem-560.png) center/contain no-repeat;mask:url(assets/jesus-loves-you-emblem-560.png) center/contain no-repeat}.signature img{opacity:0}}
 
 /* Dialogs: one quiet card, light by day and deep blue at night. */
 dialog{--card:#f6f1e6;--card-ink:#233f48;--card-line:#233f4833;--note:#f0dfc1;background:var(--card);color:var(--card-ink);border:0;padding:30px;width:min(460px,calc(100% - 32px));max-height:calc(100svh - 32px);border-radius:12px;box-shadow:0 24px 130px #0a18265c;overscroll-behavior:contain}
@@ -165,6 +165,8 @@ body.night{--ink:#d9dfd0;--halo:#1d3036;color:#e9e5d5}
 .night .world{background:#1b2c3b}
 .night .source-button{background:#21344a99;border-color:#d7dec54a}
 .night .source-button:hover{background:#2a425acc}
+.night .signature{--signature-ink:#fff}
+.night .signature img{filter:brightness(0) invert(1)}
 .night dialog{--card:#172737;--card-ink:#e9e5d5;--card-line:#d7dec54a;--note:#22384a}
 .night .tip-options a{background:#22384a}
 .night .tip-options a:first-child{background:#24402f}
@@ -174,8 +176,8 @@ body.night{--ink:#d9dfd0;--halo:#1d3036;color:#e9e5d5}
 
 @media(min-width:1700px){.hero-content{gap:8%;width:88%;margin-top:90px;margin-bottom:130px;margin-top:clamp(16px,9svh - 8px,90px);margin-bottom:clamp(56px,15svh - 12px,130px)}}
 @media(max-width:1050px){.hero-content{gap:4%;width:100%}.intro h1{font-size:clamp(48px,5.5vw,65px)}.lede{font-size:15px}.primary,.source-button{font-size:13px;padding:14px 16px}}
-@media(max-width:850px){.world{padding:22px 6% 20px}footer{display:block;margin-bottom:104px}.signature{--corner:124px;--mark:90px;--mark-right:3px;--mark-bottom:11.4px}.wordmark{font-size:26px;gap:9px}.wordmark img{width:51px;height:51px}.hero-content{grid-template-columns:minmax(0,1fr);gap:36px;max-width:590px;margin:40px auto 90px}.intro h1{font-size:clamp(51px,9vw,72px);letter-spacing:-2.6px;margin-bottom:18px}.lede{font-size:16px;max-width:440px;line-height:1.55;margin-bottom:22px}.primary,.source-button{font-size:14px;padding:15px 18px}.footer-links{gap:8px 20px}.atmosphere i:nth-child(1){width:90vw;height:90vw}.atmosphere i:nth-child(2){width:70vw;height:70vw}}
-@media(max-width:600px){.film-stage{aspect-ratio:1;background-image:url(assets/film-poster-square.webp?v=20261007-3d3),linear-gradient(160deg,#d6e5e6,#efdfbd 55%,#f6b585);background-image:image-set(url(assets/film-poster-square.avif?v=20261007-3d3) type("image/avif"),url(assets/film-poster-square.webp?v=20261007-3d3) type("image/webp")),linear-gradient(160deg,#d6e5e6,#efdfbd 55%,#f6b585)}.app-actions>*{flex:1 1 auto}}
+@media(max-width:850px){.world{padding:22px 6% 20px}footer{display:block}.footer-links{justify-content:center}.signature{width:min(144px,100%);margin:24px auto 12px}.wordmark{font-size:26px;gap:9px}.wordmark img{width:51px;height:51px}.hero-content{grid-template-columns:minmax(0,1fr);gap:36px;max-width:590px;margin:40px auto 90px}.intro h1{font-size:clamp(51px,9vw,72px);letter-spacing:-2.6px;margin-bottom:18px}.lede{font-size:16px;max-width:440px;line-height:1.55;margin-bottom:22px}.primary,.source-button{font-size:14px;padding:15px 18px}.footer-links{gap:8px 20px}.atmosphere i:nth-child(1){width:90vw;height:90vw}.atmosphere i:nth-child(2){width:70vw;height:70vw}}
+@media(max-width:600px){.film-stage{aspect-ratio:1;background-image:url(assets/film-poster-square.webp?v=20261007-3d4),linear-gradient(160deg,#d6e5e6,#efdfbd 55%,#f6b585);background-image:image-set(url(assets/film-poster-square.avif?v=20261007-3d4) type("image/avif"),url(assets/film-poster-square.webp?v=20261007-3d4) type("image/webp")),linear-gradient(160deg,#d6e5e6,#efdfbd 55%,#f6b585)}.app-actions>*{flex:1 1 auto}}
 @media(max-width:480px){.world{padding-left:7%;padding-right:7%}.wordmark{font-size:24px}.wordmark img{width:46px;height:46px}.sky-toggle{width:44px;height:44px}.hero-content{margin-top:34px;margin-bottom:70px;gap:32px}.intro h1{font-size:clamp(46px,12vw,58px);letter-spacing:-2px;line-height:1.04}.lede{font-size:15px}.primary,.source-button{font-size:14px;padding:14px 16px}.tip-options a{padding:15px 11px}}
 /* The page arrives gently (from its first frame on, its words already show, only fainter and a little lower), and
    turns with the sky: while page.js marks a change of sky, colors ease over the sky's own sunset or sunrise. */
@@ -183,6 +185,7 @@ body.night{--ink:#d9dfd0;--halo:#1d3036;color:#e9e5d5}
 header,.intro>*,.film-section,footer{animation:arrive .9s cubic-bezier(.2,.7,.2,1) backwards}
 header{animation-delay:.05s}.intro h1{animation-delay:.15s}.lede{animation-delay:.25s}.app-actions{animation-delay:.33s}.film-section{animation-delay:.4s}footer{animation-delay:.5s}
 .turning body,.turning body *{transition:color .45s ease-in-out .5s,background-color 1s ease-in-out .2s,border-color 1s ease-in-out .2s,text-shadow 1s ease-in-out .2s,box-shadow 1s ease-in-out .2s!important}
+.turning .signature::before{transition:background-color .45s ease-in-out .5s}
 }
 @keyframes arrive{from{opacity:.4;transform:translateY(16px)}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}.atmosphere i{animation:none!important}}

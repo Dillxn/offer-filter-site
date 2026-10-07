@@ -2,12 +2,12 @@
  * The page's side of its 3D scenery (assets/scenery.js builds and draws it). Where the browser lets a page hand its
  * canvas to a worker (OffscreenCanvas), the scenery is drawn there, so neither making its WebGL context, nor building
  * it, nor drawing it takes the page's own thread; elsewhere it is drawn on the page's thread. This side says where the
- * page's words, sky button and footer stand, and passes on the sky, motion, the page being hidden and the pointer.
+ * page's words, sky button and footer stand, and passes on the sky, motion and the page being hidden.
  * Without WebGL the page keeps its plain background and the sky button its own sun and moon.
  */
 (() => {
 'use strict';
-const V = '?v=20261007-3d3', KNOWN = 'offergl.software';
+const V = '?v=20261007-3d4', KNOWN = 'offergl.software';
 const canvas = () => document.getElementById('landscape');
 if (!canvas() || !window.WebGLRenderingContext) { window.setSceneNight = window.setScenePaused = () => {}; return; }
 let night = document.body.classList.contains('night'), paused = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -77,7 +77,6 @@ addEventListener('resize', () => {
   settling = setTimeout(() => { if (send) send({type: 'page', page: measure()}); }, 160);
 });
 document.addEventListener('visibilitychange', () => { if (send) send({type: 'hidden', hidden: document.hidden}); });
-document.addEventListener('pointermove', e => { if (send) send({type: 'pointer', x: e.clientX, y: e.clientY}); }, {passive: true});
 
 // Begun once the page has loaded and shown its words (its first contentful paint, or a second after loading where the
 // browser cannot say), when the browser is idle; the page's own colors show until the scenery fades in. When the fonts

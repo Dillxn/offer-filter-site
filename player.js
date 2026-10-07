@@ -1,8 +1,11 @@
-/* The film, drawn live. OfferFilm renders each frame, clocked by the soundtrack, so the page downloads a few hundred
- * kilobytes of audio instead of megabytes of video and stays sharp at any size: its art in 3D (WebGL, on a canvas off
- * the page), copied into the film's canvas under its words and the app's screen, so the page composites one layer.
- * Until someone reaches for it, the stage shows its closing frame as a picture, and neither the renderer nor its
- * scripts exist. The MP4 renders of the same frames remain the fallback without script or WebGL. */
+/* The film, drawn live. OfferFilm renders each frame, so the page downloads a few hundred kilobytes of audio instead of
+ * megabytes of video and stays sharp at any size: its art in 3D (WebGL, on a canvas off the page), copied into the
+ * film's canvas under its words and the app's screen, so the page composites one layer. Once the page has shown its
+ * words and the browser is idle, the film plays muted, round and round, on the page's own clock (no soundtrack is
+ * fetched for it), until someone plays it with sound: then it starts over, clocked by the soundtrack, and when it ends
+ * it goes back to its loop. Until the loop begins, the stage shows the film's closing frame as a picture. The loop waits
+ * while motion is paused or a dialog is open, and does not start where the visitor asks for reduced motion or less
+ * data. The MP4 renders of the same frames remain the fallback without script or WebGL. */
 (() => {
   'use strict';
   const $ = id => document.getElementById(id);
@@ -38,19 +41,22 @@
   }
   const audio = $('film-audio'), controls = $('film-controls'), seek = $('film-seek'), clockText = $('film-time'), cue = $('film-cue');
   const button = act => controls.querySelector(`[data-act="${act}"]`);
-  const MEDIA = '?v=20261007-3d3', D = +seek.max;
+  const MEDIA = '?v=20261007-3d4', D = +seek.max;
   const SIZES = {landscape: [1920, 1080], square: [1080, 1080], portrait: [1080, 1920]};
   const player = new EventTarget();
   let format = 'landscape', comp = SIZES.landscape, scale = 1, ox = 0, oy = 0, visible = true;
   let emblem = document.createElement('canvas'), ready = false, playing = false, ended = false, started = false;
   let silent = false, buffering = false, dragging = false, captions = false, hideTimer = 0, raf = 0;
+  // 'idle' until the film first moves, then 'loop' (muted, round and round) or 'sound' (played with its soundtrack).
+  let mode = 'idle', resting = false, back = 0;
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches || !!(navigator.connection && navigator.connection.saveData);
   let t = 0, anchorT = 0, anchorAt = 0, lastAudio = -1, shownSecond = -1, cueText = null, lastDraw = 0, cost = 0;
   emblem.width = emblem.height = 1;
 
   // Film time follows the soundtrack. Between the audio clock's updates it advances with the frame clock,
   // never more than a quarter second ahead, so a stalled stream holds the picture instead of drifting.
   function clock(now) {
-    if (silent) return anchorT + (now - anchorAt) / 1000;
+    if (silent || mode === 'loop') return anchorT + (now - anchorAt) / 1000;
     const a = audio.currentTime;
     if (a !== lastAudio || buffering) { lastAudio = a; anchorT = a; anchorAt = now; return a; }
     return anchorT + Math.min((now - anchorAt) / 1000, .25);
@@ -84,9 +90,13 @@
     raf = 0;
     if (!playing) return;
     t = Math.max(t, clock(now));
-    if (t >= D) return finish();
-    // At most 60 frames a second; a device that needs more than 10 ms per frame gets 30, as in the MP4.
-    if (visible && now - lastDraw >= (cost > 10 ? 29 : 12)) {
+    if (t >= D) {
+      if (mode !== 'loop') return finish();
+      t %= D; anchorT = t; anchorAt = now;
+    }
+    // At most 60 frames a second; the muted loop, and a device that needs more than 10 ms per frame, get 30, as in the MP4.
+    if (visible && now - lastDraw >= (mode === 'loop' || cost > 10 ? 29 : 12)) {
+      if (!stage.classList.contains('live')) stage.classList.add('live');
       const begin = performance.now();
       draw(); lastDraw = now;
       cost = cost * .9 + (performance.now() - begin) * .1;
@@ -95,7 +105,8 @@
     raf = requestAnimationFrame(loop);
   }
   function setState() {
-    stage.classList.toggle('playing', playing);
+    stage.classList.toggle('playing', playing && mode === 'sound');
+    stage.classList.toggle('looping', mode === 'loop');
     const toggle = button('toggle');
     toggle.setAttribute('aria-label', playing ? 'Pause film' : 'Play film');
     toggle.classList.toggle('is-playing', playing);
@@ -103,7 +114,7 @@
   function emit(type) { setState(); player.dispatchEvent(new Event(type)); }
   function seekTo(value) {
     t = Math.max(0, Math.min(D, value)); ended = false;
-    if (!silent) { try { audio.currentTime = t; } catch (e) {} lastAudio = -1; }
+    if (!silent && mode !== 'loop') { try { audio.currentTime = t; } catch (e) {} lastAudio = -1; }
     anchorT = t; anchorAt = performance.now();
     draw(); sync();
   }
@@ -118,12 +129,16 @@
     if (!silent && !audio.paused) audio.pause();
     draw(); sync(); showControls();
     emit('ended');
+    // The closing frame holds a moment; then the film goes back to its muted loop.
+    clearTimeout(back);
+    if (!still) back = setTimeout(() => { if (ended && !playing) { mode = 'loop'; t = 0; player.loop(); } }, 3000);
   }
+  /** Plays the film with its sound, from the start if it was looping muted or had ended. */
   player.play = () => {
     if (missing) { player.wanted = true; return Promise.resolve(); }
-    loadApp(); live = true;
-    if (!started || ended) { started = true; seekTo(0); }
-    playing = true; ended = false; controls.hidden = false; showControls();
+    loadApp(); live = true; clearTimeout(back);
+    if (!started || ended || mode === 'loop') { started = true; mode = 'sound'; seekTo(0); }
+    mode = 'sound'; playing = true; ended = false; controls.hidden = false; showControls();
     let result = Promise.resolve();
     if (silent) { anchorT = t; anchorAt = performance.now(); }
     else {
@@ -137,18 +152,35 @@
     emit('play');
     return result;
   };
+  /** The muted loop, from where it was (the start, the first time). */
+  player.loop = () => {
+    if (missing || !F || !renderer() || resting || (playing && mode === 'sound')) return;
+    if (mode !== 'loop') { mode = 'loop'; t = 0; }
+    started = live = playing = true; ended = false; controls.hidden = true;
+    anchorT = t; anchorAt = performance.now();
+    if (!raf) raf = requestAnimationFrame(loop);
+    emit('loop');
+  };
+  /** While motion is paused or a dialog is open (page.js), the muted loop waits, and carries on after. */
+  player.rest = on => {
+    resting = on;
+    if (mode !== 'loop') return;
+    if (on && playing) player.pause();
+    else if (!on && !playing) player.loop();
+  };
   player.pause = () => {
     if (!playing) return;
     playing = false;
-    if (!silent) audio.pause();
+    if (!silent && mode === 'sound') audio.pause();
     if (raf) cancelAnimationFrame(raf);
     raf = 0; draw(); sync(); showControls();
     emit('pause');
   };
   Object.defineProperties(player, {
-    paused: {get: () => !playing}, ended: {get: () => ended}, error: {get: () => null}
+    paused: {get: () => !playing}, ended: {get: () => ended}, error: {get: () => null}, quiet: {get: () => mode === 'loop'}
   });
-  const toggle = () => playing ? player.pause() : player.play().catch(() => {});
+  // A click or K on the muted loop plays the film with its sound; otherwise they pause and play.
+  const toggle = () => playing && mode === 'sound' ? player.pause() : player.play().catch(() => {});
 
   audio.addEventListener('playing', () => { buffering = false; lastAudio = -1; });
   audio.addEventListener('waiting', () => { buffering = true; });
@@ -260,21 +292,33 @@
       .catch(() => {}).then(() => { if (ready && live) draw(); });
     return app;
   }
-  // As soon as someone reaches for the play button: the soundtrack, the app's views, and the film's 3D art, built a
-  // piece at a time between frames, so playing starts without a stall; the picture stays until it does.
-  let warmed = false;
+  // The app's views and the film's 3D art, built a piece at a time between frames, so the film starts without a stall;
+  // the picture stays until it does. As soon as someone reaches for the play button, the soundtrack too.
+  let warmed = null;
   function wake() {
-    if (warmed) return;
-    warmed = true;
-    loadApp().then(() => {
-      if (!F || !renderer()) return;
+    if (warmed) return warmed;
+    return warmed = loadApp().then(() => new Promise(resolve => {
+      if (!F || !renderer()) return resolve();
       const steps = F.prepare(r, comp[0], comp[1]);
-      const step = () => { if (steps.length) { steps.shift()(); setTimeout(step, 0); } };
+      const step = () => { if (steps.length) { steps.shift()(); setTimeout(step, 0); } else resolve(); };
       step();
-    });
+    }));
   }
   const warm = () => { if (audio.preload === 'none') audio.preload = 'auto'; wake(); };
   for (const type of ['pointerenter', 'focus', 'touchstart']) $('film-play').addEventListener(type, warm, {once: true, passive: true});
+  // The muted loop begins once the page has loaded and shown its words, when the browser is idle.
+  if (!still) {
+    const go = () => (window.requestIdleCallback || (fn => setTimeout(fn, 50)))(() => wake().then(() => { if (mode === 'idle') player.loop(); }), {timeout: 1500});
+    let loaded = document.readyState === 'complete', painted = false;
+    const both = () => { if (loaded && painted) { loaded = false; go(); } };
+    try {
+      new PerformanceObserver((list, observer) => {
+        if (list.getEntries().some(e => e.name === 'first-contentful-paint')) { observer.disconnect(); painted = true; both(); }
+      }).observe({type: 'paint', buffered: true});
+    } catch (e) {}
+    const onLoad = () => { loaded = true; both(); setTimeout(() => { painted = true; both(); }, 1000); };
+    if (loaded) onLoad(); else addEventListener('load', onLoad, {once: true});
+  }
 
   // Live frames wait for the fonts and the tinted emblem.
   const fonts = document.fonts ? Promise.all([document.fonts.load('700 1em "Baloo 2"'), document.fonts.load('400 1em "Atkinson Hyperlegible"')]) : Promise.resolve();

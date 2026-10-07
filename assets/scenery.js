@@ -5,11 +5,11 @@
  * rise, a road winding into the distance and the delivery car on it, dust drifting in the air. Day turns to night as a
  * short sunset: the sun shrinks away, the sky deepens, the stars and windows come out and the moon swings in.
  * The camera looks level over the land; a lens shift puts the horizon where the page wants it (the road and car stay
- * above the footer links), and the pointer sways the camera a little, so near things pass in front of far ones. Every
- * piece is placed where the earlier flat drawing put it on screen, at a depth that keeps its size.
+ * above the footer links). It rides along beside the car as it drives the winding road, so near things stream past
+ * and far ones drift by. Every piece stands at the depth where the earlier flat drawing's size for it holds.
  * Where the browser lets a page hand its canvas to a worker (OffscreenCanvas), this runs in one, so building the
  * scenery and drawing it never take the page's own thread; elsewhere it runs on the page's. Either way scene.js, on the
- * page, says where the page's words, sky button and footer stand and passes on its sky, motion and pointer (receive()).
+ * page, says where the page's words, sky button and footer stand and passes on its sky and motion (receive()).
  */
 (root => {
 'use strict';
@@ -36,7 +36,10 @@ const pick = (k, n) => !Array.isArray(DAY[k]) ? mix(DAY[k], NIGHT[k], n)
 // night runs 0 (day) to 1; a change of sky eases it there over TURN seconds.
 const TURN = 1.6;
 let W = 0, H = 0, dpr = 1, night = 0, turn = {from: 0, to: 0, at: -1e9};
-let t = 2, prev = 0, raf = 0, px = 0, py = 0;
+let t = 2, prev = 0, raf = 0;
+// The ride: metres along the road so far, at RIDE metres a second, and the car's wheels turned to match.
+const RIDE = 3.5;
+let ride = 0, spin = 0;
 let paused = false, hidden = false;
 let L = null;          // the layout and meshes for this size
 const CAM_H = 2;       // the camera's height over the ground, metres
@@ -80,88 +83,104 @@ function skyParts() {
 // complement), depth].
 const CLOUDS = [[.52, 110, 12, .1, 640], [.12, 160, 15, .3, 470], [.8, 200, 11, .4, 330]];
 
+/* One period of ground: x from 0 to P and z from z0 to z1 in nx x nz cells, its height y = height(x, z) and its color
+ * col(x, z). Heights are sampled once a point on a lattice and normals come from the neighbouring heights, across the
+ * period's ends too, so its repeats meet without a seam. */
+function field(P, z0, z1, nx, nz, height, col) {
+  const g = new G.Geo(), dx = P / nx, dz = (z1 - z0) / nz, Y = new Float64Array(nx * (nz + 1));
+  for (let j = 0; j <= nz; j++) for (let k = 0; k < nx; k++) Y[j * nx + k] = height(dx * k, z0 + dz * j);
+  const at = (k, j) => Y[Math.min(nz, Math.max(0, j)) * nx + (k % nx + nx) % nx];
+  g.room((nx + 1) * (nz + 1), nx * nz * 6);
+  for (let j = 0; j <= nz; j++) for (let k = 0; k <= nx; k++) {
+    const sx = (at(k + 1, j) - at(k - 1, j)) / (2 * dx), sz = (at(k, j + 1) - at(k, j - 1)) / (dz * ((j > 0) + (j < nz)));
+    const l = Math.hypot(sx, 1, sz), x = dx * k, z = z0 + dz * j;
+    g.vert([x, at(k, j), z], [-sx / l, 1 / l, -sz / l], col(x, z), [k / nx, j / nz]);
+  }
+  for (let j = 0; j < nz; j++) for (let k = 0; k < nx; k++) { const a = j * (nx + 1) + k, b = a + nx + 1; g.quad(a, b, b + 1, a + 1); }
+  return g;
+}
+
 function layout() {
   const mobile = W < 850, horizon = Math.min(mobile ? H * .806 : H * .756, page.groundTop - 118);
-  const f = Math.max(380, Math.min(1100, W * .62)), camZ = 6;
-  const L = {W, H, mobile, horizon, f, camZ, meshes: []};
-  const add = (geo, key, opt) => { if (geo.i.length) L.meshes.push(Object.assign({mesh: r.mesh(geo), key}, opt)); };
-  // Two far ridges whose crests trace the flat drawing's hills, standing at depth: y = base + waves.
+  const f = Math.max(380, Math.min(1100, W * .62)), camZ = 6, town = f * CAM_H / 3;
+  // The period of the land, its road and trees, and the town: eighteen houses at the flat drawing's spacing, a little
+  // wider than the view at the town.
+  const P = 18 * (W / 16) / f * town;
+  const L = {W, H, mobile, horizon, f, camZ, P, layers: []};
+  const add = (geo, key, period, depth, opt) => { if (geo.i.length) L.layers.push(Object.assign({mesh: r.mesh(geo), key, period, depth}, opt)); };
+  // Two far ridges whose crests trace the flat drawing's hills, standing at depth, each repeating with its longer wave.
   const ridge = (base, amp, phase, d, key) => {
-    const g = new G.Geo(), n = 64, top = [], bottom = [];
+    const period = Math.PI / 2 * W / f * d, g = new G.Geo(), n = 96, top = [], bottom = [];
     for (let k = 0; k <= n; k++) {
-      const sx = -60 + (W + 120) * k / n, sy = base + Math.sin(sx / W * 4 + phase) * amp + Math.sin(sx / W * 8 + phase) * amp * .3;
-      const x = (sx - W / 2) / f * d, y = CAM_H + (horizon - sy) / f * d;
-      top.push(g.vert([x, y, camZ - d], [0, .35, 1], '#ffffff'));
+      const x = period * k / n, sx = W / 2 + x * f / d;
+      const sy = base + Math.sin(sx / W * 4 + phase) * amp + Math.sin(sx / W * 8 + phase) * amp * .3;
+      top.push(g.vert([x, CAM_H + (horizon - sy) / f * d, camZ - d], [0, .35, 1], '#ffffff'));
       bottom.push(g.vert([x, -d * .05, camZ - d], [0, .35, 1], '#ffffff'));
     }
     for (let k = 0; k < n; k++) g.quad(bottom[k], bottom[k + 1], top[k + 1], top[k]);
-    add(g, key, {rim: .04, spec: 0});
+    add(g, key, period, d, {rim: .04, spec: 0});
   };
   ridge(horizon - 60, 35, 1.2, 700, 'far');
   ridge(horizon - 23, 22, 3.1, 420, 'mid');
-  // The town along the horizon: eighteen buildings, every third gabled; their windows light at night.
-  const town = depthAt(L, 3), walls = [new G.Geo(), new G.Geo()], lit = new G.Geo(), dark = new G.Geo();
+  // The town along the horizon: eighteen houses to the period, every third gabled; their windows light at night.
+  const walls = [new G.Geo(), new G.Geo()], lit = new G.Geo(), dark = new G.Geo();
   for (let i = 0; i < 18; i++) {
-    const sx = i * (W / 16) - 25, hpx = 24 + ((i * 17) % 53), wpx = W / 33, d = town + (i % 4) * town * .04;
-    const w = wpx / f * d, h = (hpx + 3) / f * d, x = (sx + wpx / 2 - W / 2) / f * d;
+    const hpx = 24 + ((i * 17) % 53), wpx = W / 33, d = town + (i % 4) * town * .04;
+    const w = wpx / f * d, h = (hpx + 3) / f * d;
     const b = OfferModels.buildingParts(w, h, w * .8, {gable: i % 3 === 0, seed: i * 7 + 3, cols: Math.max(1, Math.round(wpx / 14)), rows: Math.max(1, Math.floor(hpx / 13))});
-    const m = M.trs([x, -h * .03, camZ - d]);
+    const m = M.trs([(i + .5) * P / 18, -h * .03, camZ - d]);
     walls[i % 3 ? 0 : 1].add(b.walls, m); lit.add(b.lit, m); dark.add(b.dark, m);
   }
-  add(walls[0], 'wallA', {rim: .1, spec: .03}); add(walls[1], 'wallB', {rim: .1, spec: .03});
-  add(dark, 'window', {rim: 0, spec: 0}); add(lit, 'lit', {rim: 0, spec: 0, glowing: true});
-  // The land: gently rolling, rising a little before the town so its feet sit behind a near swell.
-  const swell = town * .5;
-  const land = (x, z) => {
+  const back = town * 1.12;
+  add(walls[0], 'wallA', P, back, {rim: .1, spec: .03}); add(walls[1], 'wallB', P, back, {rim: .1, spec: .03});
+  add(dark, 'window', P, back, {rim: 0, spec: 0}); add(lit, 'lit', P, back, {rim: 0, spec: 0, glowing: true});
+  // The land: gently rolling, rising a little before the town so its feet sit behind a near swell. Each of its waves
+  // along x fits the period a whole number of times, so its repeats meet without a seam.
+  const swell = town * .5, wave = k => 2 * Math.PI * Math.max(1, Math.round(k * P / (2 * Math.PI))) / P;
+  const kA = wave(9 / swell), kB = wave(.011), kC = wave(.023), kD = wave(.7), kE = wave(.021), kF = wave(.008);
+  const land = L.land = (x, z) => {
     const d = camZ - z, far = Math.min(1, Math.max(0, (d - 60) / 260)) * Math.min(1, Math.max(0, (town * .92 - d) / 60));
-    return .55 * Math.exp(-Math.pow((d - swell) / (swell * .35), 2)) * (1 + .6 * Math.sin(x / swell * 9 + 2)) +
-      far * (2.6 * Math.sin(x * .011 + 1.3) * Math.sin(z * .008 + .4) + 1.4 * Math.sin(x * .023 - z * .01)) +
-      .12 * Math.sin(x * .7 + z * .3) * Math.min(1, d / 30);
+    return .55 * Math.exp(-Math.pow((d - swell) / (swell * .35), 2)) * (1 + .6 * Math.sin(x * kA + 2)) +
+      far * (2.6 * Math.sin(x * kB + 1.3) * Math.sin(z * .008 + .4) + 1.4 * Math.sin(x * kC - z * .01)) +
+      .12 * Math.sin(x * kD + z * .3) * Math.min(1, d / 30);
   };
-  const patch = (x, z) => { const v = .965 + .035 * Math.sin(x * .021 + z * .013) * Math.cos(z * .017 - x * .008); return [v, v, v, 0]; };
-  add(G.terrain(-town * 1.6, town * 1.6, camZ - town * .985, camZ + 1, 120, 90, land, patch), 'near', {rim: .02, spec: 0});
-  // The road: the flat drawing's curve laid on the land, with dashes along its middle.
-  const roadY = horizon + 37, bez = u => {
-    const p0 = [-20, roadY + 43], p1 = [W * .22, roadY + 73], p2 = [W * .58, roadY - 19], p3 = [W + 20, roadY + 11], v = 1 - u;
-    return [0, 1].map(k => v * v * v * p0[k] + 3 * v * v * u * p1[k] + 3 * v * u * u * p2[k] + u * u * u * p3[k]);
-  };
-  const path = [];
-  for (let k = 0; k <= 90; k++) { const [sx, sy] = bez(k / 90), p = ground(L, sx, sy); p[1] = land(p[0], p[2]); path.push(p); }
-  const width = 36 / f * depthAt(L, 55);
-  add(G.ribbon(path, width, '#ffffff', .04), 'road', {rim: 0, spec: .02});
+  const patch = (x, z) => { const v = .965 + .035 * Math.sin(x * kE + z * .013) * Math.cos(z * .017 - x * kF); return [v, v, v, 0]; };
+  add(field(P, camZ - town * .985, camZ + 1, Math.max(24, Math.round(P / (town * .0267))), 90, land, patch), 'near', P, town, {rim: .02, spec: 0});
+  // The road, winding nearer and farther: one wave to about a screen and a third at its middle distance, as the flat
+  // drawing's curve did. Seen side on, it is wide enough to show 14 px deep there; its edges run along it and dashes
+  // down its middle, a whole number of them to the period.
+  const dm = depthAt(L, 70), kR = wave(2 * Math.PI / (1.3 * W / f * dm)), kS = wave(2.3 * 2 * Math.PI / (1.3 * W / f * dm));
+  L.roadDepth = x => dm * (1 + .2 * Math.sin(x * kR + .7) + .04 * Math.sin(x * kS + 2.1));
+  L.roadSlope = x => dm * (.2 * kR * Math.cos(x * kR + .7) + .04 * kS * Math.cos(x * kS + 2.1));
+  const onRoad = x => { const z = camZ - L.roadDepth(x); return [x, land(x, z), z]; };
+  const nr = Math.round(P * kR / (2 * Math.PI)) * 28, path = [];
+  for (let k = 0; k <= nr; k++) path.push(onRoad(P * k / nr));
+  const width = 14 * dm * dm / (f * CAM_H), deep = dm * 1.3;
+  add(G.ribbon(path, width, '#ffffff', .04), 'road', P, deep, {rim: 0, spec: .02});
   const edges = new G.Geo();
   for (const side of [-1, 1]) {
     const line = path.map((p, k) => {
       const a = path[Math.max(0, k - 1)], b = path[Math.min(path.length - 1, k + 1)], l = Math.hypot(b[0] - a[0], b[2] - a[2]) || 1;
       return [p[0] + (b[2] - a[2]) / l * width * .47 * side, p[1], p[2] - (b[0] - a[0]) / l * width * .47 * side];
     });
-    edges.add(G.ribbon(line, width * .06, '#ffffff', .05));
+    edges.add(G.ribbon(line, width * .05, '#ffffff', .05));
   }
-  add(edges, 'roadEdge', {rim: 0, spec: 0});
-  const dashes = new G.Geo();
-  let run = 0;
-  for (let k = 1; k < path.length; k++) {
-    const a = path[k - 1], b = path[k];
-    if (Math.floor(run / (width * 1.5)) % 2 === 0) dashes.add(G.ribbon([a, b], width * .07, '#ffffff', .07));
-    run += Math.hypot(b[0] - a[0], b[2] - a[2]);
+  add(edges, 'roadEdge', P, deep, {rim: 0, spec: 0});
+  const count = Math.max(1, Math.round(P / (width * .9))), dashes = new G.Geo();
+  for (let i = 0; i < count; i++) dashes.add(G.ribbon([0, .25, .5].map(u => onRoad((i + u) * P / count)), width * .1, '#ffffff', .07));
+  add(dashes, 'dash', P, deep, {rim: 0, spec: 0});
+  // Trees beyond the road at the flat drawing's depths, about as many to the screen at each depth as it had.
+  const tree = OfferModels.treeParts(), leaves = new G.Geo(), trunks = new G.Geo(), tr = rnd(5);
+  for (const [lo, hi] of [[9, 16], [16, 24], [24, 31]]) {
+    const n = Math.round((mobile ? 2 : 6) * P / (W / f * depthAt(L, (lo + hi) / 2)));
+    for (let i = 0; i < n; i++) {
+      const x = (i + tr()) * P / n, d = depthAt(L, lo + tr() * (hi - lo)), z = camZ - d;
+      const m = M.trs([x, land(x, z), z], [tr() * 6, 0, 0], (.6 + tr() * .6) * 72 / f * d / 2);
+      leaves.add(tree.leaf, m); trunks.add(tree.trunk, m);
+    }
   }
-  add(dashes, 'dash', {rim: 0, spec: 0});
-  L.road = path;
-  // Trees where the flat drawing set them, on the swell.
-  const leaves = new G.Geo(), trunks = new G.Geo();
-  [.05, .12, .4, .61, .86, .94].forEach((fx, i) => {
-    const [x, , z] = ground(L, W * fx, horizon + 12 + Math.sin(i) * 15), d = camZ - z, s = (.75 + (i % 3) * .15) * 80 / f * d / 2;
-    const tr = OfferModels.treeParts(), m = M.trs([x, land(x, z), z], [i, 0, 0], s);
-    leaves.add(tr.leaf, m); trunks.add(tr.trunk, m);
-  });
-  const tr2 = rnd(5);
-  // More trees scattered between the road and the town, where a wide page shows that ground.
-  for (let i = 0; i < (mobile ? 0 : 16); i++) {
-    const sx = tr2() * W, dy = 9 + tr2() * 22, [x, , z] = ground(L, sx, horizon + dy), d = camZ - z;
-    const s = (.6 + tr2() * .5) * 64 / f * d / 2, tr = OfferModels.treeParts(), m = M.trs([x, land(x, z), z], [tr2() * 6, 0, 0], s);
-    leaves.add(tr.leaf, m); trunks.add(tr.trunk, m);
-  }
-  add(leaves, 'tree', {rim: .2, spec: .04}); add(trunks, 'trunk', {rim: .1, spec: 0});
+  const woods = depthAt(L, 9) * 1.05;
+  add(leaves, 'tree', P, woods, {rim: .2, spec: .04}); add(trunks, 'trunk', P, woods, {rim: .1, spec: 0});
   // Stars far off, and dust in the air.
   const sr = rnd(28), stars = [];
   for (let i = 0; i < 90; i++) {
@@ -180,7 +199,7 @@ function layout() {
   L.cloudSize = clamp(W / 412 * .75, 1.2, 2.3);
   // Where the page's words stand: a cloud fades while it passes behind them, as the app's do.
   L.words = page.words;
-  L.sorted = ORDER.map(k => L.meshes.find(m => m.key === k)).filter(Boolean);
+  L.sorted = ORDER.map(k => L.layers.find(m => m.key === k)).filter(Boolean);
   return L;
 }
 
@@ -199,39 +218,43 @@ function place(p, force) {
 }
 function build() {
   skyParts();
-  if (L) { for (const m of L.meshes) r.free(m.mesh); r.free(L.stars); r.free(L.dustCloud); }
+  if (L) { for (const m of L.layers) r.free(m.mesh); r.free(L.stars); r.free(L.dustCloud); }
   L = layout();
   draw();
   // The sky fades in, and the sky button's own sun and moon give way to the sky's.
   if (!shown) { shown = true; post({type: 'drawn'}); }
 }
 
-/** The car's place on the road at s (0-1 along it) and its heading. */
-function along(s) {
-  const p = L.road, f = Math.max(0, Math.min(p.length - 1.001, s * (p.length - 1))), k = Math.floor(f), u = f - k;
-  const a = p[k], b = p[k + 1];
-  return {at: [lerp(a[0], b[0], u), lerp(a[1], b[1], u), lerp(a[2], b[2], u)], yaw: Math.atan2(-(b[2] - a[2]), b[0] - a[0])};
+/** Where the ride has brought the car: its place in the land's period, its depth on the road, and how far right of
+ *  the camera it is, the camera keeping it a third of the way across the page. */
+function riding() {
+  const x = (ride % L.P + L.P) % L.P, d = L.roadDepth(x);
+  return {x, d, z: L.camZ - d, ahead: (W * .3 - W / 2) / L.f * d};
 }
 
 const ORDER = ['tree', 'trunk', 'dash', 'roadEdge', 'road', 'near', 'window', 'lit', 'wallA', 'wallB', 'mid', 'far'];
 function draw() {
   if (!L) return;
-  const n = night, sky = pick('sky', n), I = M.ident();
+  const n = night, sky = pick('sky', n);
   r.clear(sky[2]);
-  // A level camera, swayed by the pointer; the lens shift puts the horizon at L.horizon.
-  const shiftY = (L.horizon - H / 2) / (H / 2), cam = [px * .9, CAM_H + py * .25, L.camZ];
-  const view = {eye: cam, at: [cam[0], cam[1], cam[2] - 10], fov: 2 * Math.atan(H / 2 / L.f), near: .5, far: 2000, shiftY};
+  // A level camera riding beside the car; the lens shift puts the horizon at L.horizon. The camera stays at x = 0 and
+  // the world moves past it, so its coordinates stay small however far the ride goes.
+  const shiftY = (L.horizon - H / 2) / (H / 2), cam = [0, CAM_H, L.camZ];
+  const view = {eye: cam, at: [0, CAM_H, L.camZ - 10], fov: 2 * Math.atan(H / 2 / L.f), near: .5, far: 2000, shiftY};
   r.camera(view);
   const land = {dir: [.5, .55, .65], color: pick('light', n), sky: pick('skyLight', n), ground: pick('ground', n), rim: pick('rim', n),
     gloss: [.6, .1, .7], fog: pick('fog', n), fogNear: 250, fogFar: 3000};
   r.light(land);
-  // The car first (nearest), ambling to and fro on the road's left third, then the land near to far.
-  const s = .3 + Math.sin(t * .06) * .025, p = along(s), d = L.camZ - p.at[2], k = 52 / L.f * d / (92 * art.carSize);
-  const bob = Math.abs(Math.sin(t * 9)) * .008 * k, carAt = M.trs([p.at[0], p.at[1] + .06 + bob, p.at[2]], [p.yaw, 0, 0], k);
-  art.car(carAt, {wheel: t * 3, lights: smooth((n - .3) / .5)});
+  // The car first (nearest), driving along the road, turning with it, then the land near to far: each layer at the
+  // repeats of its period that the view takes in at its farthest.
+  const c = riding(), camX = ride - c.ahead, k = 52 / L.f * c.d / (92 * art.carSize), yaw = Math.atan2(L.roadSlope(c.x), 1);
+  const bob = Math.abs(Math.sin(t * 9)) * .008 * k, carY = L.land(c.x, c.z);
+  art.car(M.trs([c.ahead, carY + .06 + bob, c.z], [yaw, 0, 0], k), {wheel: spin, lights: smooth((n - .3) / .5)});
   for (const m of L.sorted) {
     const tint = m.key === 'lit' ? mix(DAY.window, '#ecc27b', n) : pick(m.key, n);
-    r.draw(m.mesh, I, {tint, rim: m.rim, spec: m.spec, glow: m.glowing ? smooth((n - .3) / .5) : 0, cull: false});
+    const o = {tint, rim: m.rim, spec: m.spec, glow: m.glowing ? smooth((n - .3) / .5) : 0, cull: false};
+    const reach = W / 2 / L.f * m.depth + 20;
+    for (let i = Math.floor((camX - reach) / m.period); i <= Math.floor((camX + reach) / m.period); i++) r.draw(m.mesh, M.trs([i * m.period - camX, 0, 0]), o);
   }
   // By day, the clouds drift across at their own paces; at dusk they melt into the sky.
   const fade = smooth(n / .7);
@@ -252,15 +275,16 @@ function draw() {
   r.sky({c0: sky[0], c1: sky[1], c2: sky[2], mid: .48, from: [0, 0], to: [0, 1],
     halo: pick('glow', n), haloAt: [L.glow.x / W, L.glow.y / H], haloR: L.glow.r, haloA: .42});
   r.light(land);
-  r.shadow(M.trs([p.at[0], p.at[1] + .07, p.at[2]], [p.yaw, 0, 0], [2.1 * k, 1, 1.2 * k]), {alpha: lerp(.18, .3, n)});
+  r.shadow(M.trs([c.ahead, carY + .07, c.z], [yaw, 0, 0], [2.1 * k, 1, 1.2 * k]), {alpha: lerp(.18, .3, n)});
   const starsOn = smooth((n - .35) / .55);
   if (starsOn > .01) r.stars(L.stars, {color: '#f6edcd', alpha: starsOn * .85, time: t, twinkle: .6});
   sunAndMoon(n, cam);
   r.camera(view);
-  // Dust drifting in the air.
+  // Dust in the air, drifting and streaming past as the ride goes.
   const dust = L.dust.map(([a, b, c, e], i) => {
-    const sx = (a * W + t * (3 + c * 7)) % (W + 30) - 15, sy = b * L.horizon * .95 + Math.sin(t * .4 + i) * 5;
-    const dd = 20 + e * 80, x = (sx - W / 2) / L.f * dd, y = CAM_H + (L.horizon - sy) / L.f * dd;
+    const dd = 20 + e * 80, span = W + 30, run = a * W + t * (3 + c * 7) - camX * L.f / dd;
+    const sx = (run % span + span) % span - 15, sy = b * L.horizon * .95 + Math.sin(t * .4 + i) * 5;
+    const x = (sx - W / 2) / L.f * dd, y = CAM_H + (L.horizon - sy) / L.f * dd;
     return [x, y, L.camZ - dd, 1 + c * 2.6, 0, .25 + c * .6];
   });
   r.stars(r.updatePoints(L.dustCloud, dust), {color: pick('dust', n), alpha: .55, twinkle: 0});
@@ -298,6 +322,8 @@ function tick(ms) {
   const dt = prev ? Math.min((ms - prev) / 1000, .05) : 0;
   prev = ms; t += dt;
   night = lerp(turn.from, turn.to, smooth((t - turn.at) / TURN));
+  // The wheels (10 of the car's units in radius, at its scale for its depth) roll the ground the ride covers.
+  ride += dt * RIDE; spin += dt * RIDE / (10 * 52 / L.f * riding().d / 92);
   draw();
   raf = frame(tick);
 }
@@ -351,7 +377,7 @@ function settle() {
   setTimeout(() => { place(page, true); wake(); }, 0);
 }
 /** What scene.js says: start (with the canvas and how things stand), a fresh canvas, the canvas's size while the page
- *  resizes, the page's places, the sky, motion paused, the page hidden, the pointer. */
+ *  resizes, the page's places, the sky, motion paused, the page hidden. */
 function receive(m) {
   switch (m.type) {
     case 'start': start(m); break;
@@ -361,9 +387,6 @@ function receive(m) {
     case 'night': setNight(m.night); break;
     case 'paused': setPaused(m.paused); break;
     case 'hidden': hidden = m.hidden; wake(); break;
-    case 'pointer':
-      if (L && !paused) { px += (m.x / W - .5) * 1.4 - px * .16; py += (m.y / H - .5) * .9 - py * .16; }
-      break;
   }
 }
 if (worker) { post = m => postMessage(m); onmessage = e => receive(e.data); }
