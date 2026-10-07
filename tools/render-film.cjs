@@ -6,15 +6,19 @@
  *   node tools/render-film.cjs captions [out]     the WebVTT captions, from OfferFilm.CAPTIONS
  *   node tools/render-film.cjs audit [out]        every frame's text-bounds audit, without video
  *   node tools/render-film.cjs posters [out]      the posters alone
- *   node tools/render-film.cjs <format> [out]     landscape | portrait | square: the MP4 (audited), and its posters
+ *   node tools/render-film.cjs <format> [out]     landscape | portrait | square: the MP4 (audited; portrait also as
+ *                                                 WebM), and its posters
  * The soundtrack is <out>/soundtrack.wav (tools/film/make-audio.py). Needs Playwright's Chromium and ffmpeg; frames are
  * drawn by SwiftShader, so a render does not depend on the machine's GPU. */
 const fs = require('fs'), path = require('path'), http = require('http'), {execFileSync} = require('child_process');
 const {chromium} = require('playwright');
 const root = path.resolve(__dirname, '..');
 const FORMATS = {landscape: [1920, 1080], portrait: [1080, 1920], square: [1080, 1080]};
-// The posters: the JPEGs the page's MP4 fallback and link previews use, and the stage's own WebP pictures.
+// The posters: the JPEGs the page's MP4 fallback and link previews use, and the stage's own pictures.
 const POSTERS = {landscape: ['film-poster-wide', [1280, 720]], portrait: ['film-poster', null], square: ['film-poster-square', [900, 900]]};
+// The encoders' settings: each film is visually lossless against its frames, at no more bytes than the flat film's.
+const H264 = ['-c:v', 'libx264', '-crf', '20', '-preset', 'veryslow', '-tune', 'animation', '-threads', '4'];
+const VP9 = ['-c:v', 'libvpx-vp9', '-crf', '30', '-b:v', '0', '-row-mt', '1', '-cpu-used', '2', '-threads', '4'];
 const mode = process.argv[2] || 'stills', OUT = path.resolve(process.argv[3] || '/tmp/offer-filter-film');
 fs.mkdirSync(OUT, {recursive: true});
 const stamp = s => { const m = Math.floor(s / 60), r = (s - m * 60).toFixed(3).padStart(6, '0'); return `${String(m).padStart(2, '0')}:${r}`; };
@@ -53,12 +57,16 @@ async function main() {
       const bounds = await page.evaluate(([t, w, h]) => window.renderFrame(t, w, h), [t, w, h]);
       return {bounds, png: await page.screenshot({type: 'png', clip: {x: 0, y: 0, width: w, height: h}})};
     };
-    // The closing frame as the format's JPEG poster and, for the stage, a smaller WebP.
+    // The closing frame as the format's JPEG poster and, for the stage, smaller pictures: AVIF, and WebP where a browser
+    // has no AVIF.
     const posters = async (name, w, h) => {
       const still = path.join(OUT, `poster-${name}.png`), [poster, small] = POSTERS[name];
       fs.writeFileSync(still, (await shot(POSTER, w, h)).png);
       execFileSync('ffmpeg', ['-y', '-v', 'error', '-i', still, '-q:v', '2', path.join(OUT, `${poster}.jpg`)]);
-      if (small) execFileSync('ffmpeg', ['-y', '-v', 'error', '-i', still, '-vf', `scale=${small[0]}:${small[1]}:flags=lanczos`, '-c:v', 'libwebp', '-quality', '80', '-compression_level', '6', path.join(OUT, `${poster}.webp`)]);
+      if (!small) return;
+      const scale = ['-vf', `scale=${small[0]}:${small[1]}:flags=lanczos`];
+      execFileSync('ffmpeg', ['-y', '-v', 'error', '-i', still, ...scale, '-c:v', 'libwebp', '-quality', '80', '-compression_level', '6', path.join(OUT, `${poster}.webp`)]);
+      execFileSync('ffmpeg', ['-y', '-v', 'error', '-i', still, ...scale, '-c:v', 'libaom-av1', '-still-picture', '1', '-crf', '32', '-cpu-used', '4', '-threads', '1', '-pix_fmt', 'yuv420p', path.join(OUT, `${poster}.avif`)]);
     };
     for (const [name, [w, h]] of Object.entries(FORMATS)) {
       if (!['stills', 'audit', 'posters', name].includes(mode)) continue;
@@ -97,9 +105,13 @@ async function main() {
         if (!fs.existsSync(wav)) throw Error(`${wav} is missing: run python3 tools/film/make-audio.py ${OUT}`);
         // Captions ride along as a soft subtitle track, so a saved film keeps them.
         execFileSync('ffmpeg', ['-nostdin', '-y', '-v', 'error', '-framerate', String(FPS), '-i', path.join(frames, '%04d.png'), '-i', wav, '-i', captions,
-          '-map', '0:v', '-map', '1:a', '-map', '2:s', '-c:v', 'libx264', '-crf', '18', '-preset', 'medium', '-tune', 'animation', '-threads', '4', '-pix_fmt', 'yuv420p',
+          '-map', '0:v', '-map', '1:a', '-map', '2:s', ...H264, '-pix_fmt', 'yuv420p',
           '-c:a', 'aac', '-b:a', '192k', '-c:s', 'mov_text', '-metadata:s:s:0', 'language=eng', '-movflags', '+faststart', '-frames:v', String(FRAMES),
           '-t', String(DURATION), '-map_metadata', '-1', path.join(OUT, `offer-filter-${name}.mp4`)], {stdio: 'inherit'});
+        // The portrait film also as WebM (VP9 and Opus), from the same frames.
+        if (name === 'portrait') execFileSync('ffmpeg', ['-nostdin', '-y', '-v', 'error', '-framerate', String(FPS), '-i', path.join(frames, '%04d.png'), '-i', wav,
+          '-map', '0:v', '-map', '1:a', ...VP9, '-pix_fmt', 'yuv420p', '-c:a', 'libopus', '-b:a', '160k', '-frames:v', String(FRAMES),
+          '-map_metadata', '-1', path.join(OUT, `offer-filter-${name}.webm`)], {stdio: 'inherit'});
       }
       const report = {format: name, width: w, height: h, frames: FRAMES, fps: FPS, duration: DURATION, renderer: film.renderer, minimumTextMargins: minima, checkedTextDraws: byScene, violations};
       fs.writeFileSync(path.join(OUT, `${name}-text-validation.json`), JSON.stringify(report, null, 2) + '\n');

@@ -1,27 +1,34 @@
 /* The film, drawn live. OfferFilm renders each frame, clocked by the soundtrack, so the page downloads a few hundred
  * kilobytes of audio instead of megabytes of video and stays sharp at any size: its art in 3D (WebGL, on a canvas off
  * the page), copied into the film's canvas under its words and the app's screen, so the page composites one layer.
- * Until someone reaches for it, the stage shows its closing frame as a picture and no renderer exists. The MP4 renders
- * of the same frames remain the fallback without script or WebGL. */
+ * Until someone reaches for it, the stage shows its closing frame as a picture, and neither the renderer nor its
+ * scripts exist. The MP4 renders of the same frames remain the fallback without script or WebGL. */
 (() => {
   'use strict';
   const $ = id => document.getElementById(id);
-  const GL = window.OfferGL, stage = $('film-stage'), canvas = $('film-canvas');
-  // The film's own script (assets/film.js, OfferFilm) loads with the app's views when the film is first wanted.
+  const stage = $('film-stage'), canvas = $('film-canvas');
+  // The film's own script (assets/film.js, OfferFilm) loads with the renderer, the models and the app's views when the
+  // film is first wanted.
   let F = null;
-  // Without the film's script or WebGL, page.js plays the MP4 instead: at once without the script; when WebGL turns out
-  // to be missing as the film is first wanted, through the 'unavailable' event.
+  // Without the film's script or WebGL, page.js plays the MP4 instead: at once without the script or WebGL; when a
+  // WebGL context turns out not to be made as the film is first wanted, through the 'unavailable' event.
   let ctx = null;
-  try { ctx = GL && canvas.getContext('2d'); } catch (e) {}
+  try { ctx = window.WebGLRenderingContext && canvas.getContext('2d'); } catch (e) {}
   if (!ctx) return;
   // The renderer, made on the film's first live frame. Where WebGL is drawn by the CPU, the moving art is drawn at half
   // the frame's pixels and smoothed up to it; a still frame (a pause) always at all of them.
   let r = null, quality = 1, live = false;
   let missing = false;
   function renderer() {
-    if (!r && !missing) {
-      r = GL.create(document.createElement('canvas'));
-      if (!r) { missing = true; setTimeout(() => player.dispatchEvent(new Event('unavailable')), 0); return null; }
+    if (!r && !missing && window.OfferGL) {
+      r = OfferGL.create(document.createElement('canvas'));
+      if (!r) {
+        // The film hands over to the MP4, which plays if the film was asked to.
+        missing = true; player.wanted = player.wanted || playing;
+        if (playing) { playing = false; if (!silent) audio.pause(); if (raf) cancelAnimationFrame(raf); raf = 0; }
+        setTimeout(() => player.dispatchEvent(new Event('unavailable')), 0);
+        return null;
+      }
       quality = r.software ? .5 : 1;
       // A lost WebGL context (a GPU reset, a long while in the background) comes back empty: build the renderer again.
       r.canvas.addEventListener('webglcontextlost', e => e.preventDefault());
@@ -31,7 +38,7 @@
   }
   const audio = $('film-audio'), controls = $('film-controls'), seek = $('film-seek'), clockText = $('film-time'), cue = $('film-cue');
   const button = act => controls.querySelector(`[data-act="${act}"]`);
-  const MEDIA = '?v=20261007-3d2', D = +seek.max;
+  const MEDIA = '?v=20261007-3d3', D = +seek.max;
   const SIZES = {landscape: [1920, 1080], square: [1080, 1080], portrait: [1080, 1920]};
   const player = new EventTarget();
   let format = 'landscape', comp = SIZES.landscape, scale = 1, ox = 0, oy = 0, visible = true;
@@ -113,7 +120,7 @@
     emit('ended');
   }
   player.play = () => {
-    if (!renderer()) { player.wanted = true; return Promise.resolve(); }
+    if (missing) { player.wanted = true; return Promise.resolve(); }
     loadApp(); live = true;
     if (!started || ended) { started = true; seekTo(0); }
     playing = true; ended = false; controls.hidden = false; showControls();
@@ -233,13 +240,15 @@
     visible = entries[entries.length - 1].isIntersecting;
     if (visible && ready && live) draw();
   }).observe(stage);
-  // The film's script and the app's own views (assets/app/, which draw the phone in the film's middle) load only when
-  // the film is wanted, in order, with the Roboto the app's words are drawn in.
+  // The renderer and the models (unless the page's scenery already loaded them here), the app's own views (assets/app/,
+  // which draw the phone in the film's middle) and the film's script load only when the film is wanted, in order, with
+  // the Roboto the app's words are drawn in.
   let app = null;
   function loadApp() {
     if (app) return app;
     app = fetch(`assets/app/files.json${MEDIA}`).then(r => r.json()).then(files => new Promise(resolve => {
-      const list = files.map(file => `assets/app/${file}`).concat('assets/film.js');
+      const list = [window.OfferGL ? null : 'assets/gl.js', window.OfferModels ? null : 'assets/models.js'].filter(Boolean)
+        .concat(files.map(file => `assets/app/${file}`), 'assets/film.js');
       let left = list.length;
       for (const src of list) {
         const script = Object.assign(document.createElement('script'), {src: src + MEDIA, async: false});
