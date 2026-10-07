@@ -324,7 +324,8 @@ async function main() {
       assert.equal(await page.evaluate(() => document.getElementById('download-meta').nextElementSibling.id), 'beta-pending');
       if (release.versionCode < upcoming) {
         const note = await page.locator('#beta-pending').textContent();
-        assert(note.includes(release.versionName) && note.includes('New in 0.5.0'), 'pending note: ' + note);
+        const upcomingName = await page.locator('#whats-new').getAttribute('data-version-name');
+        assert(note.includes(release.versionName) && note.includes('New in ' + upcomingName), 'pending note: ' + note);
         const gap = await page.evaluate(() => document.getElementById('beta-pending').getBoundingClientRect().top - document.getElementById('download-apk').getBoundingClientRect().bottom);
         assert(gap < 200, 'pending note close to the button: ' + gap);
       }
@@ -394,7 +395,8 @@ async function main() {
         'resume from Offer Filter’s home screen', 'Peek waits for Dasher’s offer', 'unlock within 40 seconds',
         'keeps your screen from timing out', 'the power button still turns the screen off', 'Peek pauses while your phone is locked',
         'Send anonymous feedback', 'feedback form', 'Android 8', 'New in 0.5.0', 'Attach masked diagnostics',
-        'Share anonymous diagnostics after each dash', 'Both start off', 'The screens you’re most likely to see']) {
+        'Share anonymous diagnostics after each dash', 'Both start off', 'The screens you’re most likely to see',
+        'New in 0.5.1', 'Your minimums grow', 'Let my minimums grow', 'at most 10% at a time']) {
         assert(text.includes(phrase), 'install page lacks: ' + phrase);
       }
       // Retired in 0.5.0: per-minute and per-item rules, and the setup labels the homepage checklist replaced (Settings'
