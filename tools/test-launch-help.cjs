@@ -8,12 +8,12 @@
  * download button is labelled from assets/release.json, the install steps (every risk statement, and the 0.5.0
  * guide's words with none of the retired ones) and legal pages are present, the
  * feedback form's messages for 201/429/400/413/offline/network/timeout, the dialogs and their addresses
- * (#help, #feedback, ...), reduced motion and the 30 fps cap, and that a phone fetches one poster and one small
- * signature image.
+ * (#help, #feedback, ...), reduced motion (the 3D scenery still, nothing of the film loaded), the muted film loop's
+ * 30 fps cap, and that a phone fetches one poster and one emblem image and no video or soundtrack before Play.
  *
- * It also checks dark mode (the home page starts at night; the reading pages switch palette, with readable contrast),
- * the iPhone visitor's path, the film's controls, and that the landscape copies its still backdrop instead of
- * redrawing it.
+ * It also checks dark mode (with the sky on System, a dark device gets the night sky; the reading pages switch palette,
+ * with readable contrast), the iPhone visitor's path, and the film player's controls and captions button.
+ * tools/test-site.cjs covers the live film, its player and the 3D scenery in depth.
  *
  * Release gates come last. The site may be deployed only when they pass: the legal pages carry no drafting notes,
  * the app's own privacy text names the same private contact as the site, and once assets/release.json is 0.5.0 or
@@ -22,7 +22,7 @@
  *
  * Nothing leaves this machine: every request that is not to the local server is answered by a fake or aborted, so
  * the real feedback endpoint never receives anything. Needs Playwright with Chromium (set CHROMIUM_EXECUTABLE_PATH
- * to use a specific browser binary).
+ * to use a specific browser binary); WebGL is drawn by SwiftShader, as in tools/test-site.cjs, so no GPU is needed.
  */
 const assert = require('node:assert/strict');
 const http = require('node:http');
@@ -41,9 +41,9 @@ const PAGES = ['/', '/install/', '/privacy/', '/terms/', '/license/', '/404.html
 const WIDTHS = [360, 1366];
 const MIME = {
   '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json',
-  '.png': 'image/png', '.jpg': 'image/jpeg', '.webp': 'image/webp', '.svg': 'image/svg+xml', '.vtt': 'text/vtt',
-  '.mp4': 'video/mp4', '.webm': 'video/webm', '.woff2': 'font/woff2', '.ttf': 'font/ttf', '.xml': 'application/xml',
-  '.txt': 'text/plain', '.md': 'text/markdown', '.mp3': 'audio/mpeg',
+  '.png': 'image/png', '.jpg': 'image/jpeg', '.webp': 'image/webp', '.avif': 'image/avif', '.svg': 'image/svg+xml',
+  '.vtt': 'text/vtt', '.mp4': 'video/mp4', '.webm': 'video/webm', '.m4a': 'audio/mp4', '.woff2': 'font/woff2',
+  '.ttf': 'font/ttf', '.xml': 'application/xml', '.txt': 'text/plain', '.md': 'text/markdown', '.mp3': 'audio/mpeg',
 };
 
 function loadPlaywright() {
@@ -67,8 +67,12 @@ function serve() {
       res.writeHead(404, {'Content-Type': MIME['.html']}).end(fs.readFileSync(path.join(root, '404.html')));
       return;
     }
-    res.writeHead(200, {'Content-Type': MIME[path.extname(file)] || 'application/octet-stream'});
-    fs.createReadStream(file).pipe(res);
+    const type = MIME[path.extname(file)] || 'application/octet-stream', size = fs.statSync(file).size;
+    const range = /bytes=(\d*)-(\d*)/.exec(req.headers.range || '');
+    if (!range) { res.writeHead(200, {'Content-Type': type, 'Content-Length': size, 'Accept-Ranges': 'bytes'}); fs.createReadStream(file).pipe(res); return; }
+    const start = range[1] ? +range[1] : 0, end = range[2] ? Math.min(+range[2], size - 1) : size - 1;
+    res.writeHead(206, {'Content-Type': type, 'Content-Range': `bytes ${start}-${end}/${size}`, 'Content-Length': end - start + 1, 'Accept-Ranges': 'bytes'});
+    fs.createReadStream(file, {start, end}).pipe(res);
   });
   return new Promise(resolve => server.listen(0, '127.0.0.1', () => resolve(server)));
 }
@@ -133,7 +137,7 @@ async function main() {
   const {chromium} = loadPlaywright();
   const server = await serve();
   const base = `http://127.0.0.1:${server.address().port}`;
-  const browser = await chromium.launch({headless: true,
+  const browser = await chromium.launch({headless: true, args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'],
     ...(process.env.CHROMIUM_EXECUTABLE_PATH ? {executablePath: process.env.CHROMIUM_EXECUTABLE_PATH} : {})});
   const escaped = [];
 
@@ -228,34 +232,50 @@ async function main() {
     for (const loc of listed) assert.equal(await get(base, loc), 200, 'sitemap ' + loc);
     assert.match(fs.readFileSync(path.join(root, 'robots.txt'), 'utf8'), /Sitemap: https:\/\/offerfilter\.org\/sitemap\.xml/);
     assert.equal(await get(base, '/no-such-page/'), 404);
-    for (const width of WIDTHS) {
-      const ctx = await context({viewport: {width, height: 760}});
-      const page = await ctx.newPage();
-      for (const name of ['help', 'feedback', 'about', 'tip']) {
-        await page.goto(base + '/#' + name, {waitUntil: 'networkidle'});
-        assert(await page.locator(`#${name}-dialog`).evaluate(d => d.open), name + ' opens');
-        assert.deepEqual(await page.evaluate(smallText), [], `#${name} at ${width}px has text under 11px`);
-        const fit = await page.locator(`#${name}-dialog`).evaluate(d => ({scroll: d.scrollWidth, client: d.clientWidth, right: d.getBoundingClientRect().right}));
-        assert(fit.scroll <= fit.client && fit.right <= width, `#${name} at ${width}px overflows: ${JSON.stringify(fit)}`);
+    // The dialogs by day and by night (the sky set as the sky button would leave it); Help also at the narrow widths
+    // the earlier help test covered.
+    const DIALOGS = ['help', 'feedback', 'about', 'tip'];
+    for (const [width, names] of [[320, ['help']], [WIDTHS[0], DIALOGS], [400, ['help']], [520, ['help']], [WIDTHS[1], DIALOGS]]) {
+      for (const sky of ['DAY', 'NIGHT']) {
+        const ctx = await context({viewport: {width, height: 760}});
+        await ctx.addInitScript(mode => { try { localStorage.setItem('offerfilter.theme', mode); } catch (e) {} }, sky);
+        const page = await ctx.newPage();
+        const errors = watch(page);
+        for (const name of names) {
+          await page.goto(base + '/#' + name, {waitUntil: 'networkidle'});
+          assert(await page.locator(`#${name}-dialog`).evaluate(d => d.open), name + ' opens');
+          assert.equal(await page.evaluate(() => document.body.classList.contains('night')), sky === 'NIGHT', `#${name} at ${width}px: ${sky}`);
+          assert.deepEqual(await page.evaluate(smallText), [], `#${name} at ${width}px (${sky}) has text under 11px`);
+          const fit = await page.locator(`#${name}-dialog`).evaluate(d => ({scroll: d.scrollWidth, client: d.clientWidth, right: d.getBoundingClientRect().right, page: document.documentElement.scrollWidth}));
+          assert(fit.scroll <= fit.client && fit.right <= width && fit.page <= width, `#${name} at ${width}px (${sky}) overflows: ${JSON.stringify(fit)}`);
+        }
+        assert.deepEqual(errors, [], `dialogs at ${width}px (${sky}) errors`);
+        await ctx.close();
       }
-      await ctx.close();
     }
-    pass('pages', `${PAGES.length} pages and 4 dialogs at ${WIDTHS.join(' and ')} px: no overflow, no text under 11px, no console errors, ${checkedUrls.size} local URLs resolve`);
+    pass('pages', `${PAGES.length} pages at ${WIDTHS.join(' and ')} px and the 4 dialogs at those widths (Help also at 320, 400 and 520 px), by day and night: no overflow, no text under 11px, no console errors, ${checkedUrls.size} local URLs resolve`);
 
     // 2. One cache-buster for every local asset reference.
     const tokens = new Set();
     for (const file of ['index.html', 'install/index.html', 'privacy/index.html', 'terms/index.html', 'license/index.html', '404.html', 'style.css', 'doc.css', 'install/install.js']) {
       const text = fs.readFileSync(path.join(root, file), 'utf8');
-      for (const [, ref, token] of text.matchAll(/(?:href|src|srcset|url\(|data-[\w-]+)=?["(]?([^"')\s]+\.(?:css|js|png|jpg|webp|svg|woff2|mp4|vtt))(?:\?v=([\w.-]+))?/g)) {
+      for (const [, ref, token] of text.matchAll(/(?:href|src|srcset|url\(|data-[\w-]+)=?["(]?([^"')\s]+\.(?:css|js|png|jpg|webp|avif|svg|woff2|mp4|webm|m4a|vtt))(?:\?v=([\w.-]+))?/g)) {
         if (/^https?:/.test(ref)) continue;
         assert(token, `${file}: ${ref} has no ?v= cache-buster`);
         tokens.add(token);
       }
     }
+    // The scripts that load the film, its app views, the renderer and the scenery's worker carry the same version.
+    for (const file of ['page.js', 'player.js', 'scene.js']) {
+      const versions = [...fs.readFileSync(path.join(root, file), 'utf8').matchAll(/'\?v=([\w.-]+)'/g)].map(m => m[1]);
+      assert(versions.length, `${file} names no ?v= version`);
+      versions.forEach(token => tokens.add(token));
+    }
     assert.equal(tokens.size, 1, 'cache-busters differ: ' + [...tokens].join(', '));
     pass('cache-busters', [...tokens][0]);
 
-    // 3. Payload: a phone fetches one poster, the small signature once, WOFF2 fonts only, never the 818 KB master.
+    // 3. Payload: a phone fetches one poster (AVIF), the 560 px emblem once, WOFF2 fonts only, never the 818 KB master,
+    // and no video or soundtrack before Play (the muted loop is drawn live, on the page's own clock).
     for (const width of WIDTHS) {
       const ctx = await context({viewport: {width, height: 860}});
       const page = await ctx.newPage();
@@ -266,15 +286,16 @@ async function main() {
       await page.waitForLoadState('networkidle');
       const count = re => fetched.filter(p => re.test(p)).length;
       assert.equal(count(/film-poster/), 1, `posters at ${width}px: ${fetched.filter(p => /poster/.test(p))}`);
-      assert.equal(count(width <= 600 ? /film-poster-square\.webp$/ : /film-poster-wide\.webp$/), 1);
-      assert.equal(count(/jesus-loves-you-signature\.(webp|png)$/), 1, 'signature fetched once');
+      assert.equal(count(width <= 600 ? /film-poster-square\.avif$/ : /film-poster-wide\.avif$/), 1);
+      assert.equal(count(/jesus-loves-you-emblem-560\.png$/), 1, 'emblem fetched once');
       assert.equal(count(/jesus-loves-you-emblem\.png$/), 0, 'emblem master not fetched');
       assert.equal(count(/\.ttf$/), 0, 'no TTF fonts');
-      assert(count(/baloo2-latin\.woff2$/) === 1 && count(/atkinson-latin\.woff2$/) === 1, 'WOFF2 fonts once each');
+      assert(count(/baloo2-latin\.woff2$/) === 1 && count(/atkinson-hyperlegible-latin\.woff2$/) === 1, 'WOFF2 fonts once each');
       assert.equal(count(/\.mp4$/), 0, 'film not fetched before play');
+      assert.equal(count(/film-soundtrack/), 0, 'soundtrack not fetched before play');
       await ctx.close();
     }
-    pass('payload', 'one poster per layout, one signature image, WOFF2 fonts, no film until Play');
+    pass('payload', 'one AVIF poster per layout, one emblem image, WOFF2 fonts, no video or soundtrack until Play');
 
     // 4. The download: labelled from release.json, and a plain link that works without JavaScript.
     {
@@ -600,94 +621,109 @@ async function main() {
       await page.keyboard.press('Escape');
       await page.waitForFunction(() => !document.getElementById('help-dialog').open && location.hash === '');
       assert.equal(await page.evaluate(() => location.href), base + '/');
-      // The film's captions switch is visible and works.
-      assert(await page.locator('#captions-toggle').isVisible(), 'captions switch visible');
-      assert.equal(await page.getByRole('button', {name: 'Captions', exact: true}).count(), 1, 'captions switch keeps its name');
-      assert.match((await page.locator('#captions-toggle').innerText()).replace(/\s+/g, ' ').trim(), /^Captions (on|off)$/, 'captions switch reads "Captions on/off"');
-      const pressed = await page.locator('#captions-toggle').getAttribute('aria-pressed');
-      await page.click('#captions-toggle');
-      assert.notEqual(await page.locator('#captions-toggle').getAttribute('aria-pressed'), pressed, 'captions toggle');
-      // The player's controls stay off the poster (and its "Not affiliated with DoorDash" line) until the film plays,
-      // and leave again when it ends. Without JavaScript the HTML's own controls remain.
-      assert.match(fs.readFileSync(path.join(root, 'index.html'), 'utf8'), /<video id="film" controls /, 'controls without JavaScript');
-      const film = page.locator('#film');
-      assert.equal(await film.evaluate(v => v.controls), false, 'no controls over the poster');
-      await film.evaluate(v => v.dispatchEvent(new Event('play')));
-      assert.equal(await film.evaluate(v => v.controls), true, 'controls while the film plays');
-      await film.evaluate(v => v.dispatchEvent(new Event('ended')));
-      assert.equal(await film.evaluate(v => v.controls), false, 'controls leave when it ends');
+      // The film's player: its controls stay off the poster (and its "Not affiliated with DoorDash" line) and off the
+      // muted loop, come up when the film plays with sound, with a Captions button, and leave again when the film goes
+      // back to its loop after the end. Without JavaScript the <noscript> video keeps its own controls.
+      assert.match(fs.readFileSync(path.join(root, 'index.html'), 'utf8'), /<noscript><video controls /, 'controls without JavaScript');
+      const controls = page.locator('#film-controls');
+      assert(await controls.isHidden(), 'no player controls over the poster or the muted loop');
+      await page.click('#film-play');
+      await page.waitForFunction(() => !document.getElementById('film-controls').hidden && window.offerFilm && !offerFilm.paused && !offerFilm.quiet, null, {timeout: 20000});
+      const captions = page.getByRole('button', {name: 'Captions', exact: true});
+      assert.equal(await captions.count(), 1, 'the player has one Captions button');
+      const pressed = await captions.getAttribute('aria-pressed');
+      await captions.click();
+      assert.notEqual(await captions.getAttribute('aria-pressed'), pressed, 'captions toggle');
+      // The end offers a replay; then the muted loop comes back and the controls go. (Played from 20.3 s, as in
+      // tools/test-site.cjs: started at the very end, the film can finish before its soundtrack's own "play" event
+      // arrives, and that late event starts it over.)
+      await page.click('[data-act=toggle]');
+      await page.evaluate(() => { const seek = document.getElementById('film-seek'); seek.value = 20.3; seek.dispatchEvent(new Event('input')); });
+      await page.click('[data-act=toggle]');
+      await page.waitForFunction(() => !document.getElementById('film-play').hidden && window.offerFilm.ended, null, {timeout: 10000});
       assert.equal(await page.locator('#film-play').textContent(), '▶Replay film');
+      await page.waitForFunction(() => window.offerFilm.quiet && !offerFilm.paused && document.getElementById('film-controls').hidden, null, {timeout: 10000});
       assert.deepEqual(errors, [], 'dialog errors');
       await ctx.close();
-      pass('dialogs', 'labelled; Tab/Enter/Escape; #help/#feedback addresses; Feedback→Help; Back closes; captions switch; film controls only while playing');
+      pass('dialogs', 'labelled; Tab/Enter/Escape; #help/#feedback addresses; Feedback→Help; Back closes; player controls only while the film plays with sound, Captions button, Replay at the end');
     }
 
-    // 8. Motion: reduced motion stops the landscape; otherwise it draws at most ~30 frames a second.
+    // 8. Motion: reduced motion keeps the 3D scenery still and the film a picture (nothing of it loads); otherwise the
+    // scenery rides and the film loops muted at most ~30 frames a second; Pause motion rests both. The scenery is drawn
+    // on the page's thread here (as browsers without OffscreenCanvas draw it), so its frames can be counted.
     {
-      // A frame sets the page canvas's scale once; gradients on the page canvas mean the still backdrop was redrawn
-      // instead of copied from its offscreen canvas.
-      const countDraws = () => {
-        window.__draws = 0;
-        window.__gradients = 0;
-        const proto = CanvasRenderingContext2D.prototype;
-        const original = proto.setTransform;
-        proto.setTransform = function (...args) {
-          if (this.canvas && this.canvas.id === 'landscape') window.__draws++;
-          return original.apply(this, args);
+      // A frame of either clears its WebGL canvas once: the scenery's is #landscape, the film's 3D layer is off the page.
+      const countFrames = () => {
+        delete HTMLCanvasElement.prototype.transferControlToOffscreen;
+        window.__frames = {scenery: 0, film: 0};
+        const clear = WebGLRenderingContext.prototype.clear;
+        WebGLRenderingContext.prototype.clear = function (mask) {
+          if (this.canvas && this.canvas.id === 'landscape') window.__frames.scenery++;
+          else if (this.canvas && !this.canvas.isConnected) window.__frames.film++;
+          return clear.call(this, mask);
         };
-        for (const name of ['createLinearGradient', 'createRadialGradient']) {
-          const create = proto[name];
-          proto[name] = function (...args) {
-            if (this.canvas && this.canvas.id === 'landscape') window.__gradients++;
-            return create.apply(this, args);
-          };
-        }
       };
-      let gradients = 0;
       const measure = async page => {
-        const start = await page.evaluate(() => [window.__draws, window.__gradients]);
+        const start = await page.evaluate(() => ({...window.__frames}));
         await page.waitForTimeout(2000);
-        const end = await page.evaluate(() => [window.__draws, window.__gradients]);
-        gradients = end[1] - start[1];
-        return end[0] - start[0];
+        const end = await page.evaluate(() => ({...window.__frames}));
+        return {scenery: end.scenery - start.scenery, film: end.film - start.film};
       };
+      const sceneryDrawn = page => page.waitForFunction(() => document.body.classList.contains('sky-3d'), null, {timeout: 20000});
       const reduced = await context({viewport: {width: 1366, height: 860}, reducedMotion: 'reduce'});
-      await reduced.addInitScript(countDraws);
+      await reduced.addInitScript(countFrames);
       const still = await reduced.newPage();
       await still.goto(base + '/', {waitUntil: 'networkidle'});
+      await sceneryDrawn(still);
       assert.equal(await still.locator('#motion-toggle').textContent(), 'Resume motion');
       assert.equal(await still.locator('#motion-toggle').getAttribute('aria-pressed'), 'true');
       assert(await still.evaluate(() => document.body.classList.contains('motion-paused')));
       assert.equal(await still.locator('.atmosphere i').first().evaluate(i => getComputedStyle(i).animationName), 'none');
-      const stillDraws = await measure(still);
-      assert.equal(stillDraws, 0, 'reduced motion: landscape still');
+      const stillFrames = await measure(still);
+      assert.deepEqual(stillFrames, {scenery: 0, film: 0}, 'reduced motion: scenery and film still');
+      const held = await still.evaluate(() => ({film: !!window.OfferFilm, paused: window.offerFilm.paused, button: document.querySelector('#film-play b').textContent}));
+      assert(!held.film && held.paused && held.button === 'Play film', 'reduced motion: the film stays a picture, nothing of it loaded ' + JSON.stringify(held));
       await reduced.close();
       const moving = await context({viewport: {width: 1366, height: 860}, reducedMotion: 'no-preference'});
-      await moving.addInitScript(countDraws);
+      await moving.addInitScript(countFrames);
       const page = await moving.newPage();
       await page.goto(base + '/', {waitUntil: 'networkidle'});
-      const draws = await measure(page);
-      assert(draws >= 4 && draws <= 66, `about 30 fps: ${draws} draws in 2 s`);
-      assert.equal(gradients, 0, 'the still backdrop is copied, not redrawn, each frame');
+      await sceneryDrawn(page);
+      await page.waitForFunction(() => window.offerFilm && offerFilm.quiet && !offerFilm.paused, null, {timeout: 30000});
+      const frames = await measure(page);
+      assert(frames.scenery >= 4, `the scenery rides: ${frames.scenery} frames in 2 s`);
+      assert(frames.film >= 1 && frames.film <= 66, `the muted loop at about 30 fps or less: ${frames.film} frames in 2 s`);
       await page.click('#motion-toggle');
-      assert.equal(await measure(page), 0, 'Pause motion stops it');
+      assert.deepEqual(await measure(page), {scenery: 0, film: 0}, 'Pause motion rests the scenery and the loop');
       await moving.close();
-      pass('motion', `reduced motion: 0 draws; running: ${draws} draws in 2 s (cap 60), backdrop copied (0 gradients); Pause motion: 0`);
+      pass('motion', `reduced motion: 0 scenery and 0 film frames, nothing of the film loaded; running: scenery ${frames.scenery} and muted loop ${frames.film} frames in 2 s (loop cap 66); Pause motion: 0`);
     }
 
-    // 9. Dark mode: the home page starts at night; the reading pages switch palette and keep readable contrast.
+    // 9. Dark mode: with the sky on System (the sky button cycles Day, Night, System and Auto, as the app's does), a dark
+    // device gets the night sky from the first paint and the browser's bars follow; the reading pages switch palette
+    // and keep readable contrast.
     {
       const dark = await context({viewport: {width: 360, height: 800}, colorScheme: 'dark'});
+      await dark.addInitScript(() => { try { if (!localStorage.getItem('offerfilter.theme')) localStorage.setItem('offerfilter.theme', 'SYSTEM'); } catch (e) {} });
       const page = await dark.newPage();
       const errors = watch(page);
       await page.goto(base + '/', {waitUntil: 'networkidle'});
-      assert(await page.evaluate(() => document.body.classList.contains('night')), 'home page starts at night');
-      assert.equal(await page.locator('#sky-toggle').getAttribute('aria-label'), 'Switch to day');
+      assert(await page.evaluate(() => document.body.classList.contains('night')), 'System sky on a dark device: night');
+      assert.match(await page.locator('#sky-toggle').getAttribute('aria-label'), /^Sky: System, night, follows this device\./);
       assert.equal(await page.locator('meta[name="theme-color"]').getAttribute('content'), '#102032');
-      const skyTop = await page.evaluate(() => [...document.getElementById('landscape').getContext('2d').getImageData(4, 4, 1, 1).data]);
-      assert(skyTop[0] < 60 && skyTop[1] < 70 && skyTop[2] < 90, 'night sky drawn from the start: ' + skyTop);
-      await page.click('#sky-toggle');
+      const shot = await page.screenshot({clip: {x: 0, y: 0, width: 8, height: 8}});
+      const skyTop = await page.evaluate(async png => {
+        const image = new Image();
+        image.src = 'data:image/png;base64,' + png;
+        await image.decode();
+        const canvas = Object.assign(document.createElement('canvas'), {width: 8, height: 8}), g = canvas.getContext('2d');
+        g.drawImage(image, 0, 0);
+        return [...g.getImageData(4, 4, 1, 1).data];
+      }, shot.toString('base64'));
+      assert(skyTop[0] < 60 && skyTop[1] < 70 && skyTop[2] < 90, 'night sky from the start: ' + skyTop);
+      for (let taps = 0; taps < 3 && (await page.evaluate(() => document.getElementById('sky-toggle').dataset.mode)) !== 'DAY'; taps++) await page.click('#sky-toggle');
       assert(!(await page.evaluate(() => document.body.classList.contains('night'))), 'the sky button still switches to day');
+      assert.equal(await page.locator('meta[name="theme-color"]').getAttribute('content'), '#efe9db', 'the browser\'s bars follow the sky');
       const contrast = {};
       for (const scheme of ['dark', 'light']) {
         await page.emulateMedia({colorScheme: scheme});
@@ -699,7 +735,7 @@ async function main() {
       }
       assert.deepEqual(errors, [], 'dark mode errors');
       await dark.close();
-      pass('dark mode', `home starts at night; reading pages at least ${Math.min(...Object.values(contrast.dark))}:1 dark, ${Math.min(...Object.values(contrast.light))}:1 light`);
+      pass('dark mode', `System sky: night on a dark device, theme colour following; reading pages at least ${Math.min(...Object.values(contrast.dark))}:1 dark, ${Math.min(...Object.values(contrast.light))}:1 light`);
     }
 
     // Release gates: what must be true of the published texts before this site is deployed.
