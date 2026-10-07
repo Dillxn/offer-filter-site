@@ -23,8 +23,8 @@ async function main() {
     for(const width of [320,400,520,1280]) for(const night of [false,true]) {
       const page=await browser.newPage({viewport:{width,height:900}});
       const errors=[];page.on('pageerror',e=>errors.push(e.message));
+      await page.addInitScript(mode => localStorage.setItem('offerfilter.theme', mode), night ? 'NIGHT' : 'DAY');
       await page.goto(base,{waitUntil:'networkidle'});
-      if(night) await page.locator('#sky-toggle').click();
       await page.locator('#help-open').click();
       assert.equal(await page.locator('#help-dialog').evaluate(d=>d.open),true);
       const copy=await page.locator('#help-dialog').innerText();

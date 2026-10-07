@@ -67,7 +67,7 @@ header{position:relative;z-index:2;flex:none;display:flex;align-items:center;jus
 
 /* The film plays live in a canvas; until someone reaches for it, its closing frame stands in as a picture. */
 .film-section{position:relative;min-width:0;scroll-margin-top:24px}
-.film-stage{position:relative;container-type:inline-size;aspect-ratio:16/9;width:100%;overflow:hidden;border-radius:12px;background:url(assets/film-poster-wide.webp?v=3d-20261007) center/cover no-repeat,linear-gradient(160deg,#d6e5e6,#efdfbd 55%,#f6b585);box-shadow:0 22px 65px #16364426}
+.film-stage{position:relative;container-type:inline-size;aspect-ratio:16/9;width:100%;overflow:hidden;border-radius:12px;background:url(assets/film-poster-wide.webp?v=20261007-3d) center/cover no-repeat,linear-gradient(160deg,#d6e5e6,#efdfbd 55%,#f6b585);box-shadow:0 22px 65px #16364426}
 .film-stage canvas{display:block;width:100%;height:100%}
 .film-stage video{position:absolute;inset:0;z-index:3;display:block;width:100%;height:100%;object-fit:contain;background:#0b1725}
 .film-video video{z-index:auto}
@@ -174,7 +174,7 @@ body.night{--ink:#d9dfd0;--halo:#1d3036;color:#e9e5d5}
 @media(min-width:1700px){.hero-content{gap:8%;width:88%;margin-top:90px;margin-bottom:130px;margin-top:clamp(16px,9svh - 8px,90px);margin-bottom:clamp(56px,15svh - 12px,130px)}}
 @media(max-width:1050px){.hero-content{gap:4%;width:100%}.intro h1{font-size:clamp(48px,5.5vw,65px)}.lede{font-size:15px}.primary,.source-button{font-size:13px;padding:14px 16px}}
 @media(max-width:850px){.world{padding:22px 6% 20px}footer{display:block}.footer-links{justify-content:center}.signature{width:min(144px,100%);margin:24px auto 12px}.wordmark{font-size:26px;gap:9px}.wordmark img{width:51px;height:51px}.hero-content{grid-template-columns:minmax(0,1fr);gap:36px;max-width:590px;margin:40px auto 90px}.intro h1{font-size:clamp(51px,9vw,72px);letter-spacing:-2.6px;margin-bottom:18px}.lede{font-size:16px;max-width:440px;line-height:1.55;margin-bottom:22px}.primary,.source-button{font-size:14px;padding:15px 18px}.footer-links{gap:8px 20px}.atmosphere i:nth-child(1){width:90vw;height:90vw}.atmosphere i:nth-child(2){width:70vw;height:70vw}}
-@media(max-width:600px){.film-stage{aspect-ratio:1;background-image:url(assets/film-poster-square.webp?v=3d-20261007),linear-gradient(160deg,#d6e5e6,#efdfbd 55%,#f6b585)}.app-actions>*{flex:1 1 auto}}
+@media(max-width:600px){.film-stage{aspect-ratio:1;background-image:url(assets/film-poster-square.webp?v=20261007-3d),linear-gradient(160deg,#d6e5e6,#efdfbd 55%,#f6b585)}.app-actions>*{flex:1 1 auto}}
 @media(max-width:480px){.world{padding-left:7%;padding-right:7%}.wordmark{font-size:24px}.wordmark img{width:46px;height:46px}.sky-toggle{width:44px;height:44px}.hero-content{margin-top:34px;margin-bottom:70px;gap:32px}.intro h1{font-size:clamp(46px,12vw,58px);letter-spacing:-2px;line-height:1.04}.lede{font-size:15px}.primary,.source-button{font-size:14px;padding:14px 16px}.tip-options a{padding:15px 11px}}
 /* The page arrives gently, and turns with the sky: while page.js marks a change of sky, colors ease over the sky's own
    sunset or sunrise. */

@@ -1,65 +1,114 @@
 #!/usr/bin/env node
-const fs=require('fs'),path=require('path'),{spawn}=require('child_process');
-let canvas;try{canvas=require('@napi-rs/canvas')}catch(e){if(!process.env.CODEX_PRIMARY_RUNTIME_NODE_MODULES)throw e;canvas=require(path.join(process.env.CODEX_PRIMARY_RUNTIME_NODE_MODULES,'@napi-rs/canvas'));}
-const {createCanvas,GlobalFonts,loadImage,Path2D}=canvas;global.Path2D=Path2D;
-const root=path.resolve(__dirname,'..');
-// Skia ignores weight on variable fonts, so the film's bold Baloo 2 is a static 700 instance (tools/make-fonts.sh).
-for(const[file,name]of[['baloo2-bold-latin.ttf','Baloo 2'],['AtkinsonHyperlegible-Regular.ttf','Atkinson Hyperlegible'],['roboto-400-latin.ttf','Roboto'],['roboto-500-latin.ttf','Roboto']]){if(!GlobalFonts.registerFromPath(path.join(root,'assets',file),name))throw Error('Font failed: '+file);}
-// The app's own views (assets/app/), drawn inside the film's phone, load before the film as on the page.
-require('../assets/brand.js');for(const file of require('../assets/app/files.json'))require('../assets/app/'+file);require('../assets/film.js');
-// The app's ports draw a few things offscreen (a layer, a blurred shadow), as the page does with canvas elements.
-OfferApp.util.makeCanvas=(w,h)=>createCanvas(w,h);
-const {DURATION,FPS,POSTER,CAPTIONS}=OfferFilm,FRAMES=Math.round(DURATION*FPS);
-const FORMATS={landscape:[1920,1080],portrait:[1080,1920],square:[1080,1080]};
-const OUT=path.resolve(process.argv[3]||'/tmp/offer-filter-film');fs.mkdirSync(OUT,{recursive:true});
-const times=[2.6,4.7,6.5,10.5,12.9,14.9,17.9,POSTER];
-const stamp=s=>{const m=Math.floor(s/60),r=(s-m*60).toFixed(3).padStart(6,'0');return `${String(m).padStart(2,'0')}:${r}`;};
-function writeCaptions(){
- const vtt='WEBVTT\n\nNOTE Generated from OfferFilm.CAPTIONS in assets/film.js, timed to the narration take\'s word boundaries.\n\n'+CAPTIONS.map(([a,b,s])=>`${stamp(a)} --> ${stamp(b)}\n${s}\n`).join('\n');
- const file=path.join(OUT,'film-captions.vtt');fs.writeFileSync(file,vtt);return file;
+/* Renders the film (assets/film.js) as the page draws it: headless Chromium draws each frame through
+ * tools/film/render.html (its 3D art with WebGL, multisampled, under a 2D canvas of words and the app's screen) and
+ * ffmpeg encodes the frames.
+ *   node tools/render-film.cjs stills [out]       eight stills of each format and a contact sheet
+ *   node tools/render-film.cjs captions [out]     the WebVTT captions, from OfferFilm.CAPTIONS
+ *   node tools/render-film.cjs audit [out]        every frame's text-bounds audit, without video
+ *   node tools/render-film.cjs posters [out]      the posters alone
+ *   node tools/render-film.cjs <format> [out]     landscape | portrait | square: the MP4 (audited), and its posters
+ * The soundtrack is <out>/soundtrack.wav (tools/film/make-audio.py). Needs Playwright's Chromium and ffmpeg; frames are
+ * drawn by SwiftShader, so a render does not depend on the machine's GPU. */
+const fs = require('fs'), path = require('path'), http = require('http'), {spawn, execFileSync} = require('child_process');
+const {chromium} = require('playwright');
+const root = path.resolve(__dirname, '..');
+const FORMATS = {landscape: [1920, 1080], portrait: [1080, 1920], square: [1080, 1080]};
+// The posters: the JPEGs the page's MP4 fallback and link previews use, and the stage's own WebP pictures.
+const POSTERS = {landscape: ['film-poster-wide', [1280, 720]], portrait: ['film-poster', null], square: ['film-poster-square', [900, 900]]};
+const mode = process.argv[2] || 'stills', OUT = path.resolve(process.argv[3] || '/tmp/offer-filter-film');
+fs.mkdirSync(OUT, {recursive: true});
+const stamp = s => { const m = Math.floor(s / 60), r = (s - m * 60).toFixed(3).padStart(6, '0'); return `${String(m).padStart(2, '0')}:${r}`; };
+
+// The repository over HTTP, so the render page can fetch the app's file list and fonts as the site does.
+function serve() {
+  const types = {'.html': 'text/html', '.js': 'text/javascript', '.json': 'application/json', '.woff2': 'font/woff2', '.png': 'image/png', '.webp': 'image/webp'};
+  const server = http.createServer((req, res) => {
+    const file = path.resolve(root, '.' + decodeURIComponent(new URL(req.url, 'http://x').pathname));
+    if (!file.startsWith(root + path.sep) || !fs.existsSync(file) || !fs.statSync(file).isFile()) { res.writeHead(404).end(); return; }
+    res.writeHead(200, {'Content-Type': types[path.extname(file)] || 'application/octet-stream'});
+    fs.createReadStream(file).pipe(res);
+  });
+  return new Promise(resolve => server.listen(0, '127.0.0.1', () => resolve(server)));
 }
-async function main(){
- const emblemSource=await loadImage(path.join(root,'assets/jesus-loves-you-emblem.png'));
- const emblem=createCanvas(emblemSource.width,emblemSource.height),ink=emblem.getContext('2d');
- ink.drawImage(emblemSource,0,0);ink.globalCompositeOperation='source-in';
- ink.fillStyle='#315B54';ink.fillRect(0,0,emblem.width,emblem.height);
- const mode=process.argv[2]||'stills',captions=writeCaptions();
- if(mode==='captions')return console.log(captions);
- for(const[name,[w,h]]of Object.entries(FORMATS)){
-  if(mode!=='stills'&&mode!=='audit'&&name!==mode)continue;
-  const c=createCanvas(w,h),ctx=c.getContext('2d');
-  if(mode==='stills'){
-   for(let i=0;i<times.length;i++){OfferFilm.frame(ctx,times[i],w,h,emblem);fs.writeFileSync(path.join(OUT,`${name}-${i}.png`),c.toBuffer('image/png'));}
-   const tileW=name==='portrait'?270:480,tileH=h*tileW/w;
-   const sheet=createCanvas(4*tileW,2*tileH),sc=sheet.getContext('2d');
-   for(let i=0;i<times.length;i++){const im=await loadImage(path.join(OUT,`${name}-${i}.png`));sc.drawImage(im,i%4*tileW,Math.floor(i/4)*tileH,tileW,tileH);}
-   fs.writeFileSync(path.join(OUT,`contact-${name}.jpg`),sheet.toBuffer('image/jpeg',91));
-   continue;
+
+async function main() {
+  const server = await serve(), base = `http://127.0.0.1:${server.address().port}`;
+  const browser = await chromium.launch({args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist']});
+  try {
+    const page = await browser.newPage({viewport: {width: 1920, height: 1080}, deviceScaleFactor: 1});
+    const errors = [];
+    page.on('pageerror', e => errors.push(e.message));
+    await page.goto(`${base}/tools/film/render.html`);
+    await page.waitForFunction(() => window.film || window.failed, null, {timeout: 120000});
+    const film = await page.evaluate(() => window.film || {failed: window.failed});
+    if (film.failed) throw Error(film.failed);
+    const {DURATION, FPS, POSTER, CAPTIONS} = film, FRAMES = Math.round(DURATION * FPS);
+    const vtt = 'WEBVTT\n\nNOTE Generated from OfferFilm.CAPTIONS in assets/film.js, timed to the narration take\'s word boundaries.\n\n' +
+      CAPTIONS.map(([a, b, s]) => `${stamp(a)} --> ${stamp(b)}\n${s}\n`).join('\n');
+    const captions = path.join(OUT, 'film-captions.vtt');
+    fs.writeFileSync(captions, vtt);
+    if (mode === 'captions') return console.log(captions);
+    // One frame as PNG bytes, and the visible text's bounds.
+    const shot = async (t, w, h) => {
+      const bounds = await page.evaluate(([t, w, h]) => window.renderFrame(t, w, h), [t, w, h]);
+      return {bounds, png: await page.screenshot({type: 'png', clip: {x: 0, y: 0, width: w, height: h}})};
+    };
+    // The closing frame as the format's JPEG poster and, for the stage, a smaller WebP.
+    const posters = async (name, w, h) => {
+      const still = path.join(OUT, `poster-${name}.png`), [poster, small] = POSTERS[name];
+      fs.writeFileSync(still, (await shot(POSTER, w, h)).png);
+      execFileSync('ffmpeg', ['-y', '-v', 'error', '-i', still, '-q:v', '2', path.join(OUT, `${poster}.jpg`)]);
+      if (small) execFileSync('ffmpeg', ['-y', '-v', 'error', '-i', still, '-vf', `scale=${small[0]}:${small[1]}:flags=lanczos`, '-c:v', 'libwebp', '-quality', '80', '-compression_level', '6', path.join(OUT, `${poster}.webp`)]);
+    };
+    for (const [name, [w, h]] of Object.entries(FORMATS)) {
+      if (!['stills', 'audit', 'posters', name].includes(mode)) continue;
+      await page.setViewportSize({width: w, height: h});
+      if (mode === 'stills') {
+        const times = [2.6, 4.7, 6.5, 10.5, 12.9, 14.9, 17.9, POSTER], files = [];
+        for (let i = 0; i < times.length; i++) { const file = path.join(OUT, `${name}-${i}.png`); fs.writeFileSync(file, (await shot(times[i], w, h)).png); files.push(file); }
+        const tw = name === 'portrait' ? 270 : 480, th = Math.round(h * tw / w);
+        const tiles = files.map((f, i) => `[${i}:v]scale=${tw}:${th}[v${i}]`).join(';') + ';' + files.map((f, i) => `[v${i}]`).join('') +
+          `xstack=inputs=${files.length}:layout=${files.map((f, i) => `${i % 4 * tw}_${Math.floor(i / 4) * th}`).join('|')}[o]`;
+        execFileSync('ffmpeg', ['-y', '-v', 'error', ...files.flatMap(f => ['-i', f]), '-filter_complex', tiles, '-map', '[o]', '-q:v', '3', path.join(OUT, `contact-${name}.jpg`)]);
+        continue;
+      }
+      if (mode === 'posters') { await posters(name, w, h); continue; }
+      const violations = [], minima = {left: Infinity, top: Infinity, right: Infinity, bottom: Infinity}, byScene = {};
+      let ff = null, done = null;
+      if (mode !== 'audit') {
+        const wav = path.join(OUT, 'soundtrack.wav');
+        if (!fs.existsSync(wav)) throw Error(`${wav} is missing: run python3 tools/film/make-audio.py ${OUT}`);
+        // Captions ride along as a soft subtitle track, so a saved film keeps them.
+        const file = path.join(OUT, `offer-filter-${name}.mp4`);
+        ff = spawn('ffmpeg', ['-nostdin', '-y', '-v', 'error', '-f', 'image2pipe', '-c:v', 'png', '-framerate', String(FPS), '-i', 'pipe:0', '-i', wav, '-i', captions,
+          '-map', '0:v', '-map', '1:a', '-map', '2:s', '-c:v', 'libx264', '-crf', '18', '-preset', 'medium', '-tune', 'animation', '-threads', '4', '-pix_fmt', 'yuv420p',
+          '-c:a', 'aac', '-b:a', '192k', '-c:s', 'mov_text', '-metadata:s:s:0', 'language=eng', '-movflags', '+faststart', '-frames:v', String(FRAMES),
+          '-t', String(DURATION), '-map_metadata', '-1', file], {stdio: ['pipe', 'inherit', 'inherit']});
+        done = new Promise((res, rej) => { ff.on('error', rej); ff.on('exit', code => code ? rej(Error('encoder ' + code)) : res()); });
+      }
+      for (let f = 0; f < FRAMES; f++) {
+        const t = f / FPS, bounds = mode === 'audit' ? await page.evaluate(([t, w, h]) => window.renderFrame(t, w, h), [t, w, h]) : null;
+        const frame = bounds ? {bounds} : await shot(t, w, h);
+        for (const b of frame.bounds) {
+          minima.left = Math.min(minima.left, b.left); minima.top = Math.min(minima.top, b.top);
+          minima.right = Math.min(minima.right, w - b.right); minima.bottom = Math.min(minima.bottom, h - b.bottom);
+          byScene[b.scene] = (byScene[b.scene] || 0) + 1;
+          if (b.left < 24 || b.top < 24 || b.right > w - 24 || b.bottom > h - 24) violations.push({frame: f, ...b});
+        }
+        if (ff && !ff.stdin.write(frame.png)) await new Promise(r => ff.stdin.once('drain', r));
+        if (f % 150 === 0) console.log(`${name}: ${f}/${FRAMES}`);
+      }
+      if (ff) { ff.stdin.end(); await done; }
+      const report = {format: name, width: w, height: h, frames: FRAMES, fps: FPS, duration: DURATION, renderer: film.renderer, minimumTextMargins: minima, checkedTextDraws: byScene, violations};
+      fs.writeFileSync(path.join(OUT, `${name}-text-validation.json`), JSON.stringify(report, null, 2) + '\n');
+      if (violations.length) throw Error(`${name}: ${violations.length} text boundary violations; see report`);
+      if (mode !== 'audit') await posters(name, w, h);
+      console.log(`${name}: finished; all visible text inside safe frame`);
+    }
+    if (errors.length) throw Error('page errors: ' + errors.join(' | '));
+  } finally {
+    await browser.close();
+    server.close();
   }
-  const violations=[],minima={left:Infinity,top:Infinity,right:Infinity,bottom:Infinity},byScene={};
-  let ff,done;
-  if(mode!=='audit'){
-   // Captions ride along as a soft subtitle track, so a saved film keeps them.
-   const file=path.join(OUT,`offer-filter-${name}.mp4`);
-   ff=spawn('ffmpeg',['-nostdin','-y','-v','error','-f','rawvideo','-pixel_format','rgba','-video_size',`${w}x${h}`,'-framerate',String(FPS),'-i','pipe:0','-i',path.join(OUT,'soundtrack.wav'),'-i',captions,'-map','0:v','-map','1:a','-map','2:s','-c:v','libx264','-crf','18','-preset','medium','-tune','animation','-threads','4','-pix_fmt','yuv420p','-c:a','aac','-b:a','192k','-c:s','mov_text','-metadata:s:s:0','language=eng','-movflags','+faststart','-frames:v',String(FRAMES),'-t',String(DURATION),'-map_metadata','-1',file],{stdio:['pipe','inherit','inherit']});
-   done=new Promise((res,rej)=>{ff.on('error',rej);ff.on('exit',code=>code?rej(Error('encoder '+code)):res());});
-  }
-  for(let f=0;f<FRAMES;f++){
-   const records=OfferFilm.frame(ctx,f/FPS,w,h,emblem);
-   for(const b of records){
-    minima.left=Math.min(minima.left,b.left);minima.top=Math.min(minima.top,b.top);minima.right=Math.min(minima.right,w-b.right);minima.bottom=Math.min(minima.bottom,h-b.bottom);
-    byScene[b.scene]=(byScene[b.scene]||0)+1;
-    if(b.left<24||b.top<24||b.right>w-24||b.bottom>h-24)violations.push({frame:f,...b});
-   }
-   if(ff&&!ff.stdin.write(ctx.getImageData(0,0,w,h).data))await new Promise(r=>ff.stdin.once('drain',r));
-   if(f%150===0)console.log(`${name}: ${f}/${FRAMES}`);
-  }
-  if(ff){ff.stdin.end();await done;}
-  const report={format:name,width:w,height:h,frames:FRAMES,fps:FPS,duration:DURATION,minimumTextMargins:minima,checkedTextDraws:byScene,violations};
-  fs.writeFileSync(path.join(OUT,`${name}-text-validation.json`),JSON.stringify(report,null,2)+'\n');
-  if(violations.length)throw Error(`${name}: ${violations.length} text boundary violations; see report`);
-  OfferFilm.frame(ctx,POSTER,w,h,emblem);fs.writeFileSync(path.join(OUT,`poster-${name}.jpg`),c.toBuffer('image/jpeg',93));
-  console.log(`${name}: finished; all visible text inside safe frame`);
- }
 }
-main().catch(e=>{console.error(e);process.exitCode=1});
+main().catch(e => { console.error(e); process.exitCode = 1; });
