@@ -23,8 +23,10 @@ install steps and visible risk text (every risk statement pinned; the 0.5.0 guid
 absent, also in Help and About), the legal pages and links to them, the feedback form's messages (201, 429, 400, 413,
 502, network failure, 15 s timeout, offline, whitespace-only, the 4,000-character counter, the message kept on
 failure), dialog labels, keyboard use, `#help`/`#feedback` addresses, Feedback returning to Help, Back closing a
-dialog, the film player's controls (off the poster and the muted loop, up while it plays with sound, a Captions
-button, Replay at the end), reduced motion (no scenery or film frames, nothing of the film loaded), the muted loop's
+dialog, the film's muted loop beginning after a visit that opens on a dialog (`/#help` loaded afresh), the film
+player's controls (off the poster and the muted loop, up while it plays with sound, a Captions button, gone again at
+the end, where Replay takes their focus; the MP4 fallback's controls likewise, and its play button back if the browser
+refuses to start it), reduced motion (no scenery or film frames, nothing of the film loaded), the muted loop's
 30 fps cap and Pause motion, dark mode (with the sky on System, a dark device gets the night sky and the theme colour
 follows; the reading pages' text at 4.5:1 or more in both palettes), the iPhone path (no APK button, a link to share),
 the 0.5.0 marks and pending note, and the private contact on every page. Chromium draws WebGL with SwiftShader, as
@@ -69,6 +71,44 @@ Local results (Chromium with SwiftShader WebGL, `release.json` at 0.4.72, versio
   scenery and the film's muted loop draw, the beta's words and links show, nothing overlaps or clips, and no page
   scrolls sideways. The home page fits 1280 × 800 exactly, its links and the emblem sharing the footer's row; at 390 px
   the footer's rows stack, centred, above the emblem. By night the footer's links and line stay legible on the halo.
+
+## Review of the merge (7 October 2026)
+
+The merge (`7c0f53c`) was checked against both parents. Every change on `main` since `4e1aa5a` is in it or replaced on
+purpose by this branch's own (the Help and About dialogs' links to the app repository's texts, now the on-site pages;
+the download dialog, retired; main's edits to the old `test-launch-help.cjs`), and `tools/test-site.cjs` is main's,
+unchanged. Of this branch's changes, only those to code that main replaced are gone: the `<video>` film (its captions
+switch, on by default, its square source and Save film link), the 2D landscape's cached backdrop, the night sky on a
+dark device (main's sky starts on Auto; System follows the device), and this branch's font subsets, SVG favicon and
+WebP posters, replaced by main's own. The review found and fixed four things; each code fix has a check in
+`test-launch-help.cjs` that fails on the code before it:
+
+- The film's muted loop never began on a visit that opened on a dialog (`/#help` or `/#feedback`, which every reading
+  page links to) if the dialog was still open when the loop came due, nor after Pause motion pressed before then; the
+  stage kept its still poster. Main's player has the same flaw, rarely reached there. The loop now waits behind the
+  dialog and begins when it closes. The test's deep link had only changed the hash of the open page; it now loads
+  `/#help` afresh.
+- At the film's end its controls covered the closing frame's "Independent app. Not affiliated with DoorDash." for
+  three seconds, and for good under reduced motion or Save-Data. This branch had kept its film's controls off that
+  line; they now leave at the end, and Replay takes their focus.
+- The MP4 fallback (no WebGL) showed native controls over the poster's same line from the start. They now come up on
+  play and leave at the end; until then the play button, or a click on the picture, starts it, and the play button
+  comes back if the browser refuses to start the MP4 when it takes over from the live film.
+- The README's pointer to `validation/` and this record, lost with the old film section, is back.
+
+Local results on the final tree (Chromium with SwiftShader WebGL, `release.json` at 0.4.72):
+
+- `test-launch-help.cjs`, run twice: all nine sections pass; release gates as before (no drafting notes in /terms/ or
+  /privacy/, the app's privacy text names privacy@offerfilter.org, the Autopilot-wording gate waiting for 0.5.0); no
+  "NOT READY TO DEPLOY". Running: 5–15 scenery and 8–21 muted-loop frames in 2 s.
+- `test-site.cjs`, run twice: passes at 1280 and 400 px by day and night (the sky in a worker, once on the page's
+  thread), the film within 3–6 ms of its soundtrack, all eight app modules, and the reduced-motion run.
+- `build-legal.py --check` and `sync-release.py --check`: current.
+- Screenshots of every page at 390 × 844 and 1280 × 800 by day, of /, /install/, /privacy/ and the 404 page at both
+  sizes by night (a dark device, the sky on Night), and of / at 320 × 568, 900 × 700, 1024 × 768 and 1366 × 768: the
+  scenery and the muted loop draw, the beta's words and links show, nothing overlaps, no page scrolls sideways and no
+  page logs an error. The home page still fits every laptop size tried (1280 × 720 up to 1920 × 1080) without
+  scrolling.
 
 ## Before the merge: the 0.5.0 guide and the final legal texts (7 October 2026)
 
@@ -137,6 +177,8 @@ The 2D landscape, the `<video>` film and the first-load sizes below are from bef
 - Main's player: pressed Play with the film already at its very end (21.0 s), the film can finish before its
   soundtrack's own "play" event arrives, and that late event starts it over, paused at 0:00 with its controls up
   (seen in local Chromium; main's code, unchanged here). Both tests play from 20.3 s instead.
+- The MP4 fallback was checked with stand-ins for the video's events and `play()`: Playwright's Chromium has no
+  H.264, so no MP4 was played here.
 - The Render page at https://dash-offer-filter-build.onrender.com/ (built by the app repository) still shows the
   GitHub-era setup text; it needs its own update and a manual Render deploy, after this site is live.
 - A real install on Samsung and Pixel phones (Chrome's warning, Play Protect, Auto Blocker, restricted settings). The
