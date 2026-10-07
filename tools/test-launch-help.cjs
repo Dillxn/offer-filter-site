@@ -672,6 +672,23 @@ async function main() {
       assert.equal(await video.evaluate(v => v.controls), false, 'MP4: controls leave at its end');
       assert.deepEqual(fallbackErrors, [], 'MP4 fallback errors');
       await flat.close();
+      // Where WebGL turns out to be missing only when Play is pressed, the MP4 takes over and plays; if the browser
+      // refuses to start it without a fresh tap, the play button comes back for one.
+      const late = await context({viewport: {width: 1366, height: 860}, reducedMotion: 'reduce'});
+      await late.addInitScript(() => {
+        const getContext = HTMLCanvasElement.prototype.getContext, play = HTMLMediaElement.prototype.play;
+        HTMLCanvasElement.prototype.getContext = function (type, ...rest) { return /webgl/.test(type) ? null : getContext.call(this, type, ...rest); };
+        HTMLMediaElement.prototype.play = function () { return this.tagName === 'VIDEO' ? Promise.reject(new DOMException('refused', 'NotAllowedError')) : play.call(this); };
+      });
+      const handover = await late.newPage();
+      const handoverErrors = watch(handover);
+      await handover.goto(base + '/', {waitUntil: 'networkidle'});
+      await handover.click('#film-play');
+      await handover.waitForFunction(() => !!document.querySelector('#film-stage video'), null, {timeout: 20000});
+      await handover.waitForFunction(() => !document.getElementById('film-play').hidden, null, {timeout: 5000}).catch(() => {});
+      assert(await handover.locator('#film-play').isVisible(), 'MP4 refused at the hand-over: the play button comes back');
+      assert.deepEqual(handoverErrors, [], 'hand-over errors');
+      await late.close();
       pass('dialogs', 'labelled; Tab/Enter/Escape; #help/#feedback addresses; Feedback→Help; Back closes; player controls only while the film plays with sound (gone at its end), Captions button, Replay at the end; the MP4 fallback\'s controls likewise');
     }
 

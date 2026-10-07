@@ -215,11 +215,12 @@
     f.addEventListener('ended', () => { offer('Replay film', 'Replay the Offer Filter film'); syncMotion(); });
   }
   follow(film);
-  // The live film finds out it has no WebGL only when first wanted: the MP4 takes its place, playing if asked to.
+  // The live film finds out it has no WebGL only when first wanted: the MP4 takes its place, playing if asked to. If the
+  // browser refuses to start it without a fresh tap, the play button comes back for one (the MP4 has no controls yet).
   if (window.offerFilm) window.offerFilm.addEventListener('unavailable', () => {
     const wanted = window.offerFilm.wanted;
     film = videoFallback(); follow(film);
-    if (wanted) film.play().catch(() => {});
+    if (wanted) film.play().catch(() => { play.hidden = false; syncMotion(); });
   });
 
   // The sky button works as the app's sun button does: each tap moves on through Day, Night, System (the device's own
