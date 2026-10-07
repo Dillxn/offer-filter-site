@@ -3,10 +3,11 @@
 // Local Chromium checks for the homepage and its live film player: the page fitting a laptop's screen, the hero's
 // buttons, the footer's row, the tip buttons' icons, the sky button cycling as the app's does, the 3D sky drawn after
 // the page's first paint (in a worker, and once on the page's own thread as browsers without OffscreenCanvas draw it),
-// the film's poster picture, the film then looping muted (no soundtrack fetched) beside the riding scenery and going
-// round, playback with sound in sync with the soundtrack, the app's screens loaded and drawn on the phone, keyboard
-// pause, seeking, captions, dialogs pausing the film, the ending and replay, and the film kept still where reduced
-// motion is asked for. Chromium draws WebGL with SwiftShader here, so the 3D paths run without a GPU.
+// the film's poster picture (gone from behind the film once it is drawn), the film then looping muted (no soundtrack
+// fetched) beside the riding scenery and going round, playback with sound in sync with the soundtrack, the app's
+// screens loaded and drawn on the phone, keyboard pause, seeking, captions, dialogs pausing the film, the ending and
+// replay, and the film kept still where reduced motion is asked for. Chromium draws WebGL with SwiftShader here, so the
+// 3D paths run without a GPU.
 // Local browser evidence only, not a phone or live-domain receipt.
 const assert = require('node:assert/strict');
 const http = require('node:http');
@@ -55,10 +56,11 @@ async function main() {
       page.on('console', m => { if (m.type() === 'error') errors.push(m.text()); });
       const workers = [];
       page.on('worker', w => workers.push(w));
-      // A fixed sky.
+      // A fixed sky; and the film's poster as it stands before the film is drawn.
       await page.addInitScript(([mode, here]) => {
         localStorage.setItem('offerfilter.theme', mode);
         if (here) delete HTMLCanvasElement.prototype.transferControlToOffscreen;
+        addEventListener('DOMContentLoaded', () => { window.posterFirst = getComputedStyle(document.getElementById('film-stage')).backgroundImage; });
       }, [night ? 'NIGHT' : 'DAY', here]);
       await page.goto(base, {waitUntil: 'networkidle'});
       await page.waitForFunction(() => document.getElementById('film-stage').classList.contains('drawn') && document.getElementById('landscape').classList.contains('drawn'), null, {timeout: 20000});
@@ -69,7 +71,7 @@ async function main() {
         return {night: document.body.classList.contains('night'), sky3d: document.body.classList.contains('sky-3d'), sceneryHere: !!window.OfferScenery,
           loopButton: document.querySelector('#film-play b').textContent, riding: !document.body.classList.contains('motion-paused'),
           soundtrack: performance.getEntriesByType('resource').some(e => /film-soundtrack/.test(e.name)),
-          poster: getComputedStyle(stage).backgroundImage, posterLoaded: performance.getEntriesByType('resource').some(e => /film-poster-(wide|square)\.avif/.test(e.name)),
+          poster: window.posterFirst, posterLoaded: performance.getEntriesByType('resource').some(e => /film-poster-(wide|square)\.avif/.test(e.name)),
           save: !!document.getElementById('film-save'),
           icons: [...document.querySelectorAll('#download-open svg, .source-button svg')].length, github: document.querySelector('.source-button').href,
           githubText: document.querySelector('.source-button').textContent.trim(), links: box('.footer-links'), signature: box('.signature'), world: box('.world'),
@@ -80,6 +82,9 @@ async function main() {
       assert(look.sky3d, 'the 3D sky is drawn');
       assert.match(look.poster, new RegExp(`film-poster-${format === 'landscape' ? 'wide' : 'square'}\\.avif`));
       assert(look.posterLoaded, 'the poster picture loads');
+      // Once the film has faded in, the poster steps out from behind it (else it shows at the rounded corners as a rim).
+      await page.waitForFunction(() => document.getElementById('film-stage').classList.contains('bare'), null, {timeout: 5000});
+      assert.equal(await page.evaluate(() => getComputedStyle(document.getElementById('film-stage')).backgroundImage), 'none', 'no poster behind the drawn film');
       assert.equal(look.loopButton, 'Play with sound', 'the looping film offers its sound');
       assert(!look.soundtrack, 'no soundtrack is fetched for the muted loop');
       assert(look.riding, 'the scenery rides on beside the muted loop');

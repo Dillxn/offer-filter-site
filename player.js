@@ -41,7 +41,7 @@
   }
   const audio = $('film-audio'), controls = $('film-controls'), seek = $('film-seek'), clockText = $('film-time'), cue = $('film-cue');
   const button = act => controls.querySelector(`[data-act="${act}"]`);
-  const MEDIA = '?v=20261007-3d5', D = +seek.max;
+  const MEDIA = '?v=20261007-3d6', D = +seek.max;
   const SIZES = {landscape: [1920, 1080], square: [1080, 1080], portrait: [1080, 1920]};
   const player = new EventTarget();
   let format = 'landscape', comp = SIZES.landscape, scale = 1, ox = 0, oy = 0, visible = true;
@@ -68,7 +68,7 @@
     const w = comp[0] * scale, h = comp[1] * scale;
     r.size(w, h, playing ? quality : 1); r.view(0, 0, w, h, comp);
     ctx.setTransform(1, 0, 0, 1, 0, 0);
-    if (ox || oy) { ctx.fillStyle = '#0b1725'; ctx.fillRect(0, 0, canvas.width, canvas.height); }
+    if (ox > 0 || oy > 0) { ctx.fillStyle = '#0b1725'; ctx.fillRect(0, 0, canvas.width, canvas.height); }
     ctx.setTransform(scale, 0, 0, scale, ox, oy);
     ctx.save(); ctx.beginPath(); ctx.rect(0, 0, comp[0], comp[1]); ctx.clip();
     F.frame(r, ctx, t, comp[0], comp[1], emblem, {audit: false});
@@ -96,7 +96,9 @@
     }
     // At most 60 frames a second; the muted loop, and a device that needs more than 10 ms per frame, get 30, as in the MP4.
     if (visible && now - lastDraw >= (mode === 'loop' || cost > 10 ? 29 : 12)) {
-      if (!stage.classList.contains('live')) stage.classList.add('live');
+      // Once the film has faded in over its poster, the poster goes: left behind it, it would show through the rounded
+      // corners' soft edge as a light rim.
+      if (!stage.classList.contains('live')) { stage.classList.add('live'); setTimeout(() => stage.classList.add('bare'), 900); }
       const begin = performance.now();
       draw(); lastDraw = now;
       cost = cost * .9 + (performance.now() - begin) * .1;
@@ -264,6 +266,10 @@
     format = aspect > 1.25 ? 'landscape' : aspect < .8 ? 'portrait' : 'square';
     comp = SIZES[format];
     scale = Math.min(canvas.width / comp[0], canvas.height / comp[1]);
+    // A stage of the composition's own shape, off from it only by rounding, is covered edge to edge: letterboxed, a
+    // sliver of the bars would show along two of its sides as a dark line.
+    const cover = Math.max(canvas.width / comp[0], canvas.height / comp[1]);
+    if (comp[0] * cover - canvas.width < 2 && comp[1] * cover - canvas.height < 2) scale = cover;
     ox = (canvas.width - comp[0] * scale) / 2; oy = (canvas.height - comp[1] * scale) / 2;
     if (ready && live) draw();
   }
