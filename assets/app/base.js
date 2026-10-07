@@ -1,4 +1,4 @@
-/* Shared helpers for the canvas ports of the Offer Filter app's views (app-source branch, Java onDraw code).
+/* Shared helpers for the canvas ports of the Offer Filter app's views (its Java onDraw code, Dillxn/dasher-offer-filter).
  * Units are dp: callers scale the context so 1 unit = 1 dp; sp is treated as dp. Colors stay Android ARGB ints
  * (0xAARRGGBB, as in the Java) until painted with U.css(). Deterministic: animations take explicit time t (seconds). */
 (function(root) {

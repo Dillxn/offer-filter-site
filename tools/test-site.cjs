@@ -94,7 +94,7 @@ async function main() {
       assert(!look.save, 'no Save film link');
       assert.equal(look.icons, 2, 'both hero buttons carry icons');
       assert.equal(look.githubText, 'View on GitHub');
-      assert.match(look.github, /github\.com\/Dillxn\/offer-filter-site/);
+      assert.equal(look.github, 'https://github.com/Dillxn/dasher-offer-filter', 'View on GitHub opens the app\'s own repository');
       assert(look.overflow <= 0, 'no horizontal overflow');
       if (format === 'landscape') {
         assert(look.scroll <= 0, `the page fits the screen (${look.scroll} px over)`);
