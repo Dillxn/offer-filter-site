@@ -31,7 +31,7 @@
   }
   const audio = $('film-audio'), controls = $('film-controls'), seek = $('film-seek'), clockText = $('film-time'), cue = $('film-cue');
   const button = act => controls.querySelector(`[data-act="${act}"]`);
-  const MEDIA = '?v=20261007-3d', D = +seek.max;
+  const MEDIA = '?v=20261007-3d2', D = +seek.max;
   const SIZES = {landscape: [1920, 1080], square: [1080, 1080], portrait: [1080, 1920]};
   const player = new EventTarget();
   let format = 'landscape', comp = SIZES.landscape, scale = 1, ox = 0, oy = 0, visible = true;
