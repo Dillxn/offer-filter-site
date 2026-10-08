@@ -1,8 +1,8 @@
 {
-  "versionName": "0.5.3",
-  "versionCode": 83,
+  "versionName": "0.5.4",
+  "versionCode": 84,
   "sizeBytes": 1353230,
-  "sha256": "35c09a4586ae540980476f1066c46c973257b9a618c42f7e2918ed003ad7b4ea",
+  "sha256": "58992d22f702e1073b5d4d85df52d9d53456e5cfc6bd471467f48cc431d3451e",
   "apkUrl": "https://dash-offer-filter-build.onrender.com/OfferFilter.apk",
   "date": "2026-10-08"
 }
