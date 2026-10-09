@@ -1,7 +1,7 @@
 (() => {
   'use strict';
   const $ = id => document.getElementById(id);
-  const FEEDBACK_ENDPOINT = 'https://zlnfvqyyjsltmkmmpgzp.supabase.co/functions/v1/offer-filter-feedback';
+  const FEEDBACK_ENDPOINT = 'https://nwglojlrzfbsibtoqjzc.supabase.co/functions/v1/offer-filter-feedback';
   const FEEDBACK_TIMEOUT_MS = 15000;
   const FEEDBACK_MAX = 4000;
   const MEDIA = '?v=20261007-beta', play = $('film-play');

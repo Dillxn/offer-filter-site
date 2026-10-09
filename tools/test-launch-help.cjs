@@ -30,7 +30,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 
 const root = path.resolve(__dirname, '..');
-const FEEDBACK = 'https://zlnfvqyyjsltmkmmpgzp.supabase.co/functions/v1/offer-filter-feedback';
+const FEEDBACK = 'https://nwglojlrzfbsibtoqjzc.supabase.co/functions/v1/offer-filter-feedback';
 const APK = 'https://dash-offer-filter-build.onrender.com/OfferFilter.apk';
 const CONTACT = 'privacy@offerfilter.org';
 // The same notes tools/build-legal.py refuses (DRAFT_MARKERS there).
