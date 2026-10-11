@@ -22,14 +22,23 @@
   // the frame's pixels and smoothed up to it; a still frame (a pause) always at all of them.
   let r = null, quality = 1, live = false;
   let missing = false;
+  // A failed lazy load needs the same handoff as unavailable WebGL. Stop the live soundtrack and frame loop before
+  // page.js installs the MP4; warming alone must never ask the replacement to autoplay.
+  function unavailable() {
+    if (missing) return;
+    missing = true; player.wanted = player.wanted || playing;
+    playing = false;
+    if (!audio.paused) audio.pause();
+    if (raf) cancelAnimationFrame(raf);
+    raf = 0; clearTimeout(back);
+    setTimeout(() => player.dispatchEvent(new Event('unavailable')), 0);
+  }
   function renderer() {
     if (!r && !missing && window.OfferGL) {
       r = OfferGL.create(document.createElement('canvas'));
       if (!r) {
         // The film hands over to the MP4, which plays if the film was asked to.
-        missing = true; player.wanted = player.wanted || playing;
-        if (playing) { playing = false; if (!silent) audio.pause(); if (raf) cancelAnimationFrame(raf); raf = 0; }
-        setTimeout(() => player.dispatchEvent(new Event('unavailable')), 0);
+        unavailable();
         return null;
       }
       quality = r.software ? .5 : 1;
@@ -176,6 +185,7 @@
     else if (!on && !playing) player.loop();
   };
   player.pause = () => {
+    player.wanted = false;
     if (!playing) return;
     playing = false;
     if (!silent && mode === 'sound') audio.pause();
@@ -194,7 +204,9 @@
   audio.addEventListener('ended', () => { if (playing) finish(); });
   // Media keys and the system's audio controls act on the soundtrack; keep the picture with them.
   audio.addEventListener('pause', () => { if (playing && !audio.ended) player.pause(); });
-  audio.addEventListener('play', () => { if (!playing) player.play().catch(() => {}); });
+  // Media events can arrive after a pause, the closing frame or the MP4 handoff. Only a soundtrack that is still
+  // playing may resume the picture; a queued event must not restart the finished film or undo a visitor's pause.
+  audio.addEventListener('play', () => { if (!missing && !playing && !audio.paused) player.play().catch(() => {}); });
   const sources = audio.querySelectorAll('source');
   sources[sources.length - 1].addEventListener('error', goSilent);
 
@@ -289,18 +301,24 @@
   let app = null;
   function loadApp() {
     if (app) return app;
-    app = fetch(`assets/app/files.json${MEDIA}`).then(r => r.json()).then(files => new Promise(resolve => {
+    app = fetch(`assets/app/files.json${MEDIA}`).then(response => {
+      if (!response.ok) throw new Error('Film manifest unavailable');
+      return response.json();
+    }).then(files => new Promise((resolve, reject) => {
       const list = [window.OfferGL ? null : 'assets/gl.js', window.OfferModels ? null : 'assets/models.js'].filter(Boolean)
         .concat(files.map(file => `assets/app/${file}`), 'assets/film.js');
       let left = list.length;
       for (const src of list) {
         const script = Object.assign(document.createElement('script'), {src: src + MEDIA, async: false});
-        script.onload = script.onerror = () => { if (--left === 0) resolve(); };
+        script.onload = () => { if (--left === 0) resolve(); };
+        script.onerror = () => reject(new Error('Film script unavailable'));
         document.head.append(script);
       }
-    })).then(() => { F = window.OfferFilm || null; })
-      .then(() => document.fonts && Promise.all([document.fonts.load('400 1em Roboto'), document.fonts.load('500 1em Roboto')]))
-      .catch(() => {}).then(() => { if (ready && live) draw(); });
+    })).then(() => {
+      F = window.OfferFilm || null;
+      if (!F) throw new Error('Film API unavailable');
+    }).then(() => document.fonts && Promise.all([document.fonts.load('400 1em Roboto'), document.fonts.load('500 1em Roboto')]).catch(() => {}))
+      .catch(unavailable).then(() => { if (ready && live && !missing) draw(); });
     return app;
   }
   // The app's views and the film's 3D art, built a piece at a time between frames, so the film starts without a stall;

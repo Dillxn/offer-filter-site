@@ -220,6 +220,9 @@
   if (window.offerFilm) window.offerFilm.addEventListener('unavailable', () => {
     const wanted = window.offerFilm.wanted;
     film = videoFallback(); follow(film);
+    // The old player may have hidden Play before loading failed. The replacement starts paused with no native
+    // controls; keep a visible keyboard action until its own play event takes over, and release the old busy state.
+    play.hidden = false; syncMotion();
     if (wanted) film.play().catch(() => { play.hidden = false; syncMotion(); });
   });
 

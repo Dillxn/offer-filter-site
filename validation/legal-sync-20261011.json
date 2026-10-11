@@ -1,0 +1,42 @@
+{
+  "checkedAt": "2026-10-11T20:27:13.632159+00:00",
+  "sourceRepository": "Dillxn/dasher-offer-filter",
+  "sourceCommit": "86cea6262fa5280e3613d5d146cdcb12f32933dd",
+  "sourceTree": "75261f02af6b9fc33d8f37e0ccf5e8974211f12a",
+  "sourceFiles": {
+    "PRIVACY.md": "81214c8b86fde626df25652768c4905e6fd78322fd6b58d9204cd4cf1e95562d",
+    "TERMS.md": "e65afa013ed76ba91996880348bd1757313585acdef08e0d21ee9422055961c3",
+    "LICENSE": "bfc596093890f687c936cec40a3cadd3b4d11898f2b6fa27675b4ba98fc41c36"
+  },
+  "generator": "tools/build-legal.py",
+  "generatorSha256": "0c6b297e1f0cf136d29aecfeeb899e5b964de82e7c4e2a70ea60b11da772a34d",
+  "generatorModified": false,
+  "commands": [
+    "python3 tools/build-legal.py --app-repo /workspace/scratch/3192b7ee03c9/offerfilter-cumulative-study",
+    "python3 tools/build-legal.py --app-repo /workspace/scratch/3192b7ee03c9/offerfilter-cumulative-study --check"
+  ],
+  "result": "PASS: three generated pages current; only privacy page changed",
+  "outputFiles": {
+    "privacy/index.html": "c7b89841fc4b1b695e3607dd8f84353536d2dc8fe46f9490ac7648351af3158c",
+    "terms/index.html": "af2f45c80d271b93fddd5fd25399c89633198a8f4c25684bfe2028d15d435ee7",
+    "license/index.html": "be4d36a2e3e9e592389633bf74bf66aa7235c6f530270eaa293eebb87b11aede"
+  },
+  "appPublicationSiteDependency": {
+    "checkedAt": "2026-10-11T20:26:03.153358+00:00",
+    "helpGate": "https://offerfilter.org/install/",
+    "legalPages": {
+      "https://offerfilter.org/terms/": true,
+      "https://offerfilter.org/privacy/": true,
+      "https://offerfilter.org/license/": true
+    }
+  },
+  "publicationScope": "Unpublished local candidate; app Help URL availability passed but website full browser gate remains blocked before page load",
+  "browserBlockers": [
+    "Local Chrome process-singleton socket() EPERM; no sandbox flag changes",
+    "Supported cloud browser rejects file: URLs; only http: and https: permitted; stopped without workaround"
+  ],
+  "remaining": [
+    "Run unchanged website browser gates in permitted environment before website publication",
+    "Sync release metadata only after actual new app delivery"
+  ]
+}

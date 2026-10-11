@@ -1,3 +1,13 @@
+## Cumulative playback candidate — October 11, 2026
+
+Prepared locally from complete main `665e49962bc8cc975f22d7a7144a8561b4e430e3`; all 150 original tracked files, including the films, are recovered. This candidate integrates the previously independently reviewed player/page repair: failed lazy loads hand off to the composed video, canceled playback preserves an available Play action, and a late soundtrack event cannot restart the held closing frame. Explicit Replay still works. The two changed script URLs have new cache keys.
+
+All 18 focused source-adapter cases pass, JavaScript syntax and patch checks pass, and generated legal pages match the durable app texts. A fresh read-only audit inspected 24 extracted MP4 frames and fully decoded all three films without errors. The existing alpha favicons, colorful illustrated ending, plain URL, unbacked emblem, cleaned-up composition and Jesus Loves You footer link already satisfy those earlier design requests; no film re-encoding or design rewrite was needed.
+
+**Browser acceptance is not claimed.** Both unchanged browser gates were attempted using locally extracted Google Chrome 155.0.8059.39, but its process-singleton socket was denied by the execution sandbox before a page opened (`socket() failed: Operation not permitted`). No restriction or assertion was changed. The all-frame text audit was not completed. Run the unchanged browser gates in a permitted venue before deployment. Release metadata must be synchronized with `tools/sync-release.py --live` after the new APK is actually served. No source push or website publication occurred in this lane.
+
+Structured local evidence: `validation/cumulative-playback-20261011.json`.
+
 # Site validation record
 
 Current record for the public-beta site (Cincinnati area), prepared 6–7 October 2026 on branch
@@ -306,3 +316,9 @@ The renderer previously drew the variable Baloo 2 at its default regular weight,
 Local Chromium (`tools/test-site.cjs`) checked the drawn poster, the per-screen download, playback in sync with the soundtrack (within 8 ms), keyboard pause, seeking, captions, a dialog pausing the film, the ending and replay, in day and night at 1280 and 400 px, with no page errors. `tools/test-launch-help.cjs` was updated to the current accountless-feedback help copy and passes all eight combinations. Screenshots at 1440, 1024, 820, 390 and 360 px in both skies show no horizontal overflow and footer links clear of the road and car. Frame cost was measured with software rendering only; it is not a phone, GPU or subjective-listening claim.
 
 Structured local evidence: `validation/live-film-20261006.json`.
+
+### Cumulative privacy synchronization — October 11, 2026
+
+The unchanged `tools/build-legal.py` generated the website privacy page from settled app source `4022a6768c8b0e316dda39cd0270d5292e219f10`, tree `f1897d51197e5009761f634826f23eb0b084361e`. The policy now names 0.5.11 and describes the separate optional study choice, bounded local records, sharing and withdrawal; Terms and License are unchanged. All three generated pages pass the generator's `--check`. Exact source, generator and output hashes are in `validation/legal-sync-20261011.json`.
+
+The app publisher's existing Help availability check passed for the live `/install/` page, and all three live legal URLs answered successfully. Those are availability checks, not proof the new policy is deployed. The website browser gates remain blocked before page load by the local socket restriction. A bounded supported cloud-browser file preview was separately rejected by its URL policy (only HTTP/S allowed); no workaround followed. This source synchronization neither clears the website browser gate nor advances release metadata ahead of the actual public APK.

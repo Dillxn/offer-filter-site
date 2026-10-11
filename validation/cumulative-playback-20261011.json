@@ -1,0 +1,189 @@
+{
+  "checkedAt": "2026-10-11T20:16:13.878163+00:00",
+  "baseCommit": "665e49962bc8cc975f22d7a7144a8561b4e430e3",
+  "baseTree": "73673784c23c43621b7253de37f06f07282db813",
+  "scope": "Local source and committed-media candidate, unpublished; not browser or device acceptance",
+  "completeSourceRecovery": {
+    "trackedFiles": 150,
+    "matchingBaseTree": true
+  },
+  "changes": [
+    "Manifest/script/film API failure hands off once to composed video after stopping live soundtrack and frames",
+    "Canceled Play intent survives delayed handoff; replacement exposes Play",
+    "Queued soundtrack event cannot restart closing frame; explicit Replay preserved",
+    "Player and page cache keys refreshed"
+  ],
+  "focusedTests": {
+    "player": 15,
+    "page": 3,
+    "failed": 0,
+    "type": "source adapters; actual production scripts"
+  },
+  "syntax": "PASS",
+  "patchApplicability": "PASS on exact baseline",
+  "legalTextSync": "terms, privacy and license current against durable app checkout",
+  "browserGates": {
+    "test-launch-help.cjs": "BLOCKED_BEFORE_PAGE",
+    "test-site.cjs": "BLOCKED_BEFORE_PAGE",
+    "browser": "Google Chrome 155.0.8059.39",
+    "error": "chrome/browser/process_singleton_posix.cc: socket() failed: Operation not permitted (1)",
+    "restrictionChanges": false,
+    "assertionsChanged": false
+  },
+  "mediaAudit": {
+    "checked_at": "2026-10-11T20:15:03.626231+00:00",
+    "source_commit": "665e49962bc8cc975f22d7a7144a8561b4e430e3",
+    "source_tree": "73673784c23c43621b7253de37f06f07282db813",
+    "scope": "Read-only source and committed-media audit; not a live deployment or fresh browser acceptance",
+    "files": [
+      {
+        "path": "index.html",
+        "bytes": 19420,
+        "sha256": "a4b355923165cdaf14489dd0b2f79de8863da4aee956f0f7186d075738dc8edb"
+      },
+      {
+        "path": "style.css",
+        "bytes": 21559,
+        "sha256": "eccc7e733f42670cda8a2c8c2b30d8e101468cdf8a32ebc259f5f6f60bd2491a"
+      },
+      {
+        "path": "assets/film.js",
+        "bytes": 29165,
+        "sha256": "bdaf3a4346af6d9a39411d53ebb9facfde62977cf015bf96d395d6656483ad55"
+      },
+      {
+        "path": "assets/favicon-16.png",
+        "bytes": 762,
+        "sha256": "3d2544e12134ac34a5184ee842982cca87890a79a3f740b824fa584b9124715d"
+      },
+      {
+        "path": "assets/favicon-32.png",
+        "bytes": 2069,
+        "sha256": "630ad8170db17005b16547e8f9cc6f51d92cddb46398d204cc52d00c1b697909"
+      },
+      {
+        "path": "assets/jesus-loves-you-emblem-560.png",
+        "bytes": 25483,
+        "sha256": "7e02f9e210517599817a3b7dba9f5c04982a6fffd96a1f4a87086a9bdfd8a31e"
+      },
+      {
+        "path": "assets/offer-filter-landscape.mp4",
+        "bytes": 5073241,
+        "sha256": "27aaa30d60d910a50fcd89e600101993b9f15a6cc00795c716d63341b23149c2"
+      },
+      {
+        "path": "assets/offer-filter-square.mp4",
+        "bytes": 3894129,
+        "sha256": "e571d733796749f203b7298cef3065f170fe4200049d94bcb784bc721bbaddbd"
+      },
+      {
+        "path": "assets/offer-filter-portrait.mp4",
+        "bytes": 5270463,
+        "sha256": "ae4edcb810868e2b156d17a47c0592a94ff1ccc76cdd462fbca593d9ba55d163"
+      }
+    ],
+    "sample_times_seconds": [
+      2.6,
+      4.7,
+      6.5,
+      10.5,
+      12.9,
+      14.9,
+      17.9,
+      20.5
+    ],
+    "favicon_alpha": [
+      {
+        "file": "favicon-16.png",
+        "mode": "RGBA",
+        "range": [
+          0,
+          255
+        ],
+        "fully_transparent_pixels": 96,
+        "partially_transparent_pixels": 100,
+        "opaque_pixels": 60
+      },
+      {
+        "file": "favicon-32.png",
+        "mode": "RGBA",
+        "range": [
+          0,
+          255
+        ],
+        "fully_transparent_pixels": 459,
+        "partially_transparent_pixels": 286,
+        "opaque_pixels": 279
+      }
+    ],
+    "findings": [
+      {
+        "request": "Remove text litter",
+        "status": "present in baseline source",
+        "evidence": "index.html:34 hero is one eyebrow, two-line headline, one-sentence explanation and two action links. Support/about/help text is in dialogs. Footer retains functional links and affiliation disclosure. No extra visible implementation copy added. Subjective density and responsive browser rendering belong to parent runtime gate."
+      },
+      {
+        "request": "Transparent favicon",
+        "status": "satisfied in committed PNGs",
+        "evidence": "Both linked browser favicons are RGBA, alpha range 0\u2013255, with transparent background pixels. Apple touch icon is intentionally a separate home-screen asset, not the browser favicon."
+      },
+      {
+        "request": "Colorful illustrative video ending",
+        "status": "satisfied in committed media",
+        "evidence": "Freshly extracted 17.9s and20.5s frames in all3MP4formats show dawn colors, layered hills and illustrated 3D mascot; no plain black/white ending."
+      },
+      {
+        "request": "Remove music credit",
+        "status": "satisfied in current film source and sampled ending media",
+        "evidence": "assets/film.js closing renderer contains title, Free & open source, URL, emblem and independence disclosure; no music credit. Descriptive captions for music are accessibility captions, not credit."
+      },
+      {
+        "request": "No clipping",
+        "status": "no sampled headline or closing text defect; all-frame claim not renewed",
+        "evidence": "Eight fresh MP4 samples per format show headline/closing text within frame. Parent will own fresh browser/all-frame check if required. The attempted existing render-film.cjs audit could not start due missing Playwright executable, and no fresh bounds PASS is claimed."
+      },
+      {
+        "request": "Remove pill/background around emblem and URL",
+        "status": "satisfied in source and sampled media",
+        "evidence": "assets/film.js:249\u2013259 draws URL as plain text and emblem alpha silhouette only. style.css:130\u2013134 similarly colors footer mask ink only. Fresh final frames show no filled pill/plaque."
+      },
+      {
+        "request": "Improve ending arrangement",
+        "status": "present in baseline source and committed media",
+        "evidence": "assets/film.js:221\u2013258 uses one aligned mascot/type group in landscape and a shared centerline in square/portrait. Current sampled endings show no overlaps."
+      },
+      {
+        "request": "Jesus Loves You footer link",
+        "status": "satisfied in source",
+        "evidence": "index.html:41 wraps emblem in href=https://jesuslovesyou.xyz/. This audit does not claim destination availability."
+      }
+    ]
+  },
+  "remaining": [
+    "Both unchanged browser gates must pass in an already-permitted browser execution venue before deployment",
+    "Sync assets/release.json using tools/sync-release.py --live after new app APK is served",
+    "Root integration and publication; no push or deployment by this lane"
+  ],
+  "candidateFiles": [
+    {
+      "path": "index.html",
+      "sha256": "62b2c8ba10b3c0317b54ac82a0269398f17942916e936f97009625d2965b334b"
+    },
+    {
+      "path": "player.js",
+      "sha256": "9db9c0586b7d0a3b9be2850d3517721ae4c581d7a5d775c13659d215a5316307"
+    },
+    {
+      "path": "page.js",
+      "sha256": "0e7f841c359f016b6b7811e62b8ababcfa56c6b9fb43bbb8ed7e8f8f9928ac7f"
+    },
+    {
+      "path": "tools/test-player-loading.cjs",
+      "sha256": "114d18395740c21e44f261e8d6628b20627974502cefacc19455fead04fdc832"
+    },
+    {
+      "path": "tools/test-page-handoff.cjs",
+      "sha256": "234b0f3db3dcda4435e64aff8f754fcbc41e66413847d40ff986be76e653325e"
+    }
+  ]
+}
