@@ -43,11 +43,14 @@ passes. The release gates hold the site back while:
 - the app's `PRIVACY.md` doesn't name `privacy@offerfilter.org`, the private contact the site shows for privacy,
   data deletion and security requests (feedback stays anonymous). That address must exist as a mail forward before
   the site goes live;
-- once `release.json` is 0.5.0 or later, the terms and privacy don't describe Autopilot, or still mention the retired
-  area mode ("compensating") or 0.4.73.
+- once `release.json` is 0.5.0 or later, the terms and privacy don't describe Autopilot or still mention 0.4.73.
+  Before a 0.6.0 guide/release, the retired area wording ("compensating") is also rejected. From 0.6.0, positive
+  content checks require the distinct Strict/Area modes, optional acceptance learning, saved versus learned
+  minimums, strict auto-accept and add-ons, and the retention, clearing and sharing boundaries. These source
+  checks do not replace either browser gate.
 
-While the published app is older than the guide's beta (0.5.0), the install page says so under the download button,
-and the guide marks what is new in 0.5.0. Deploy this site before the Render page that links to its `/terms/`,
+While the published app is older than the guide's beta, the install page says so under the download button,
+and the guide marks the new features by version. Deploy this site before the Render page that links to its `/terms/`,
 `/privacy/`, `/license/` and `/#help`.
 
 ## Feedback

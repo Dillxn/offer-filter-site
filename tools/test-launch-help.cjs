@@ -17,7 +17,8 @@
  *
  * Release gates come last. The site may be deployed only when they pass: the legal pages carry no drafting notes,
  * the app's own privacy text names the same private contact as the site, and once assets/release.json is 0.5.0 or
- * later, the terms and privacy describe Autopilot and drop the retired area mode and 0.4.73 wording. A failed gate
+ * later, the terms and privacy describe Autopilot; 0.6.0 adds positive checks for restored area mode and learning,
+ * retaining the earlier retirement checks for older guides. No version permits stale 0.4.73 wording. A failed gate
  * fails the run with "NOT READY TO DEPLOY", after every other check has run and passed.
  *
  * Nothing leaves this machine: every request that is not to the local server is answered by a fake or aborted, so
@@ -28,6 +29,7 @@ const assert = require('node:assert/strict');
 const http = require('node:http');
 const fs = require('node:fs');
 const path = require('node:path');
+const {installCopyChecks, legalCopyChecks} = require('./release-copy-checks.cjs');
 
 const root = path.resolve(__dirname, '..');
 const FEEDBACK = 'https://nwglojlrzfbsibtoqjzc.supabase.co/functions/v1/offer-filter-feedback';
@@ -35,7 +37,6 @@ const APK = 'https://dash-offer-filter-build.onrender.com/OfferFilter.apk';
 const CONTACT = 'privacy@offerfilter.org';
 // The same notes tools/build-legal.py refuses (DRAFT_MARKERS there).
 const DRAFT_MARKERS = /have a lawyer|not legal advice|no attorney review|draft of \d|not yet configured|to add before public release|\b(?:TODO|TBD|FIXME)\b/i;
-const AUTOPILOT_VERSION_CODE = 80; // 0.5.0
 const IPHONE_UA = 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1';
 const PAGES = ['/', '/install/', '/privacy/', '/terms/', '/license/', '/404.html'];
 const WIDTHS = [360, 1366];
@@ -403,10 +404,12 @@ async function main() {
       // "Updates can't install" became the homepage's Allow updates step).
       for (const stale of ['items on shopping orders', 'items for shopping orders', 'Every screen your phone may show',
         'anonymous diagnostics is optional', 'pay per minute', 'pay per item', 'Updates can’t install', 'Screen reading is off',
-        'Background offers are off', 'Alerts are blocked', 'combined area score', 'Keep the learning you choose',
+        'Background offers are off', 'Alerts are blocked',
         'updates will wait until it’s off again']) {
         assert(!text.includes(stale), 'install page still says: ' + stale);
       }
+      const guideCode = Number(await page.locator('#whats-new').getAttribute('data-version-code'));
+      for (const check of installCopyChecks(text, guideCode)) assert(check.ok, check.name);
       assert(!/exact setup steps/.test(await page.locator('meta[property="og:description"]').getAttribute('content')), 'og:description overclaims');
       // "Before you install" names the two permissions and Peek before anyone installs.
       const before = await page.locator('#before-title + ul').innerText();
@@ -803,14 +806,10 @@ async function main() {
       });
       gate(`the app's privacy text names ${CONTACT}, the site's private contact`, appPrivacy.includes(CONTACT),
         `PRIVACY.md in the app repository doesn't mention ${CONTACT}`);
-      if (release.versionCode >= AUTOPILOT_VERSION_CODE) {
-        for (const pathname of ['/terms/', '/privacy/']) {
-          const stale = ['compensating', '0.4.73'].filter(word => text[pathname].includes(word));
-          gate(`${pathname} describes Autopilot (release.json is ${release.versionName})`, text[pathname].includes('Autopilot'), 'no mention of Autopilot');
-          gate(`${pathname} drops retired wording`, stale.length === 0, 'still says: ' + stale.join(', '));
-        }
-      } else {
-        gate(`Autopilot wording in the terms and privacy (checked once release.json is 0.5.0 or later; it is ${release.versionName})`, true);
+      await page.goto(base + '/install/', {waitUntil: 'domcontentloaded'});
+      const guideCode = Number(await page.locator('#whats-new').getAttribute('data-version-code'));
+      for (const check of legalCopyChecks(text, release.versionCode, guideCode)) {
+        gate(check.name, check.ok, 'Required release-specific disclosure is missing or stale');
       }
       await ctx.close();
     }
