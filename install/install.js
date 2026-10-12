@@ -36,7 +36,7 @@
   }
   if (!android && !/Mobi/i.test(ua)) {
     note.innerHTML = 'On a computer? Open <strong>offerfilter.org/install</strong> on your Android phone, ' +
-      'or scan this code with its camera.<img src="../assets/install-qr.svg?v=20261012-beta" width="132" height="132" ' +
+      'or scan this code with its camera.<img src="../assets/install-qr.svg?v=20261012-063" width="132" height="132" ' +
       'alt="QR code for offerfilter.org/install">';
     note.hidden = false;
   }
@@ -75,4 +75,24 @@
       }
     })
     .catch(() => { /* Keep the plain label; the link still downloads the current app. */ });
+})();
+
+// The Download button's anonymous count: one beacon a page view, never in the download's way (the app repository's
+// backend/anonymous-feedback/WEBSITE_DOWNLOAD_COUNT.md). The endpoint is page.js's FEEDBACK_ENDPOINT, which this page
+// does not load; keep the two the same.
+(function () {
+  var FEEDBACK_ENDPOINT = 'https://nwglojlrzfbsibtoqjzc.supabase.co/functions/v1/offer-filter-feedback';
+  var link = document.getElementById('download-apk');
+  if (!link || !navigator.sendBeacon) return;
+  var counted = false;
+  link.addEventListener('click', function () {
+    if (counted) return;
+    counted = true;
+    try {
+      navigator.sendBeacon(FEEDBACK_ENDPOINT, new Blob([JSON.stringify({kind: 'count', event: 'download'})],
+          {type: 'text/plain;charset=UTF-8'}));
+    } catch (ignored) {
+      // A count that cannot go is no reason to stand in the download's way.
+    }
+  });
 })();
