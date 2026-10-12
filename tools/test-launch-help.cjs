@@ -388,7 +388,7 @@ async function main() {
         'pay per hour', 'max stops', 'no per-item or per-stop minimum', 'Tap to start with typical minimums',
         'Your rules are simpler now', 'Autopilot', 'What matters more?', 'Keep a top tier', 'acceptance rate 70% or more',
         'Suggested and preselected', 'Keep a tier', 'acceptance rate 50% or more', 'Pay first',
-        'no acceptance-rate goal', 'Long-press the Auto button', 'from 50% to 150%',
+        'no acceptance-rate goal', 'Long-press the Auto chip', 'from 50% to 150%',
         'check the Dasher app for your current requirements', 'Earn per Offer', 'Earn by Time', 'Dasher full screen',
         'Google Maps or Waze full screen', 'Peek', 'Maps and Dasher in split screen', 'split screen', 'for planning',
         'Back to map', 'Tap the mascot', 'Paused means Offer Filter isn’t reading Dasher at all',
@@ -444,7 +444,7 @@ async function main() {
       // minimums, Autopilot's question, the homepage setup steps, the driving layouts, Peek and paused.
       const about = await page.locator('#about-dialog').textContent();
       for (const phrase of ['Set three minimums', 'pay per mile', 'pay per hour', 'the most stops you’ll take',
-        'New in 0.5.0', 'Autopilot', 'acceptance-rate goal', 'always yours to decide']) {
+        'New in 0.6', 'Autopilot', 'acceptance-rate goal', 'always yours to decide']) {
         assert(about.includes(phrase), 'About lacks: ' + phrase);
       }
       const help = await page.locator('#help-dialog').textContent();
