@@ -57,7 +57,7 @@
       if (/^https:\/\//.test(release.apkUrl || '')) $('download-apk').href = release.apkUrl;
       const released = release.date ? formatDate(release.date) : '';
       $('download-meta').textContent = 'Version ' + release.versionName + (released ? ', released ' + released : '') +
-        '. Android 8 or later. A signed APK from Offer Filter’s update server, dash-offer-filter-build.onrender.com, ' +
+        '. Android 15 or later. A signed APK from Offer Filter’s update server, dash-offer-filter-build.onrender.com, ' +
         'the same place the app gets its own updates.';
       if (/^[0-9a-f]{64}$/.test(release.sha256 || '')) {
         $('download-sha').textContent = release.sha256;

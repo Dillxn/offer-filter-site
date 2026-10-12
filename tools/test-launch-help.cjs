@@ -394,7 +394,7 @@ async function main() {
         'Back to map', 'Tap the mascot', 'Paused means Offer Filter isn’t reading Dasher at all',
         'resume from Offer Filter’s home screen', 'Peek waits for Dasher’s offer', 'unlock within 40 seconds',
         'keeps your screen from timing out', 'the power button still turns the screen off', 'Peek pauses while your phone is locked',
-        'Send anonymous feedback', 'feedback form', 'Android 8', 'New in 0.5.0', 'Attach masked diagnostics',
+        'Send anonymous feedback', 'feedback form', 'Android 15', 'New in 0.5.0', 'Attach masked diagnostics',
         'Share anonymous diagnostics after each dash', 'Both start off', 'The screens you’re most likely to see',
         'New in 0.5.1', 'Your minimums grow', 'Let my minimums grow', 'at most 10% at a time']) {
         assert(text.includes(phrase), 'install page lacks: ' + phrase);
@@ -448,7 +448,7 @@ async function main() {
         assert(about.includes(phrase), 'About lacks: ' + phrase);
       }
       const help = await page.locator('#help-dialog').textContent();
-      for (const phrase of ['0.5.0 public beta', 'acceptance-rate and account risks', 'I understand and accept',
+      for (const phrase of ['Android 15+ · public beta', 'acceptance-rate and account risks', 'I understand and accept',
         'Restricted setting', 'App was denied access', 'Allow restricted settings', 'Turn on Offer Filter in Accessibility',
         'Allow notification access', 'Allow alerts', 'Allow updates', 'Set three minimums', 'minimum pay', 'pay per mile',
         'pay per hour', 'max stops', 'What matters more?', 'keep a top tier', 'acceptance rate 70% or more, suggested',
