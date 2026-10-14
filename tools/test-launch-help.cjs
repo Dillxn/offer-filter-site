@@ -365,7 +365,8 @@ async function main() {
       // Risk statements first: none of these may ever be dropped.
       for (const phrase of ['It’s a beta.', 'It can misread an offer, decline one you wanted', 'Check your Dasher history',
         'Declines can lower your acceptance rate.', 'best effort, not a promise', 'your rate rises only when you accept offers',
-        'Nothing here guarantees a rate or any earnings', 'It’s independent.', 'may conflict with DoorDash’s terms',
+        'Nothing here guarantees a rate or any earnings', 'It’s independent.', 'DoorDash’s terms ban automated tools that read or collect data from its apps',
+        'and Offer Filter is one',
         'DoorDash could limit or deactivate your account', 'It needs two Android permissions',
         'Accessibility, to read Dasher’s screen and tap Decline', 'notification access, to see Dasher’s offer alerts',
         'Peek, on by default', 'uses more battery', 'never wakes or unlocks', 'Set it up while parked.',
