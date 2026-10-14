@@ -62,8 +62,9 @@ Feedback is deleted after 90 days.
 - **Who reads feedback.** Feedback may be reviewed by the developer, with the help of AI assistants such as \
 Anthropic's Claude or OpenAI's ChatGPT/Codex, to investigate problems. There is no reply address, so we can't answer \
 you directly. Please leave out customer names, addresses, payment, account or password details.
-- **Download.** The download button fetches the app from its update server on Render \
-(dash-offer-filter-build.onrender.com), which receives ordinary connection information. The install page reads the \
+- **Download.** The download button goes first to the Offer Filter feedback service, which counts the download as \
+described above and sends your browser on to the app's file on its update server on Render \
+(dash-offer-filter-build.onrender.com); both receive ordinary connection information. The install page reads the \
 current version number from offerfilter.org.
 - **Tips and other links.** The tip links open Cash App or Venmo; the site sends them nothing and counts nothing. \
 Source-code links open GitHub, and the emblem at the foot of the home page opens jesuslovesyou.xyz. Those sites \

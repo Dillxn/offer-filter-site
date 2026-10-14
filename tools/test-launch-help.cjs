@@ -32,6 +32,8 @@ const path = require('node:path');
 const root = path.resolve(__dirname, '..');
 const FEEDBACK = 'https://nwglojlrzfbsibtoqjzc.supabase.co/functions/v1/offer-filter-feedback';
 const APK = 'https://dash-offer-filter-build.onrender.com/OfferFilter.apk';
+// The Download link: the feedback service's counted download link, which sends the browser on to APK.
+const DOWNLOAD = FEEDBACK + '/download';
 const CONTACT = 'privacy@offerfilter.org';
 // The same notes tools/build-legal.py refuses (DRAFT_MARKERS there).
 const DRAFT_MARKERS = /have a lawyer|not legal advice|no attorney review|draft of \d|not yet configured|to add before public release|\b(?:TODO|TBD|FIXME)\b/i;
@@ -306,7 +308,7 @@ async function main() {
       const label = `Download Offer Filter ${release.versionName} · ${releaseSize}`;
       await page.waitForFunction(text => document.getElementById('download-apk').textContent.includes(text), label);
       assert.equal((await button.textContent()).replace('↓', '').trim(), label);
-      assert.equal(await button.getAttribute('href'), release.apkUrl);
+      assert.equal(await button.getAttribute('href'), DOWNLOAD, 'the counted link, never replaced by the direct one');
       assert.equal(release.apkUrl, APK);
       assert.equal(await page.locator('#download-sha').textContent(), release.sha256);
       assert.match(await page.locator('#download-meta').textContent(), new RegExp('Version ' + release.versionName.replace(/\./g, '\\.')));
@@ -348,10 +350,10 @@ async function main() {
       await plain.goto(base + '/', {waitUntil: 'load'});
       await plain.click('#download-open');
       await plain.waitForURL(base + '/install/');
-      assert.equal(await plain.locator('#download-apk').getAttribute('href'), APK);
+      assert.equal(await plain.locator('#download-apk').getAttribute('href'), DOWNLOAD);
       assert.match(await plain.locator('#download-apk').textContent(), /Download Offer Filter/);
       await noJs.close();
-      pass('download', `"${label}" → ${APK}, version on its own line; pending note under it; works without JavaScript; iPhone gets a link to share instead`);
+      pass('download', `"${label}" → ${DOWNLOAD} (counted, then ${APK}), version on its own line; pending note under it; works without JavaScript; iPhone gets a link to share instead`);
     }
 
     // 5. Install steps, visible risk text, legal pages and the links to them.

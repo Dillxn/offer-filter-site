@@ -54,7 +54,9 @@
       const version = $('download-version');
       version.textContent = release.versionName + ' · ' + formatSize(release.sizeBytes);
       version.hidden = false;
-      if (/^https:\/\//.test(release.apkUrl || '')) $('download-apk').href = release.apkUrl;
+      // The link stays the feedback service's counted download link (index.html): it counts a browser's download, once
+      // per network a day, and sends it on to release.apkUrl (the app repository's
+      // backend/anonymous-feedback/WEBSITE_DOWNLOAD_COUNT.md).
       const released = release.date ? formatDate(release.date) : '';
       $('download-meta').textContent = 'Version ' + release.versionName + (released ? ', released ' + released : '') +
         '. Android 15 or later. A signed APK from Offer Filter’s update server, dash-offer-filter-build.onrender.com, ' +
@@ -75,24 +77,4 @@
       }
     })
     .catch(() => { /* Keep the plain label; the link still downloads the current app. */ });
-})();
-
-// The Download button's anonymous count: one beacon a page view, never in the download's way (the app repository's
-// backend/anonymous-feedback/WEBSITE_DOWNLOAD_COUNT.md). The endpoint is page.js's FEEDBACK_ENDPOINT, which this page
-// does not load; keep the two the same.
-(function () {
-  var FEEDBACK_ENDPOINT = 'https://nwglojlrzfbsibtoqjzc.supabase.co/functions/v1/offer-filter-feedback';
-  var link = document.getElementById('download-apk');
-  if (!link || !navigator.sendBeacon) return;
-  var counted = false;
-  link.addEventListener('click', function () {
-    if (counted) return;
-    counted = true;
-    try {
-      navigator.sendBeacon(FEEDBACK_ENDPOINT, new Blob([JSON.stringify({kind: 'count', event: 'download'})],
-          {type: 'text/plain;charset=UTF-8'}));
-    } catch (ignored) {
-      // A count that cannot go is no reason to stand in the download's way.
-    }
-  });
 })();
