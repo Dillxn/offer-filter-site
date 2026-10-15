@@ -399,7 +399,7 @@ async function main() {
         'keeps your screen from timing out', 'the power button still turns the screen off', 'Peek pauses while your phone is locked',
         'Send anonymous feedback', 'feedback form', 'Android 15', 'New in 0.5.0', 'Attach masked diagnostics',
         'Share anonymous diagnostics after each dash', 'Both start off', 'The screens you’re most likely to see',
-        'New in 0.5.1', 'Your minimums grow', 'Let my minimums grow', 'at most 10% at a time']) {
+        'New in 0.6.21', 'Autopilot is the buffer', 'Autopilot never changes your minimums', 'next 24 offers']) {
         assert(text.includes(phrase), 'install page lacks: ' + phrase);
       }
       // Retired in 0.5.0: per-minute and per-item rules, and the setup labels the homepage checklist replaced (Settings'
@@ -407,7 +407,9 @@ async function main() {
       for (const stale of ['items on shopping orders', 'items for shopping orders', 'Every screen your phone may show',
         'anonymous diagnostics is optional', 'pay per minute', 'pay per item', 'Updates can’t install', 'Screen reading is off',
         'Background offers are off', 'Alerts are blocked', 'combined area score', 'Keep the learning you choose',
-        'updates will wait until it’s off again']) {
+        'updates will wait until it’s off again',
+        // Retired in 0.6.21: Autopilot no longer grows your minimums.
+        'Your minimums grow', 'Let my minimums grow', 'at most 10% at a time']) {
         assert(!text.includes(stale), 'install page still says: ' + stale);
       }
       assert(!/exact setup steps/.test(await page.locator('meta[property="og:description"]').getAttribute('content')), 'og:description overclaims');
