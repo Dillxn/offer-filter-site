@@ -81,7 +81,7 @@
 <p>Open Offer Filter. Its first screen explains what it reads, the acceptance-rate risk and the terms. Tap <strong>I understand and accept</strong> only if you agree. <strong>Not now</strong> closes the app without it doing anything.</p>
 <p><span class="since">New in 0.6.18</span> Please turn on <strong>Share anonymous diagnostics after each dash</strong> at the bottom of the notice, so problems on your phone get fixed. It stays off unless you turn it on, and you can turn it off in Settings.</p></li>
 <li><h3>Turn on what it needs</h3>
-<p>Offer Filter’s home screen lists the Android steps still to do, each with a <strong>Fix</strong> button that opens the right Android screen. Do them in order.</p>
+<p>Offer Filter’s home screen lists the Android steps still to do, each with a <strong>Fix</strong> button that opens the right Android screen. Do them in order. <span class="since">New in 0.6.25</span> Come back from one you’ve just done and the next opens by itself.</p>
 <p><span class="since">New in 0.5.0</span> The steps are numbered, one line each and only while needed. With three or more to do, the first shows and <strong>N more to set up · Show</strong> lists the rest:</p>
 <ol>
 <li><strong>Allow restricted settings</strong> (Android 13 and later, when the app came from your browser): see step 8.</li>
@@ -91,22 +91,16 @@
 <li><strong>Allow updates</strong>: shows once the rest is done, or right away when an update is waiting (step 10).</li>
 </ol>
 <p class="note">If something you turned on stops working, its line says <strong>Turn Offer Filter off and on in Accessibility</strong> or <strong>Reconnect notification access</strong> instead.</p></li>
-<li><h3>Android 13 and later: “Restricted setting” or “App was denied access”</h3>
-<p>Because the app came from your browser, Android 13 and later keep Accessibility and notification access locked for it at first, every time it’s installed. Offer Filter’s first step, <strong>Allow restricted settings</strong>, leads you through this before you hit the lock: tap <strong>Fix</strong>, then <strong>Try the switch</strong>. You’ll see one of these:</p>
-<ul>
-<li>The switch is greyed out, or Offer Filter is listed as <strong>Controlled by Restricted Setting</strong>.</li>
-<li><strong>Restricted setting</strong> (“For your security, this setting is currently unavailable”).</li>
-<li>On newer Samsung Galaxy phones: <strong>App was denied access</strong> (“Access to this permission can put your personal and financial info at risk”).</li>
-</ul>
-<p>Close the message (<strong>OK</strong> or <strong>Close</strong>), then:</p>
+<li><h3>Android 13 and later: “App was denied access” or “Restricted setting”</h3>
+<p>Because the app came from your browser, Android keeps Accessibility and notification access locked for it at first, every time it’s installed. <span class="since">New in 0.6.25</span> Offer Filter’s first step, <strong>Allow restricted settings</strong>, walks you through it and opens each screen for you. Tap <strong>Fix</strong>, then <strong>Start</strong>:</p>
 <ol>
-<li>Tap <strong>Open App info</strong> in Offer Filter’s step (or touch and hold the Offer Filter icon and tap <strong>App info</strong>, or go to <span class="path">Settings → Apps → Offer Filter</span>).</li>
-<li>Tap <strong>⋮</strong> at the top right, then <strong>Allow restricted settings</strong>, and confirm with your PIN or fingerprint.</li>
-<li>Go back to Offer Filter. The setting you were turning on opens by itself if you come back within ten minutes; turn the switch on there (for Accessibility, <span class="path">Settings → Accessibility → Installed apps → Offer Filter</span>, or Downloaded apps on some phones). Otherwise tap <strong>Fix</strong> again, and if you already allowed it, choose <strong>Try the switch</strong>.</li>
+<li>Notification access opens. Tap the switch. Android blocks it the first time, and that’s expected: it says <strong>App was denied access</strong> (“Access to this permission can put your personal and financial info at risk”) or <strong>Restricted setting</strong> (“For your security, this setting is currently unavailable”). Close the message (<strong>Close</strong> or <strong>OK</strong>) and go back to Offer Filter.</li>
+<li><strong>App info</strong> opens by itself. Tap <strong>⋮</strong> at the top right, then <strong>Allow restricted settings</strong>, confirm with your PIN or fingerprint, and go back.</li>
+<li>Accessibility opens: <span class="path">Settings → Accessibility → Installed apps → Offer Filter</span> (Downloaded apps on some phones). Turn it on and go back. Notification access opens again: allow it and go back, and Android asks to allow Offer Filter’s alerts (step 9).</li>
 </ol>
-<p class="note"><strong>Allow restricted settings</strong> only appears after you’ve tried the switch once, so the message above is expected: it’s what unlocks the menu item. Not in the <strong>⋮</strong> menu yet? Try the switch once more, then open App info again. Allowing it once covers notification access too. The step goes away once it worked.</p></li>
+<p class="note">Each screen opens by itself only when you come back within ten minutes, and never during a dash. Otherwise tap <strong>Fix</strong> again: once Android has blocked the switch it opens App info, or it offers <strong>Open App info</strong> and <strong>Try the switch</strong>. <strong>Allow restricted settings</strong> appears in the <strong>⋮</strong> menu only after the switch was tapped once, which is why Android’s message is expected; until then Offer Filter is listed in Accessibility as <strong>Controlled by Restricted Setting</strong>. Allowing it once covers both switches, and the step goes away once it worked. To reach App info yourself, touch and hold the Offer Filter icon and tap <strong>App info</strong>, or go to <span class="path">Settings → Apps → Offer Filter</span>.</p></li>
 <li><h3>Allow alerts</h3>
-<p>Tap <strong>Fix</strong> beside <strong>Allow alerts</strong>. On Android 13 and later, Android asks <strong>Allow Offer Filter to send you notifications?</strong> Tap <strong>Allow</strong>. Offer Filter uses them for offers it lets through or can’t read, and for update notices.</p></li>
+<p>On Android 13 and later, Android asks <strong>Allow Offer Filter to send you notifications?</strong> right after the steps above, or when you tap <strong>Fix</strong> beside <strong>Allow alerts</strong>. Tap <strong>Allow</strong>. Offer Filter uses them for offers it lets through or can’t read, and for update notices.</p></li>
 <li><h3>Let Offer Filter install its own updates</h3>
 <p>On Offer Filter’s home screen, tap <strong>Fix</strong> beside <strong>Allow updates</strong> and turn on <strong>Allow from this source</strong>. This is separate from your browser’s permission in step 3. Updates are signed and checked before they install. Keep the app installed; there’s no need to uninstall to update.</p>
 <p class="note">When an update is ready and you’re not dashing, the home screen shows <strong>Update ready · Install now</strong>, and <span class="path">Settings → Updates</span> shows where updates stand. Automatic installs wait until a dash ends, or until nothing of a dash has been seen for 8 hours with the screen off. If Auto Blocker stops an update, Settings → Updates says so: “Android blocked the update (on Samsung, check Auto Blocker). Tap Updates to try again.” Turn Auto Blocker off first; the blocked update waits for that tap.</p>
