@@ -7,7 +7,7 @@
  */
 (() => {
 'use strict';
-const V = '?v=20261016-084', KNOWN = 'offergl.software';
+const V = '?v=20261016-085', KNOWN = 'offergl.software';
 const canvas = () => document.getElementById('landscape');
 if (!canvas() || !window.WebGLRenderingContext) { window.setSceneNight = window.setScenePaused = window.setSceneBusy = () => {}; return; }
 let night = document.body.classList.contains('night'), paused = matchMedia('(prefers-reduced-motion: reduce)').matches, busy = false;
