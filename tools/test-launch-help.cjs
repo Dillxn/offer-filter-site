@@ -377,21 +377,26 @@ async function main() {
         'driving', 'Autopilot can only stop declining', 'never auto-accepted']) {
         assert(text.includes(phrase), 'install page lacks the risk statement: ' + phrase);
       }
-      // The 0.5.0 guide: install, the homepage's setup steps (restricted settings first), three minimums, Autopilot's
-      // question, driving layouts, Peek, the screen held during a dash, paused, feedback.
+      // The guide: install, setup's own steps (0.6.26: screen reading, Android's block, background offers, alerts, the
+      // map, the minimums), three minimums, Autopilot's question, driving layouts, Peek, the screen held during a dash,
+      // paused, feedback, updates.
       for (const phrase of ['Allow from this source', 'Restricted setting', 'Allow restricted settings', 'App info',
         'App was denied access', 'Controlled by Restricted Setting', 'Settings → Accessibility → Installed apps',
-        'Try the switch', 'within ten minutes', 'N more to set up', 'Turn on Offer Filter in Accessibility',
-        'Allow notification access', 'Offer Filter background offers', 'Allow alerts',
-        'Allow Offer Filter to send you notifications?', 'Allow updates', 'Update ready · Install now',
+        'New in 0.6.26', 'one step at a time', 'Turn on screen reading', 'Open Accessibility', 'Installed apps',
+        'Downloaded apps', 'Open App info', 'Try the switch again', 'Now turn on screen reading',
+        'Turn on background offers', 'Open notification access', 'Stuck? Send feedback', 'Restart screen reading',
+        'Reconnect background offers', 'Map where offers pay best', 'Allow location', 'approximate location',
+        'filtering doesn’t need it', 'Start with typical minimums', 'Start auto-decline', 'Set my own',
+        '$2.00 per stop ($4.00 for a single order)', 'Offer Filter background offers', 'Allow alerts',
+        'Allow Offer Filter to send you notifications?', 'Allow updates', 'Update ready · Allow updates',
+        'Nothing asks for this until an update is ready', 'Update ready · Install now',
         'Already on 0.4.72?', 'Update ready: installs after your dash', 'install it over the old app',
         'may stop the install right here', 'open OfferFilter.apk again (step 2)', 'Tap Updates to try again',
-        'isn’t tried again by itself', 'may remind you once, with a notification',
-        'Turn Offer Filter off and on in Accessibility', 'Reconnect notification access', 'minimum pay', 'pay per mile',
-        'pay per hour', 'max stops', 'no per-item or per-stop minimum', 'Tap to start with typical minimums',
-        'Your rules are simpler now', 'Autopilot', 'What matters more?', 'Keep a top tier', 'acceptance rate 70% or more',
-        'Suggested and preselected', 'Keep a tier', 'acceptance rate 50% or more', 'Pay first',
-        'no acceptance-rate goal', 'Long-press the Auto chip', 'from 50% to 150%',
+        'isn’t tried again by itself', 'may remind you once, with a notification', 'pay per stop',
+        'the pickup included', 'pay per mile', 'pay per hour', 'max stops', 'Your rules are simpler now', 'Autopilot',
+        'What matters more?', 'The first time you turn auto-decline on with the mascot', 'Pay first',
+        'push for better pay, no acceptance-rate goal', 'Suggested and preselected', 'Protect my acceptance rate',
+        '70% or more (a top tier)', '50% or more (a tier)', 'Long-press the Auto chip', 'from 50% to 150%',
         'check the Dasher app for your current requirements', 'Earn per Offer', 'Earn by Time', 'Dasher full screen',
         'Google Maps or Waze full screen', 'Peek', 'Maps and Dasher in split screen', 'split screen', 'for planning',
         'Back to map', 'Tap the mascot', 'Paused means Offer Filter isn’t reading Dasher at all',
@@ -409,7 +414,13 @@ async function main() {
         'Background offers are off', 'Alerts are blocked', 'combined area score', 'Keep the learning you choose',
         'updates will wait until it’s off again',
         // Retired in 0.6.21: Autopilot no longer grows your minimums.
-        'Your minimums grow', 'Let my minimums grow', 'at most 10% at a time']) {
+        'Your minimums grow', 'Let my minimums grow', 'at most 10% at a time',
+        // Retired in 0.6.26: the homepage's setup lines and their Fix, for setup's own page; minimum pay became pay per
+        // stop in 0.6.12, and the goal chooser's tiers became opt-in in 0.6.18.
+        'N more to set up', 'Turn on Offer Filter in Accessibility', 'Allow notification access',
+        'Turn Offer Filter off and on in Accessibility', 'Reconnect notification access', 'within ten minutes',
+        'Tap to start with typical minimums', 'Use these', '$4.00 per offer', 'no per-item or per-stop minimum',
+        'Keep a top tier', 'Keep a tier', 'minimum pay']) {
         assert(!text.includes(stale), 'install page still says: ' + stale);
       }
       assert(!/exact setup steps/.test(await page.locator('meta[property="og:description"]').getAttribute('content')), 'og:description overclaims');
@@ -454,10 +465,12 @@ async function main() {
       }
       const help = await page.locator('#help-dialog').textContent();
       for (const phrase of ['Android 15+ · public beta', 'acceptance-rate and account risks', 'I understand and accept',
-        'Restricted setting', 'App was denied access', 'Allow restricted settings', 'Turn on Offer Filter in Accessibility',
-        'Allow notification access', 'Allow alerts', 'Allow updates', 'Set three minimums', 'minimum pay', 'pay per mile',
-        'pay per hour', 'max stops', 'What matters more?', 'keep a top tier', 'acceptance rate 70% or more, suggested',
-        'keep a tier', '50% or more', 'pay first', 'Long-press', 'Earn per Offer', 'Earn by Time',
+        'Restricted setting', 'App was denied access', 'Allow restricted settings', 'Follow setup, one step at a time',
+        'Turn on screen reading', 'Turn on background offers', 'Allow alerts', 'Allow updates',
+        'Start with typical minimums', 'Start auto-decline', 'Set my own', 'set three minimums', 'pay per stop',
+        'pay per mile', 'pay per hour', 'max stops', 'What matters more?', 'Pay first (suggested)',
+        'protect your acceptance rate', '70% or more (a top tier)', '50% or more (a tier)', 'Long-press',
+        'Earn per Offer', 'Earn by Time',
         'Dasher full screen and Offer Filter’s tab', 'Google Maps or Waze full screen with Peek',
         'Maps and Dasher in split screen with the tab', 'for planning while parked', 'Peek waits for Dasher',
         'unlock within 40 seconds', 'never woken or unlocked', 'the power button still turns it off',
@@ -465,6 +478,11 @@ async function main() {
         'A beta, not a guarantee of reliability', 'best effort, not a promise', 'Never handle your phone while driving',
         'view and control your screen']) {
         assert(help.toLowerCase().includes(phrase.toLowerCase()), 'Help lacks: ' + phrase);
+      }
+      // Retired in 0.6.26: the homepage's setup lines and their Fix; minimum pay (0.6.12) and the tiers first (0.6.18).
+      for (const stale of ['with Fix', 'Turn on Offer Filter in Accessibility', 'Allow notification access',
+        'keep a top tier', 'acceptance rate 70% or more, suggested', 'minimum pay']) {
+        assert(!help.includes(stale), 'Help still says: ' + stale);
       }
       assert(!/items on shopping orders|items for shopping orders|pay per item|pay per minute|Updates can’t install|From 0\.5\.0:/.test(copy),
         'home page still has retired wording');
@@ -481,7 +499,7 @@ async function main() {
         assert(mail.every(href => href === 'mailto:' + CONTACT), pathname + ' mail links: ' + mail);
       }
       await ctx.close();
-      pass('content', `${steps} install steps, risk text at ${risk.size}px, terms/privacy/license present and linked; the 0.5.0 guide (three minimums, Autopilot's question, the homepage setup steps, driving layouts, Peek, paused) marked; independence line and private contact on every page`);
+      pass('content', `${steps} install steps, risk text at ${risk.size}px, terms/privacy/license present and linked; the guide (setup's own steps, three minimums, Autopilot's question, driving layouts, Peek, paused, updates) marked; independence line and private contact on every page`);
     }
 
     // 6. Feedback: each response maps to an honest message; text is kept on failure; nothing real is sent.
