@@ -404,7 +404,9 @@ async function main() {
         'keeps your screen from timing out', 'the power button still turns the screen off', 'Peek pauses while your phone is locked',
         'Send anonymous feedback', 'feedback form', 'Android 15', 'New in 0.5.0', 'Attach masked diagnostics',
         'Share anonymous diagnostics after each dash', 'Both start off', 'The screens you’re most likely to see',
-        'New in 0.6.21', 'Autopilot is the buffer', 'Autopilot never changes your minimums', 'next 24 offers']) {
+        'New in 0.6.21', 'Autopilot is the buffer', 'Autopilot never changes your minimums', 'next 24 offers',
+        // 0.6.27: offers are scored by Area by default; Strict is a pick in the radar's middle.
+        'Area by default', 'Area, the default from 0.6.27', 'to choose Strict again']) {
         assert(text.includes(phrase), 'install page lacks: ' + phrase);
       }
       // Retired in 0.5.0: per-minute and per-item rules, and the setup labels the homepage checklist replaced (Settings'
@@ -420,7 +422,9 @@ async function main() {
         'N more to set up', 'Turn on Offer Filter in Accessibility', 'Allow notification access',
         'Turn Offer Filter off and on in Accessibility', 'Reconnect notification access', 'within ten minutes',
         'Tap to start with typical minimums', 'Use these', '$4.00 per offer', 'no per-item or per-stop minimum',
-        'Keep a top tier', 'Keep a tier', 'minimum pay']) {
+        'Keep a top tier', 'Keep a tier', 'minimum pay',
+        // Retired in 0.6.27: Strict is no longer the default.
+        'Strict, the default']) {
         assert(!text.includes(stale), 'install page still says: ' + stale);
       }
       assert(!/exact setup steps/.test(await page.locator('meta[property="og:description"]').getAttribute('content')), 'og:description overclaims');
