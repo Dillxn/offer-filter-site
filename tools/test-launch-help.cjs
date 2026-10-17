@@ -406,7 +406,9 @@ async function main() {
         'Share anonymous diagnostics after each dash', 'Both start off', 'The screens you’re most likely to see',
         'New in 0.6.21', 'Autopilot is the buffer', 'Autopilot never changes your minimums', 'next 24 offers',
         // 0.6.27: offers are scored by Area by default; Strict is a pick in the radar's middle.
-        'Area by default', 'Area, the default from 0.6.27', 'to choose Strict again']) {
+        'Area by default', 'Area, the default from 0.6.27', 'to choose Strict again',
+        // 0.6.28: a +$ offer with "orders completed" under it, and Dasher's add-on card, are read.
+        '+$ offers and add-on cards read', 'shows “orders completed” under it', 'is read as an add-on to your route']) {
         assert(text.includes(phrase), 'install page lacks: ' + phrase);
       }
       // Retired in 0.5.0: per-minute and per-item rules, and the setup labels the homepage checklist replaced (Settings'
