@@ -15,21 +15,21 @@
 <meta property="og:url" content="https://offerfilter.org/install/">
 <meta property="og:title" content="Install Offer Filter — free Android beta for Dashers">
 <meta property="og:description" content="Download the app and follow the setup steps for Android 15 and later. Public beta in the Cincinnati area.">
-<meta property="og:image" content="https://offerfilter.org/assets/film-poster-wide.jpg?v=20261017-088">
+<meta property="og:image" content="https://offerfilter.org/assets/film-poster-wide.jpg?v=20261020-089">
 <meta property="og:image:width" content="1920">
 <meta property="og:image:height" content="1080">
 <meta property="og:image:alt" content="The Offer Filter mascot beside its name, offerfilter.org, and a Jesus Loves You emblem.">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png?v=20261017-088">
-<link rel="icon" type="image/png" sizes="16x16" href="../assets/favicon-16.png?v=20261017-088">
-<link rel="apple-touch-icon" sizes="180x180" href="../assets/apple-touch-icon.png?v=20261017-088">
-<link rel="preload" href="../assets/baloo2-latin.woff2?v=20261017-088" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="../doc.css?v=20261017-088">
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png?v=20261020-089">
+<link rel="icon" type="image/png" sizes="16x16" href="../assets/favicon-16.png?v=20261020-089">
+<link rel="apple-touch-icon" sizes="180x180" href="../assets/apple-touch-icon.png?v=20261020-089">
+<link rel="preload" href="../assets/baloo2-latin.woff2?v=20261020-089" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../doc.css?v=20261020-089">
 </head>
 <body>
 <a class="skip-link" href="#main">Skip to content</a>
 <header class="site-header">
-<a class="wordmark" href="../" aria-label="Offer Filter home"><img src="../assets/mascot-3d.webp?v=20261017-088" width="48" height="48" alt=""><span>Offer Filter</span></a>
+<a class="wordmark" href="../" aria-label="Offer Filter home"><img src="../assets/mascot-3d.webp?v=20261020-089" width="48" height="48" alt=""><span>Offer Filter</span></a>
 <nav class="site-nav" aria-label="Site"><a href="../#help">Help</a><a href="../#feedback">Feedback</a></nav>
 </header>
 <main id="main" class="doc">
@@ -114,7 +114,7 @@
 </ul>
 <p>One tap applies, and <strong>Not now</strong> keeps the suggested goal. Long-press the Auto chip to change the goal any time. Tap it for Autopilot’s details, where <strong>Turn off</strong> judges offers at exactly your minimums; it stays off until you turn it back on.</p>
 <p>Autopilot moves one bar: how much of your minimums an offer must pay, from 50% to 150%. It goes by how often offers come, what your recent offers paid for Dasher’s time, and the acceptance rate Dasher shows on its decline question, keeping enough offers passing to reach your goal and stay a little above it. Above 100% it declines some offers that meet your minimums. Below 100%, offers it lets through under your minimums are yours to decide: never declined and never auto-accepted. DoorDash computes acceptance rate over your recent offers (it reports the last 100), and its rewards tiers use acceptance-rate minimums; check the Dasher app for your current requirements.</p>
-<p><span class="since">New in 0.6.21</span> <strong>Autopilot is the buffer.</strong> Autopilot never changes your minimums; it only moves its bar. What offers must meet rises only through <strong>Learn</strong>, as you accept offers yourself that beat your best, and your saved minimums change only when you set them or tap <strong>Adopt</strong>. An offer you accept yourself holds Autopilot’s bar at least at its score for your next 24 offers, across dashes; Autopilot’s details count them down.</p>
+<p><span class="since">New in 0.6.29</span> <strong>Your accepts set Autopilot’s minimums.</strong> With Autopilot on, each offer you accept yourself sets Autopilot’s working pay per stop, per mile and per hour to that offer’s own values, each up or down; the newest accept replaces the last. Autopilot never changes your saved minimums: they change only when you set them or tap <strong>Adopt</strong>, and <strong>Learn</strong> separately raises learned minimums when you accept an offer that beats your best. After an accept, Autopilot holds its bar for your next 24 offers, across dashes; tap the Auto chip to see its working minimums and the countdown.</p>
 <p class="note">Its goal is a best effort, not a promise: Autopilot can only stop declining, and your acceptance rate rises only when you accept offers. It’s new: watch how it does on your first dashes.</p></li>
 <li><h3>Dash in Earn per Offer</h3>
 <p>Offer Filter works with <strong>Earn per Offer</strong>. <strong>Earn by Time</strong> isn’t supported in this beta, so pause Offer Filter if you dash by time.</p></li>
@@ -149,9 +149,10 @@
 <p class="note"><strong>Already on 0.4.72?</strong> It installs an update by itself only after it has seen your dash end, and it has no Install now line or 8-hour limit (those start with 0.5.0). If its <span class="path">Settings → Updates</span> says <strong>Update ready: installs after your dash</strong> while you’re not dashing (for example because you turned Offer Filter’s Accessibility off to get through 0.4.72’s frozen Dasher), tap <strong>Updates</strong> once with Dasher not on screen, or download 0.5.0 above and install it over the old app. Your rules and history stay. If you turned Accessibility off, turn it back on afterwards.</p></li>
 </ol>
 
-<section id="whats-new" data-version-code="120" data-version-name="0.6.28" aria-labelledby="whats-new-title">
+<section id="whats-new" data-version-code="121" data-version-name="0.6.29" aria-labelledby="whats-new-title">
 <h2 id="whats-new-title">What’s new in 0.6</h2>
 <ul>
+<li><strong>Accepts set Autopilot’s minimums</strong> (new in 0.6.29). With Autopilot on, the newest offer you accept yourself sets each minimum it could read up or down; tap Auto to see the working minimums. With Learn on, the dashed green triangle covers the higher of your saved and learned minimums on every measure, and short trips you accept can teach new highs. Your saved minimums and learned bests stay separate. You’ll see the notice once more.</li>
 <li><strong>+$ offers and add-on cards read</strong> (new in 0.6.28). An offer with a +$ amount is read again when Dasher shows “orders completed” under it, and declined if even its pay plus the +$ misses your minimums. Dasher’s add-on card (+$9.40, +1 stop, +7 min) is read as an add-on to your route, and one paying too little for the minutes it adds is declined.</li>
 <li><strong>Area by default</strong> (new in 0.6.27). Offers are scored by Area from the start: a strong measure can make up for a weaker one, and max stops always applies. If yours was Strict, the update moves it to Area once; tap the word in the radar’s middle to choose Strict again, and it stays. You’ll see the notice once more.</li>
 <li><strong>Setup first, one step at a time</strong> (new in 0.6.26, after 0.6.25’s walk-through). Until Offer Filter can filter, setup fills the screen: one step and one button at a time, each saying what to do before Android’s screen opens, and Android’s block on apps from the web is warned of only where it comes. Then the home screen shows each part once it works: the skyline from your first offer, the map once location is allowed, and <strong>Allow updates</strong> only when an update is ready.</li>
@@ -198,8 +199,8 @@
 <nav aria-label="Legal and source"><a href="../">Home</a><a href="../#help">Help</a><a href="../privacy/">Privacy</a><a href="../terms/">Terms</a><a href="../license/">License</a><a href="https://github.com/Dillxn/dasher-offer-filter">Source code (MIT)</a></nav>
 <p class="independent">Offer Filter is independent and isn’t affiliated with DoorDash.</p>
 <p class="contact">Privacy, data deletion or security: <a href="mailto:privacy@offerfilter.org">privacy@offerfilter.org</a></p>
-<div class="signature"><picture><source type="image/webp" srcset="../assets/jesus-loves-you-signature.webp?v=20261017-088"><img src="../assets/jesus-loves-you-signature.png?v=20261017-088" width="432" height="341" loading="lazy" decoding="async" alt="Jesus Loves You. We love each other because He loves us first. 1 John 4:19."></picture></div>
+<div class="signature"><picture><source type="image/webp" srcset="../assets/jesus-loves-you-signature.webp?v=20261020-089"><img src="../assets/jesus-loves-you-signature.png?v=20261020-089" width="432" height="341" loading="lazy" decoding="async" alt="Jesus Loves You. We love each other because He loves us first. 1 John 4:19."></picture></div>
 </footer>
-<script src="install.js?v=20261017-088"></script>
+<script src="install.js?v=20261020-089"></script>
 </body>
 </html>

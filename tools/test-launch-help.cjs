@@ -404,11 +404,14 @@ async function main() {
         'keeps your screen from timing out', 'the power button still turns the screen off', 'Peek pauses while your phone is locked',
         'Send anonymous feedback', 'feedback form', 'Android 15', 'New in 0.5.0', 'Attach masked diagnostics',
         'Share anonymous diagnostics after each dash', 'Both start off', 'The screens you’re most likely to see',
-        'New in 0.6.21', 'Autopilot is the buffer', 'Autopilot never changes your minimums', 'next 24 offers',
+        'next 24 offers',
         // 0.6.27: offers are scored by Area by default; Strict is a pick in the radar's middle.
         'Area by default', 'Area, the default from 0.6.27', 'to choose Strict again',
         // 0.6.28: a +$ offer with "orders completed" under it, and Dasher's add-on card, are read.
-        '+$ offers and add-on cards read', 'shows “orders completed” under it', 'is read as an add-on to your route']) {
+        '+$ offers and add-on cards read', 'shows “orders completed” under it', 'is read as an add-on to your route',
+        // 0.6.29: each offer you accept yourself sets Autopilot's working minimums, up or down; saved minimums stay yours.
+        'New in 0.6.29', 'Your accepts set Autopilot’s minimums', 'Autopilot never changes your saved minimums',
+        'Accepts set Autopilot’s minimums', 'sets each minimum it could read up or down', 'short trips you accept can teach new highs']) {
         assert(text.includes(phrase), 'install page lacks: ' + phrase);
       }
       // Retired in 0.5.0: per-minute and per-item rules, and the setup labels the homepage checklist replaced (Settings'
@@ -426,7 +429,9 @@ async function main() {
         'Tap to start with typical minimums', 'Use these', '$4.00 per offer', 'no per-item or per-stop minimum',
         'Keep a top tier', 'Keep a tier', 'minimum pay',
         // Retired in 0.6.27: Strict is no longer the default.
-        'Strict, the default']) {
+        'Strict, the default',
+        // Retired in 0.6.29: an accept sets Autopilot's working minimums instead of holding its bar at the accept's score.
+        'Autopilot is the buffer', 'at least at its score']) {
         assert(!text.includes(stale), 'install page still says: ' + stale);
       }
       assert(!/exact setup steps/.test(await page.locator('meta[property="og:description"]').getAttribute('content')), 'og:description overclaims');
