@@ -411,7 +411,10 @@ async function main() {
         '+$ offers and add-on cards read', 'shows “orders completed” under it', 'is read as an add-on to your route',
         // 0.6.29: each offer you accept yourself sets Autopilot's working minimums, up or down; saved minimums stay yours.
         'New in 0.6.29', 'Your accepts set Autopilot’s minimums', 'Autopilot never changes your saved minimums',
-        'Accepts set Autopilot’s minimums', 'sets each minimum it could read up or down', 'short trips you accept can teach new highs']) {
+        'Accepts set Autopilot’s minimums', 'sets each minimum it could read up or down', 'short trips you accept can teach new highs',
+        // 0.6.30: a busy offer's total is its whole pay, the +$ included; a full-screen offer's own lines are kept.
+        'Busy offers read at Dasher’s total', 'Dasher’s total is the whole pay, the +$ included',
+        'keep a full-screen offer’s own lines']) {
         assert(text.includes(phrase), 'install page lacks: ' + phrase);
       }
       // Retired in 0.5.0: per-minute and per-item rules, and the setup labels the homepage checklist replaced (Settings'
@@ -431,7 +434,9 @@ async function main() {
         // Retired in 0.6.27: Strict is no longer the default.
         'Strict, the default',
         // Retired in 0.6.29: an accept sets Autopilot's working minimums instead of holding its bar at the accept's score.
-        'Autopilot is the buffer', 'at least at its score']) {
+        'Autopilot is the buffer', 'at least at its score',
+        // Retired in 0.6.30: a +$ amount beside Dasher's total is part of it, never added to it.
+        'pay plus the +$']) {
         assert(!text.includes(stale), 'install page still says: ' + stale);
       }
       assert(!/exact setup steps/.test(await page.locator('meta[property="og:description"]').getAttribute('content')), 'og:description overclaims');
