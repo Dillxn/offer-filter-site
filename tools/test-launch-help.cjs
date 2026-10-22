@@ -398,7 +398,8 @@ async function main() {
         'push for better pay, no acceptance-rate goal', 'Suggested and preselected', 'Protect my acceptance rate',
         '70% or more (a top tier)', '50% or more (a tier)', 'Long-press the Auto chip', 'from 10% to 150%',
         'check the Dasher app for your current requirements', 'Earn per Offer', 'Earn by Time', 'Dasher full screen',
-        'Google Maps or Waze full screen', 'Peek', 'Maps and Dasher in split screen', 'split screen', 'for planning',
+        'Google Maps or Waze full screen', 'Peek', 'Tap the tab to come back to Offer Filter', 'Open Dasher',
+        'touch and hold the tab', 'No more split screen', 'New in 0.6.33',
         'Back to map', 'Tap the mascot', 'Paused means Offer Filter isn’t reading Dasher at all',
         'resume from Offer Filter’s home screen', 'Peek waits for Dasher’s offer', 'unlock within 40 seconds',
         'keeps your screen from timing out', 'the power button still turns the screen off', 'Peek pauses while your phone is locked',
@@ -436,7 +437,9 @@ async function main() {
         // Retired in 0.6.29: an accept sets Autopilot's working minimums instead of holding its bar at the accept's score.
         'Autopilot is the buffer', 'at least at its score',
         // Retired in 0.6.30: a +$ amount beside Dasher's total is part of it, never added to it.
-        'pay plus the +$']) {
+        'pay plus the +$',
+        // Retired in 0.6.33: split screen, the divider's moves and its hint.
+        'Maps and Dasher in split screen', 'for planning while parked', 'drag the divider toward Offer Filter']) {
         assert(!text.includes(stale), 'install page still says: ' + stale);
       }
       assert(!/exact setup steps/.test(await page.locator('meta[property="og:description"]').getAttribute('content')), 'og:description overclaims');
@@ -488,7 +491,7 @@ async function main() {
         'protect your acceptance rate', '70% or more (a top tier)', '50% or more (a tier)', 'Long-press',
         'Earn per Offer', 'Earn by Time',
         'Dasher full screen and Offer Filter’s tab', 'Google Maps or Waze full screen with Peek',
-        'Maps and Dasher in split screen with the tab', 'for planning while parked', 'Peek waits for Dasher',
+        'Tap the tab to come back to Offer Filter', 'Peek waits for Dasher',
         'unlock within 40 seconds', 'never woken or unlocked', 'the power button still turns it off',
         'In Offer Filter, tap the mascot on its home screen', 'doesn’t read Dasher at all', 'turn off Auto-accept',
         'A beta, not a guarantee of reliability', 'best effort, not a promise', 'Never handle your phone while driving',
