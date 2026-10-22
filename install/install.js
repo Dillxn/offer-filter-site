@@ -36,7 +36,7 @@
   }
   if (!android && !/Mobi/i.test(ua)) {
     note.innerHTML = 'On a computer? Open <strong>offerfilter.org/install</strong> on your Android phone, ' +
-      'or scan this code with its camera.<img src="../assets/install-qr.svg?v=20261022-092" width="132" height="132" ' +
+      'or scan this code with its camera.<img src="../assets/install-qr.svg?v=20261022-093" width="132" height="132" ' +
       'alt="QR code for offerfilter.org/install">';
     note.hidden = false;
   }
