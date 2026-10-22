@@ -398,13 +398,16 @@ async function main() {
         'push for better pay, no acceptance-rate goal', 'Suggested and preselected', 'Protect my acceptance rate',
         '70% or more (a top tier)', '50% or more (a tier)', 'Long-press the Auto chip', 'from 10% to 150%',
         'check the Dasher app for your current requirements', 'Earn per Offer', 'Earn by Time', 'Dasher full screen',
-        'Google Maps or Waze full screen', 'Peek', 'Tap the tab to come back to Offer Filter', 'Open Dasher',
+        'Google Maps or Waze full screen', 'Peek', 'Tap the tab to come back to Offer Filter',
+        // 0.6.34: the same tab on Offer Filter's home screen goes back to Dasher; one diagnostics switch.
+        'The same tab, with Dasher’s icon', 'tap it to go back to Dasher', 'New in 0.6.34', 'One switch for diagnostics',
         'touch and hold the tab', 'No more split screen', 'New in 0.6.33',
         'Back to map', 'Tap the mascot', 'Paused means Offer Filter isn’t reading Dasher at all',
         'resume from Offer Filter’s home screen', 'Peek waits for Dasher’s offer', 'unlock within 40 seconds',
         'keeps your screen from timing out', 'the power button still turns the screen off', 'Peek pauses while your phone is locked',
-        'Send anonymous feedback', 'feedback form', 'Android 15', 'New in 0.5.0', 'Attach masked diagnostics',
-        'Share anonymous diagnostics after each dash', 'Both start off', 'The screens you’re most likely to see',
+        'Send anonymous feedback', 'feedback form', 'Android 15', 'New in 0.5.0', 'Share anonymous diagnostics',
+        'sends masked diagnostics after each dash and with feedback you send', 'It starts off',
+        'The screens you’re most likely to see',
         'next 24 offers',
         // 0.6.27: offers are scored by Area by default; Strict is a pick in the radar's middle.
         'Area by default', 'Area, the default from 0.6.27', 'to choose Strict again',
@@ -439,7 +442,9 @@ async function main() {
         // Retired in 0.6.30: a +$ amount beside Dasher's total is part of it, never added to it.
         'pay plus the +$',
         // Retired in 0.6.33: split screen, the divider's moves and its hint.
-        'Maps and Dasher in split screen', 'for planning while parked', 'drag the divider toward Offer Filter']) {
+        'Maps and Dasher in split screen', 'for planning while parked', 'drag the divider toward Offer Filter',
+        // Retired in 0.6.34: the separate diagnostics choices, and the header's Open Dasher for the tab.
+        'Attach masked diagnostics', 'Share anonymous diagnostics after each dash', 'Both start off', 'Open Dasher']) {
         assert(!text.includes(stale), 'install page still says: ' + stale);
       }
       assert(!/exact setup steps/.test(await page.locator('meta[property="og:description"]').getAttribute('content')), 'og:description overclaims');
@@ -491,7 +496,7 @@ async function main() {
         'protect your acceptance rate', '70% or more (a top tier)', '50% or more (a tier)', 'Long-press',
         'Earn per Offer', 'Earn by Time',
         'Dasher full screen and Offer Filter’s tab', 'Google Maps or Waze full screen with Peek',
-        'Tap the tab to come back to Offer Filter', 'Peek waits for Dasher',
+        'Tap the tab to come back to Offer Filter', 'the same tab there goes back to Dasher', 'Peek waits for Dasher',
         'unlock within 40 seconds', 'never woken or unlocked', 'the power button still turns it off',
         'In Offer Filter, tap the mascot on its home screen', 'doesn’t read Dasher at all', 'turn off Auto-accept',
         'A beta, not a guarantee of reliability', 'best effort, not a promise', 'Never handle your phone while driving',
@@ -500,7 +505,7 @@ async function main() {
       }
       // Retired in 0.6.26: the homepage's setup lines and their Fix; minimum pay (0.6.12) and the tiers first (0.6.18).
       for (const stale of ['with Fix', 'Turn on Offer Filter in Accessibility', 'Allow notification access',
-        'keep a top tier', 'acceptance rate 70% or more, suggested', 'minimum pay']) {
+        'keep a top tier', 'acceptance rate 70% or more, suggested', 'minimum pay', 'Open Dasher']) {
         assert(!help.includes(stale), 'Help still says: ' + stale);
       }
       assert(!/items on shopping orders|items for shopping orders|pay per item|pay per minute|Updates can’t install|From 0\.5\.0:/.test(copy),

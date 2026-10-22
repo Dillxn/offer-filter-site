@@ -79,7 +79,7 @@
 <ol class="steps" start="6">
 <li><h3>Read the notice</h3>
 <p>Open Offer Filter. Its first screen explains what it reads, the acceptance-rate risk and the terms. Tap <strong>I understand and accept</strong> only if you agree. <strong>Not now</strong> closes the app without it doing anything.</p>
-<p><span class="since">New in 0.6.18</span> Please turn on <strong>Share anonymous diagnostics after each dash</strong> at the bottom of the notice, so problems on your phone get fixed. It stays off unless you turn it on, and you can turn it off in Settings.</p></li>
+<p><span class="since">New in 0.6.34</span> Please turn on <strong>Share anonymous diagnostics</strong> at the bottom of the notice, so problems on your phone get fixed. It’s one switch for the summary after each dash and masked diagnostics with feedback you send. It stays off unless you turn it on, and you can turn it off in Settings.</p></li>
 <li><h3>Turn on screen reading</h3>
 <p><span class="since">New in 0.6.26</span> Until Offer Filter can filter, its setup fills the screen: one step at a time, each with one button, and each says what to do before Android’s screen opens. The first, <strong>Turn on screen reading</strong>, is Android’s Accessibility setting. Tap <strong>Open Accessibility</strong>, then <strong>Installed apps</strong> (<strong>Downloaded apps</strong> on phones other than Samsung), then <strong>Offer Filter</strong>, and turn it on. Android warns that the app can see and control your screen; that’s how it reads offers and taps Decline in Dasher.</p>
 <p>Once it’s on, Offer Filter comes back by itself where Android lets it; otherwise go back to it. <strong>Stuck? Send feedback</strong>, at the foot of every step, opens the feedback form.</p>
@@ -122,7 +122,7 @@
 <li><h3>Pick a driving layout</h3>
 <p>Set it up before you drive:</p>
 <ul>
-<li><strong>Dasher full screen</strong>, with Offer Filter’s tab on the edge. <span class="since">New in 0.6.33</span> Tap the tab to come back to Offer Filter; <strong>Open Dasher</strong> at its top goes back.</li>
+<li><strong>Dasher full screen</strong>, with Offer Filter’s tab on the edge. <span class="since">New in 0.6.33</span> Tap the tab to come back to Offer Filter. <span class="since">New in 0.6.34</span> The same tab, with Dasher’s icon, sits at the same edge of Offer Filter’s home screen: tap it to go back to Dasher. Moving one moves both.</li>
 <li><strong>Google Maps or Waze full screen</strong>, with <strong>Peek</strong> on. For a new offer, Offer Filter briefly opens Dasher, then brings you back to your map. <span class="since">New in 0.5.0</span> If an offer pulled you out of your map and ended without you accepting it, <strong>Back to map</strong> under the tab takes you back with one tap.</li>
 </ul></li>
 </ol>
@@ -148,10 +148,11 @@
 <p class="note"><strong>Already on 0.4.72?</strong> It installs an update by itself only after it has seen your dash end, and it has no Install now line or 8-hour limit (those start with 0.5.0). If its <span class="path">Settings → Updates</span> says <strong>Update ready: installs after your dash</strong> while you’re not dashing (for example because you turned Offer Filter’s Accessibility off to get through 0.4.72’s frozen Dasher), tap <strong>Updates</strong> once with Dasher not on screen, or download 0.5.0 above and install it over the old app. Your rules and history stay. If you turned Accessibility off, turn it back on afterwards.</p></li>
 </ol>
 
-<section id="whats-new" data-version-code="125" data-version-name="0.6.33" aria-labelledby="whats-new-title">
+<section id="whats-new" data-version-code="126" data-version-name="0.6.34" aria-labelledby="whats-new-title">
 <h2 id="whats-new-title">What’s new in 0.6</h2>
 <ul>
-<li><strong>No more split screen</strong> (new in 0.6.33). Offer Filter no longer splits the screen with Dasher or moves its divider for a map. To come back to Offer Filter from Dasher, tap the tab on the screen’s edge; <strong>Open Dasher</strong> at the top goes back. To pause or resume from Dasher, touch and hold the tab. You’ll see the notice once more.</li>
+<li><strong>One switch for diagnostics</strong> (new in 0.6.34). <strong>Share anonymous diagnostics</strong> is now one switch for the summary after each dash, masked diagnostics with feedback you send and the offer timing study. It covers more than each earlier choice did, so it’s off for everyone until you turn it on. Offer Filter’s home screen now has the same tab as over Dasher, with Dasher’s icon: tap it to go back to Dasher, and moving one moves both. You’ll see the notice once more.</li>
+<li><strong>No more split screen</strong> (new in 0.6.33). Offer Filter no longer splits the screen with Dasher or moves its divider for a map. To come back to Offer Filter from Dasher, tap the tab on the screen’s edge. To pause or resume from Dasher, touch and hold the tab. You’ll see the notice once more.</li>
 <li><strong>Autopilot goes down to 10%</strong> (new in 0.6.32). On a slow dash, Autopilot’s bar can now come down to 10% of its working minimums instead of stopping at 50%, so with pay first about one offer in five keeps coming. An offer you accept still holds the bar for the 24 offers after it, and offers under your saved or learned minimums are yours to decide, never auto-accepted. You’ll see the notice once more.</li>
 <li><strong>Total pay counts</strong> (new in 0.6.31). With Autopilot on, a quarter of each Area score is now an offer’s total pay against your latest accept’s, so a bigger offer a little under that accept’s rates can pass, and a smaller one at its rates can be declined. The chart’s pay line shows that accept’s total. You’ll see the notice once more.</li>
 <li><strong>Busy offers read at Dasher’s total</strong> (new in 0.6.30). On a busy offer with a +$ amount, Dasher’s total is the whole pay, the +$ included, so it’s judged like any other offer, however many stops it has. Reports and your history now keep a full-screen offer’s own lines; nothing of Dasher’s screen below the offer is kept.</li>
@@ -193,7 +194,7 @@
 <li><strong>Android 15 or newer</strong> (from 0.6.1). Phones on Android 8 to 14 stay on 0.6.0.</li>
 <li><strong>One home screen at every size</strong> (from 0.5.5). The radar and the offer map stand together, and the latest offer is always at the top.</li>
 <li><strong>Better Peek and driving layouts.</strong> Peek waits for Dasher’s offer and checks one that dinged while your phone was locked. The tab sits over Dasher’s half beside a map, with Back to map.</li>
-<li><strong>Feedback without an account.</strong> Send it from the app or this site. Optional diagnostics: turn on <strong>Attach masked diagnostics</strong> for one message, or <strong>Share anonymous diagnostics after each dash</strong> in Settings. Both start off.</li>
+<li><strong>Feedback without an account.</strong> Send it from the app or this site. Optional diagnostics: <strong>Share anonymous diagnostics</strong> in Settings sends masked diagnostics after each dash and with feedback you send. It starts off.</li>
 </ul>
 <p class="note">It’s a beta: it can misread an offer, and it makes no promise about earnings or your acceptance rate.</p>
 </section>
