@@ -402,8 +402,12 @@ async function main() {
         // 0.6.34: the same tab on Offer Filter's home screen goes back to Dasher; one diagnostics switch.
         'The same tab, with Dasher’s icon', 'tap it to go back to Dasher', 'New in 0.6.34', 'One switch for diagnostics',
         'touch and hold the tab', 'No more split screen', 'New in 0.6.33',
-        'Back to map', 'Tap the mascot', 'Paused means Offer Filter isn’t reading Dasher at all',
-        'resume from Offer Filter’s home screen', 'Peek waits for Dasher’s offer', 'unlock within 40 seconds',
+        'Back to map', 'Tap the mascot',
+        // 0.6.35: paused, offers are read and scored with nothing tapped; Decline after 10 seconds.
+        'still reads each offer on Dasher’s screen and shows its score beside the tab', 'outlined in red when it would decline',
+        'turn off Offer Filter in Android’s Accessibility settings', 'New in 0.6.35', 'Scores while paused',
+        'Decline after 10 seconds', 'a touch in that time keeps it yours',
+        'Peek waits for Dasher’s offer', 'unlock within 40 seconds',
         'keeps your screen from timing out', 'the power button still turns the screen off', 'Peek pauses while your phone is locked',
         'Send anonymous feedback', 'feedback form', 'Android 15', 'New in 0.5.0', 'Share anonymous diagnostics',
         'sends masked diagnostics after each dash and with feedback you send', 'It starts off',
@@ -444,7 +448,10 @@ async function main() {
         // Retired in 0.6.33: split screen, the divider's moves and its hint.
         'Maps and Dasher in split screen', 'for planning while parked', 'drag the divider toward Offer Filter',
         // Retired in 0.6.34: the separate diagnostics choices, and the header's Open Dasher for the tab.
-        'Attach masked diagnostics', 'Share anonymous diagnostics after each dash', 'Both start off', 'Open Dasher']) {
+        'Attach masked diagnostics', 'Share anonymous diagnostics after each dash', 'Both start off', 'Open Dasher',
+        // Retired in 0.6.35: a pause reading nothing of Dasher's screen, and its slim tab.
+        'Paused means Offer Filter isn’t reading Dasher at all', 'resume from Offer Filter’s home screen',
+        'the tab shrinks to a slim bar that takes no touches']) {
         assert(!text.includes(stale), 'install page still says: ' + stale);
       }
       assert(!/exact setup steps/.test(await page.locator('meta[property="og:description"]').getAttribute('content')), 'og:description overclaims');
@@ -498,14 +505,17 @@ async function main() {
         'Dasher full screen and Offer Filter’s tab', 'Google Maps or Waze full screen with Peek',
         'Tap the tab to come back to Offer Filter', 'the same tab there goes back to Dasher', 'Peek waits for Dasher',
         'unlock within 40 seconds', 'never woken or unlocked', 'the power button still turns it off',
-        'In Offer Filter, tap the mascot on its home screen', 'doesn’t read Dasher at all', 'turn off Auto-accept',
+        'In Offer Filter, tap the mascot on its home screen', 'still shows each offer’s score but taps nothing',
+        'To stop it reading Dasher', 'turn off Auto-accept',
         'A beta, not a guarantee of reliability', 'best effort, not a promise', 'Never handle your phone while driving',
         'view and control your screen']) {
         assert(help.toLowerCase().includes(phrase.toLowerCase()), 'Help lacks: ' + phrase);
       }
       // Retired in 0.6.26: the homepage's setup lines and their Fix; minimum pay (0.6.12) and the tiers first (0.6.18).
       for (const stale of ['with Fix', 'Turn on Offer Filter in Accessibility', 'Allow notification access',
-        'keep a top tier', 'acceptance rate 70% or more, suggested', 'minimum pay', 'Open Dasher']) {
+        'keep a top tier', 'acceptance rate 70% or more, suggested', 'minimum pay', 'Open Dasher',
+        // Retired in 0.6.35: a pause no longer stops the reading.
+        'doesn’t read Dasher at all']) {
         assert(!help.includes(stale), 'Help still says: ' + stale);
       }
       assert(!/items on shopping orders|items for shopping orders|pay per item|pay per minute|Updates can’t install|From 0\.5\.0:/.test(copy),
