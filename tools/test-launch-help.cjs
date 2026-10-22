@@ -396,7 +396,7 @@ async function main() {
         'the pickup included', 'pay per mile', 'pay per hour', 'max stops', 'Your rules are simpler now', 'Autopilot',
         'What matters more?', 'The first time you turn auto-decline on with the mascot', 'Pay first',
         'push for better pay, no acceptance-rate goal', 'Suggested and preselected', 'Protect my acceptance rate',
-        '70% or more (a top tier)', '50% or more (a tier)', 'Long-press the Auto chip', 'from 50% to 150%',
+        '70% or more (a top tier)', '50% or more (a tier)', 'Long-press the Auto chip', 'from 10% to 150%',
         'check the Dasher app for your current requirements', 'Earn per Offer', 'Earn by Time', 'Dasher full screen',
         'Google Maps or Waze full screen', 'Peek', 'Maps and Dasher in split screen', 'split screen', 'for planning',
         'Back to map', 'Tap the mascot', 'Paused means Offer Filter isn’t reading Dasher at all',
